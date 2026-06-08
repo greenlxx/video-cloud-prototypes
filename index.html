@@ -12,6 +12,7 @@ body {
   color: rgba(0,0,0,.88);
   background: #f0f2f5;
 }
+
 /* ===== 顶部栏 ===== */
 .topbar {
   background: #165DFF;
@@ -21,114 +22,20 @@ body {
   align-items: center;
   padding: 0 20px;
   gap: 12px;
-  flex-shrink: 0;
 }
 .topbar-left { display: flex; align-items: center; gap: 10px; }
 .topbar h1 { font-size: 15px; font-weight: 600; }
 .version-select {
   background: rgba(255,255,255,.15);
-  color: #fff;
-  border: none;
-  border-radius: 4px;
-  padding: 4px 10px;
-  font-size: 12px;
-  cursor: pointer;
-  appearance: none;
+  color: #fff; border: none; border-radius: 4px;
+  padding: 4px 10px; font-size: 12px; cursor: pointer;
 }
 .version-select option { color: #333; background: #fff; }
-.tabs { display: flex; margin-left: auto; gap: 4px; flex-wrap: wrap; }
-.tab-btn {
-  height: 30px; padding: 0 16px; border: none; border-radius: 4px;
-  background: rgba(255,255,255,.15); color: #fff; cursor: pointer;
-  font-size: 13px; transition: all .15s;
-}
-.tab-btn:hover { background: rgba(255,255,255,.25); }
-.tab-btn.active { background: #fff; color: #165DFF; font-weight: 600; }
 
-/* ===== 布局 ===== */
-.layout { display: flex; flex: 1; overflow: hidden; }
-
-/* ===== 侧边栏 ===== */
-.sidebar {
-  width: 220px;
-  background: #001529;
-  color: #fff;
-  display: flex;
-  flex-direction: column;
-  flex-shrink: 0;
-  overflow-y: auto;
-  padding: 12px 0;
-}
-.menu1 {
-  padding: 0;
-}
-.menu1-title {
-  padding: 10px 16px 4px;
-  font-size: 12px;
-  color: rgba(255,255,255,.45);
-  text-transform: uppercase;
-  letter-spacing: .05em;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-.menu1-bar {
-  width: 3px; height: 12px; border-radius: 1.5px; flex-shrink: 0;
-}
-.menu2-item {
-  padding: 8px 16px 8px 24px;
-  font-size: 13px;
-  color: rgba(255,255,255,.75);
-  cursor: pointer;
-  transition: all .15s;
-  border-left: 3px solid transparent;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-.menu2-item:hover {
-  background: rgba(255,255,255,.08);
-  color: #fff;
-}
-.menu2-item.active {
-  background: #165DFF;
-  color: #fff;
-  border-left-color: #fff;
-}
-.menu2-item .dot {
-  width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0;
-}
-.dot-new { background: #ff4d4f; }
-.dot-change { background: #faad14; }
-.dot-keep { background: #52c41a; }
-.dot-stub { background: rgba(255,255,255,.25); }
-
-/* ===== 主内容 ===== */
-.main {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  overflow-y: auto;
-  padding: 20px;
-}
-.page-hd {
-  margin-bottom: 20px;
-}
-.page-hd .breadcrumb {
-  font-size: 12px;
-  color: rgba(0,0,0,.45);
-  margin-bottom: 8px;
-}
-.page-hd h2 {
-  font-size: 20px;
-  font-weight: 600;
-}
-.page-hd .sub {
-  font-size: 14px;
-  color: rgba(0,0,0,.45);
-  margin-top: 4px;
-}
+/* ===== 首页 ===== */
+.home { display: none; }
+.home.active { display: block; }
+.main { max-width: 1200px; margin: 0 auto; padding: 20px; }
 
 /* ===== 图例 ===== */
 .legend {
@@ -147,42 +54,117 @@ body {
 .badge-keep { background: #f6ffed; color: #52c41a; border: 1px solid #b7eb8f; }
 .badge-stub { background: #fafafa; color: rgba(0,0,0,.45); border: 1px solid #f0f0f0; }
 
-/* ===== 空状态 ===== */
-.empty-state {
-  display: flex; flex-direction: column; align-items: center;
-  justify-content: center; flex: 1; gap: 12px;
-  color: rgba(0,0,0,.45);
-  min-height: 400px;
+/* ===== 一级菜单卡片 ===== */
+.menu1-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 32px; }
+.menu1-card {
+  background: #fff; border-radius: 12px; padding: 20px;
+  border: 1px solid #f0f0f0; cursor: pointer;
+  transition: all .25s; text-decoration: none; color: inherit;
+  box-shadow: 0 1px 2px rgba(0,0,0,.03);
 }
-.empty-state .icon { font-size: 48px; margin-bottom: 8px; }
-.empty-state h3 { font-size: 16px; color: rgba(0,0,0,.88); }
-.empty-state p { font-size: 13px; max-width: 360px; text-align: center; line-height: 1.6; }
+.menu1-card:hover {
+  border-color: var(--hover-color); transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(22,93,255,.1);
+}
+.m1-top { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+.m1-bar { width: 4px; height: 20px; border-radius: 2px; }
+.m1-title { font-size: 16px; font-weight: 600; }
+.m1-sub { font-size: 12px; color: rgba(0,0,0,.45); margin-left: auto; }
+.m1-modules { display: flex; flex-wrap: wrap; gap: 6px; }
+.m1-tag {
+  font-size: 12px; padding: 3px 10px; border-radius: 6px;
+  background: #f5f5f5; color: rgba(0,0,0,.65);
+}
+.m1-tag.new { background: #fff2f0; color: #ff4d4f; }
+.m1-tag.change { background: #fffbe6; color: #d46b08; }
+.m1-tag.keep { background: #f6ffed; color: #52c41a; }
+.m1-tag.stub { background: #fafafa; color: rgba(0,0,0,.35); }
 
-/* ===== 文件列表 ===== */
-.file-list { margin-top: 20px; }
-.file-list h4 { font-size: 14px; font-weight: 600; margin-bottom: 12px; color: rgba(0,0,0,.65); }
+/* ===== 统计 ===== */
+.stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+.stat-card {
+  background: #fff; border-radius: 8px; padding: 18px; text-align: center;
+  border: 1px solid #f0f0f0;
+  box-shadow: 0 1px 2px rgba(0,0,0,.03);
+}
+.stat-num { font-size: 28px; font-weight: 700; }
+.stat-label { font-size: 13px; color: rgba(0,0,0,.45); margin-top: 4px; }
+
+/* ================================================================
+   内部二级页面（平台布局）
+   ================================================================ */
+.detail { display: none; height: calc(100vh - 48px); }
+.detail.active { display: flex; }
+
+/* 侧边栏 */
+.detail-sidebar {
+  width: 240px;
+  background: #001529;
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  overflow-y: auto;
+}
+.ds-header {
+  padding: 16px 20px;
+  border-bottom: 1px solid rgba(255,255,255,.1);
+}
+.ds-header .ds-back {
+  font-size: 12px; color: rgba(255,255,255,.5); cursor: pointer;
+  margin-bottom: 6px; display: inline-block;
+}
+.ds-header .ds-back:hover { color: #fff; }
+.ds-header h2 { font-size: 15px; font-weight: 600; }
+.ds-header p { font-size: 12px; color: rgba(255,255,255,.45); margin-top: 2px; }
+.ds-section-title {
+  font-size: 11px; color: rgba(255,255,255,.35); padding: 12px 20px 4px;
+  text-transform: uppercase; letter-spacing: .05em;
+}
+.ds-item {
+  padding: 10px 20px; cursor: pointer; font-size: 13px;
+  color: rgba(255,255,255,.75); display: flex; align-items: center; gap: 8px;
+  transition: all .15s; border-left: 3px solid transparent;
+}
+.ds-item:hover { background: rgba(255,255,255,.08); color: #fff; }
+.ds-item.active { background: #165DFF; color: #fff; border-left-color: #fff; }
+.ds-item .ds-dot {
+  width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0;
+}
+
+/* 右侧内容区 */
+.detail-main {
+  flex: 1; display: flex; flex-direction: column; overflow: hidden;
+}
+.dm-content {
+  flex: 1; padding: 20px; overflow-y: auto;
+}
+.dm-breadcrumb { font-size: 12px; color: rgba(0,0,0,.45); margin-bottom: 8px; }
+.dm-title { font-size: 20px; font-weight: 600; margin-bottom: 4px; }
+.dm-sub { font-size: 14px; color: rgba(0,0,0,.45); margin-bottom: 20px; display: flex; align-items: center; gap: 8px; }
+
+/* 文件卡片网格 */
 .file-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
 .file-card {
   display: flex; flex-direction: column;
   background: #fff; border-radius: 8px; padding: 16px;
   border: 1px solid #f0f0f0; text-decoration: none; color: inherit;
-  transition: all .2s; cursor: pointer;
+  transition: all .2s;
   box-shadow: 0 1px 2px rgba(0,0,0,.03);
 }
 .file-card:hover { border-color: #165DFF; box-shadow: 0 4px 12px rgba(22,93,255,.12); transform: translateY(-1px); }
-.file-card .fc-icon { font-size: 24px; margin-bottom: 8px; }
-.file-card .fc-title { font-size: 14px; font-weight: 600; }
-.file-card .fc-desc { font-size: 12px; color: rgba(0,0,0,.45); margin-top: 2px; }
-.file-card .fc-badge { margin-top: 8px; align-self: flex-start; }
+.fc-icon { font-size: 24px; margin-bottom: 8px; }
+.fc-title { font-size: 14px; font-weight: 600; }
+.fc-desc { font-size: 12px; color: rgba(0,0,0,.45); margin-top: 2px; }
+.fc-badge { margin-top: 8px; align-self: flex-start; }
 
-/* ===== 统计 ===== */
-.stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-top: 24px; }
-.stat-card { background: #fff; border-radius: 8px; padding: 18px; text-align: center; border: 1px solid #f0f0f0; }
-.stat-num { font-size: 28px; font-weight: 700; }
-.stat-label { font-size: 13px; color: rgba(0,0,0,.45); margin-top: 4px; }
+.empty-files {
+  color: rgba(0,0,0,.45); padding: 40px; background: #fff;
+  border-radius: 8px; text-align: center; border: 1px solid #f0f0f0;
+}
 
-@media (max-width: 900px) { .file-grid { grid-template-columns: repeat(2, 1fr); } .sidebar { width: 180px; } }
-@media (max-width: 600px) { .file-grid { grid-template-columns: 1fr; } .sidebar { display: none; } }
+@media (max-width: 900px) { .menu1-grid { grid-template-columns: repeat(2, 1fr); } .file-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 600px) { .menu1-grid { grid-template-columns: 1fr; } .file-grid { grid-template-columns: 1fr; } }
 </style>
 </head>
 <body>
@@ -195,45 +177,53 @@ body {
   </div>
 </div>
 
-<div class="layout">
-  <!-- 侧边栏 -->
-  <aside class="sidebar" id="sidebar"></aside>
-
-  <!-- 主内容 -->
-  <main class="main" id="mainContent">
-    <div class="empty-state" id="emptyState">
-      <div class="icon">📋</div>
-      <h3>选择左侧模块查看原型</h3>
-      <p>通过左侧菜单选择本期迭代的模块，查看对应的原型文件。</p>
+<!-- ===== 首页（卡片） ===== -->
+<div class="home active" id="homeView">
+  <div class="main">
+    <div class="legend">
+      <div class="legend-item"><span class="badge badge-new">全新</span> 本次新建页面</div>
+      <div class="legend-item"><span class="badge badge-change">改造</span> 现有页面优化</div>
+      <div class="legend-item"><span class="badge badge-keep">保留</span> 现有功能参考</div>
+      <div class="legend-item"><span class="badge badge-stub">占位</span> 后续迭代开发</div>
     </div>
-  </main>
+
+    <div class="menu1-grid" id="menu1Grid"></div>
+
+    <div class="stats" id="statGrid"></div>
+  </div>
+</div>
+
+<!-- ===== 内部二级页面 ===== -->
+<div class="detail" id="detailView">
+  <aside class="detail-sidebar" id="detailSidebar"></aside>
+  <div class="detail-main">
+    <div class="dm-content" id="detailContent">
+      <div class="empty-files">选择左侧模块查看原型</div>
+    </div>
+  </div>
 </div>
 
 <script>
-// ===================================================================
-// 🎯 版本配置（你改这里）
-// ===================================================================
+// ================================================================
+// 🎯 版本配置
+// ================================================================
 const VERSIONS = {
   "v202606": {
     label: "v202606 · 6月基线版本",
-    type: "baseline",
-    date: "2026-06"
+    type: "baseline", date: "2026-06"
   },
   "龙江市监-v202606": {
     label: "龙江市监 · 6月项目版本",
-    type: "project",
-    date: "2026-06"
+    type: "project", date: "2026-06"
   }
 };
 
-// 一级菜单颜色规范
 const MENU1_COLORS = {
   "平台概览": "#165DFF", "数据治理": "#722ED1", "智能运维": "#13C2C2",
   "轨迹查询": "#1677FF", "布控管理": "#FA8C16", "设备管理": "#52C41A",
   "报警中心": "#FF4D4F", "系统管理": "#86909C"
 };
 
-// 页面类型
 const TYPE_MAP = {
   new:    { cn: "全新",  cls: "badge-new",  dot: "dot-new" },
   change: { cn: "改造",  cls: "badge-change", dot: "dot-change" },
@@ -241,12 +231,12 @@ const TYPE_MAP = {
   stub:   { cn: "占位",  cls: "badge-stub",  dot: "dot-stub" }
 };
 
-// ===================================================================
-// 📦 原型数据
-// ===================================================================
+// ================================================================
+// 📦 数据（你改这里）
+// ================================================================
 const DATA = {
   "v202606": [
-    // ── 数据治理域 ──
+    // 数据治理域
     { menu1: "数据治理", menu2: "点位智能标注", icon: "🤖",
       type: "keep",
       files: [
@@ -255,14 +245,10 @@ const DATA = {
       ]},
     { menu1: "数据治理", menu2: "点位治理效能", icon: "📊",
       type: "change",
-      files: [
-        { name: "治理总览", url: "v202606/dg-governance/index.html" }
-      ]},
+      files: [{ name: "治理总览", url: "v202606/dg-governance/index.html" }]},
     { menu1: "数据治理", menu2: "标签管理", icon: "🏷️",
       type: "keep",
-      files: [
-        { name: "标签列表", url: "v202606/dg-tag/list.html" }
-      ]},
+      files: [{ name: "标签列表", url: "v202606/dg-tag/list.html" }]},
     { menu1: "数据治理", menu2: "基础目录设备管理", icon: "📹",
       type: "change",
       files: [
@@ -277,39 +263,26 @@ const DATA = {
       ]},
     { menu1: "数据治理", menu2: "经纬度治理", icon: "🌐",
       type: "new",
-      files: [
-        { name: "坐标治理页", url: "v202606/dg-coord/index.html" }
-      ]},
-    // ── 智能运维域 ──
+      files: [{ name: "坐标治理页", url: "v202606/dg-coord/index.html" }]},
+    // 智能运维
     { menu1: "智能运维", menu2: "检测算法管理", icon: "⚙️",
       type: "change",
-      files: [
-        { name: "算法列表", url: "v202606/ops-algorithm/list.html" }
-      ]},
+      files: [{ name: "算法列表", url: "v202606/ops-algorithm/list.html" }]},
     { menu1: "智能运维", menu2: "巡检任务", icon: "📋",
       type: "change",
-      files: [
-        { name: "任务列表", url: "v202606/ops-inspection/list.html" }
-      ]},
+      files: [{ name: "任务列表", url: "v202606/ops-inspection/list.html" }]},
     { menu1: "智能运维", menu2: "巡检日志", icon: "📄",
       type: "new",
-      files: [
-        { name: "日志列表", url: "v202606/ops-log/list.html" }
-      ]},
+      files: [{ name: "日志列表", url: "v202606/ops-log/list.html" }]},
     { menu1: "智能运维", menu2: "可用性报告", icon: "📈",
       type: "new",
-      files: [
-        { name: "SLA总览", url: "v202606/ops-sla/index.html" }
-      ]},
+      files: [{ name: "SLA总览", url: "v202606/ops-sla/index.html" }]},
     { menu1: "智能运维", menu2: "故障预警", icon: "🔮",
-      type: "new",
-      files: [] },
+      type: "new", files: []},
     { menu1: "智能运维", menu2: "设备告警", icon: "🔔",
       type: "new",
-      files: [
-        { name: "告警列表", url: "v202606/ops-alert/list.html" }
-      ]},
-    // ── 轨迹查询域 ──
+      files: [{ name: "告警列表", url: "v202606/ops-alert/list.html" }]},
+    // 轨迹查询
     { menu1: "轨迹查询", menu2: "人员轨迹查询", icon: "👤",
       type: "change",
       files: [
@@ -317,139 +290,163 @@ const DATA = {
         { name: "结果页", url: "v202606/track/person-result.html" }
       ]},
     { menu1: "轨迹查询", menu2: "车辆轨迹查询", icon: "🚗",
-      type: "new",
-      files: [] },
+      type: "new", files: []},
     { menu1: "轨迹查询", menu2: "多目标对比", icon: "🔀",
-      type: "new",
-      files: [] }
+      type: "new", files: []}
   ],
-
   "龙江市监-v202606": [
     { menu1: "数据治理", menu2: "点位治理效能", icon: "📊",
       type: "new",
-      files: [
-        { name: "部门治理统计", url: "longjiang/dg-governance/index.html" }
-      ]},
+      files: [{ name: "部门治理统计", url: "longjiang/dg-governance/index.html" }]},
     { menu1: "数据治理", menu2: "治理进度统计", icon: "📈",
       type: "new",
-      files: [
-        { name: "治理概览", url: "longjiang/dg-progress/index.html" }
-      ]}
+      files: [{ name: "治理概览", url: "longjiang/dg-progress/index.html" }]}
   ]
 };
 
-// ===================================================================
+// ================================================================
 // 渲染
-// ===================================================================
+// ================================================================
 let currentVersion = "v202606";
-let currentMenu2 = null;
 
 function init() {
-  // 版本选择器
   const sel = document.getElementById('versionSelect');
-  sel.innerHTML = Object.entries(VERSIONS).map(([k, v]) =>
+  sel.innerHTML = Object.entries(VERSIONS).map(([k,v]) =>
     `<option value="${k}">${v.label}</option>`
   ).join('');
-  render();
+  renderHome();
 }
 
 function switchVersion(ver) {
   currentVersion = ver;
-  currentMenu2 = null;
-  render();
+  document.getElementById('detailView').classList.remove('active');
+  document.getElementById('homeView').classList.add('active');
+  renderHome();
 }
 
-function render() {
+function renderHome() {
   const pages = DATA[currentVersion] || [];
-  const ver = VERSIONS[currentVersion];
+  const verInfo = VERSIONS[currentVersion];
 
-  // 渲染侧边栏
-  const sidebar = document.getElementById('sidebar');
-  const menu1Order = [...new Set(pages.map(p => p.menu1))];
-  sidebar.innerHTML = menu1Order.map(m1 => {
-    const items = pages.filter(p => p.menu1 === m1);
+  // 按一级菜单分组
+  const groups = {};
+  pages.forEach(p => {
+    if (!groups[p.menu1]) groups[p.menu1] = { items: [], newCount: 0, changeCount: 0 };
+    groups[p.menu1].items.push(p);
+    if (p.type === 'new') groups[p.menu1].newCount++;
+    if (p.type === 'change') groups[p.menu1].changeCount++;
+  });
+
+  // 渲染卡片
+  const grid = document.getElementById('menu1Grid');
+  const menu1Order = Object.keys(groups);
+  grid.innerHTML = menu1Order.map(m1 => {
+    const g = groups[m1];
     const color = MENU1_COLORS[m1] || '#165DFF';
+    const tags = g.items.map(p => `<span class="m1-tag ${p.type}">${p.icon} ${p.menu2}</span>`).join('');
+    const typeTags = [];
+    if (g.newCount) typeTags.push(`<span class="badge badge-new">${g.newCount}个全新</span>`);
+    if (g.changeCount) typeTags.push(`<span class="badge badge-change">${g.changeCount}个改造</span>`);
     return `
-      <div class="menu1">
-        <div class="menu1-title">
-          <span class="menu1-bar" style="background:${color}"></span>
-          ${m1} <span style="font-size:11px;color:rgba(255,255,255,.35)">${items.length}</span>
+      <div class="menu1-card" style="--hover-color:${color}" onclick="openDetail('${m1}')">
+        <div class="m1-top">
+          <span class="m1-bar" style="background:${color}"></span>
+          <span class="m1-title">${m1}</span>
+          <span class="m1-sub">${g.items.length}个模块</span>
         </div>
-        ${items.map(p => `
-          <div class="menu2-item ${currentMenu2 === p.menu2 ? 'active' : ''}"
-               onclick="selectModule('${p.menu2}')">
-            <span class="dot ${TYPE_MAP[p.type].dot}"></span>
-            <span>${p.menu2}</span>
-          </div>
-        `).join('')}
+        <div class="m1-modules">${tags}</div>
+        <div style="margin-top:12px;display:flex;gap:8px">${typeTags.join('')}</div>
       </div>
     `;
   }).join('');
-}
 
-function selectModule(menu2) {
-  currentMenu2 = menu2;
-  const pages = DATA[currentVersion] || [];
-  const page = pages.find(p => p.menu2 === menu2);
-  if (!page) return;
-
-  // 更新侧边栏状态
-  document.querySelectorAll('.menu2-item').forEach(el => el.classList.remove('active'));
-  document.querySelectorAll('.menu2-item').forEach(el => {
-    if (el.textContent.trim().includes(menu2)) el.classList.add('active');
-  });
-
-  // 计算统计
-  const allPages = pages;
-  const counts = { new: 0, change: 0, keep: 0, stub: 0, total: 0, nav: 0 };
-  allPages.forEach(p => {
+  // 统计
+  const counts = { new:0, change:0, keep:0, total:0, nav:0 };
+  pages.forEach(p => {
     if (p.type !== 'stub') { counts[p.type]++; counts.total++; }
     p.files.forEach(f => { if (f.url) counts.nav++; });
   });
-
-  const color = MENU1_COLORS[page.menu1] || '#165DFF';
-  const t = TYPE_MAP[page.type];
-
-  const main = document.getElementById('mainContent');
-  main.innerHTML = `
-    <div class="page-hd">
-      <div class="breadcrumb">${page.menu1} / ${page.menu2}</div>
-      <h2>${page.icon} ${page.menu2}</h2>
-      <div class="sub">
-        ${page.menu1} · 本迭代<span class="badge ${t.cls}" style="margin-left:8px">${t.cn}</span>
-      </div>
-    </div>
-
-    <div class="legend">
-      <div class="legend-item"><span class="badge badge-new">全新</span> 本次新建</div>
-      <div class="legend-item"><span class="badge badge-change">改造</span> 现有优化</div>
-      <div class="legend-item"><span class="badge badge-keep">保留</span> 未改动参考</div>
-      <div class="legend-item"><span class="badge badge-stub">占位</span> 后续迭代</div>
-    </div>
-
-    <div class="file-list">
-      <h4>📂 原型文件（${page.files.length}个）</h4>
-      ${page.files.length > 0 ? `
-        <div class="file-grid">
-          ${page.files.map(f => `
-            <a href="${f.url || '#'}" class="file-card" ${f.url ? '' : 'onclick="return false"'}>
-              <div class="fc-icon">📄</div>
-              <div class="fc-title">${f.name}</div>
-              <div class="fc-desc">${f.url || '待生成'}</div>
-              <span class="fc-badge badge ${t.cls}">${t.cn}</span>
-            </a>
-          `).join('')}
-        </div>
-      ` : `<div style="color:rgba(0,0,0,.45);padding:20px;background:#fff;border-radius:8px;text-align:center">原型待生成</div>`}
-    </div>
-
-    <div class="stats">
-      <div class="stat-card"><div class="stat-num" style="color:#ff4d4f;">${counts.new}</div><div class="stat-label">全新模块</div></div>
-      <div class="stat-card"><div class="stat-num" style="color:#faad14;">${counts.change}</div><div class="stat-label">改造模块</div></div>
-      <div class="stat-card"><div class="stat-num" style="color:#165DFF;">${counts.total}</div><div class="stat-label">原型模块</div></div>
-      <div class="stat-card"><div class="stat-num" style="color:#52c41a;">${counts.nav}</div><div class="stat-label">可导航文件</div></div>
-    </div>
+  document.getElementById('statGrid').innerHTML = `
+    <div class="stat-card"><div class="stat-num" style="color:#ff4d4f;">${counts.new}</div><div class="stat-label">全新模块</div></div>
+    <div class="stat-card"><div class="stat-num" style="color:#faad14;">${counts.change}</div><div class="stat-label">改造模块</div></div>
+    <div class="stat-card"><div class="stat-num" style="color:#165DFF;">${counts.total}</div><div class="stat-label">迭代模块</div></div>
+    <div class="stat-card"><div class="stat-num" style="color:#52c41a;">${counts.nav}</div><div class="stat-label">可导航文件</div></div>
   `;
+}
+
+function openDetail(menu1) {
+  const pages = DATA[currentVersion] || [];
+  const items = pages.filter(p => p.menu1 === menu1);
+  if (!items.length) return;
+
+  // 切换视图
+  document.getElementById('homeView').classList.remove('active');
+  const dv = document.getElementById('detailView');
+  dv.classList.add('active');
+
+  // 侧边栏
+  const color = MENU1_COLORS[menu1] || '#165DFF';
+  const sidebar = document.getElementById('detailSidebar');
+  sidebar.innerHTML = `
+    <div class="ds-header">
+      <span class="ds-back" onclick="backToHome()">← 返回首页</span>
+      <h2 style="color:${color}">${menu1}</h2>
+      <p>${items.length}个模块 · ${items.filter(i => i.type==='new').length}全新 ${items.filter(i => i.type==='change').length}改造</p>
+    </div>
+    ${items.map((p, i) => `
+      <div class="ds-item ${i===0?'active':''}" onclick="showModule(${i})">
+        <span class="ds-dot ${TYPE_MAP[p.type].dot}"></span>
+        <span>${p.menu2}</span>
+      </div>
+    `).join('')}
+  `;
+
+  // 默认选中第一个
+  window._detailItems = items;
+  window._currentIdx = 0;
+  showModule(0);
+}
+
+function showModule(idx) {
+  const items = window._detailItems;
+  const p = items[idx];
+  window._currentIdx = idx;
+
+  document.querySelectorAll('.ds-item').forEach((el, i) => {
+    el.classList.toggle('active', i === idx);
+  });
+
+  const t = TYPE_MAP[p.type];
+  const color = MENU1_COLORS[p.menu1] || '#165DFF';
+  const content = document.getElementById('detailContent');
+  content.innerHTML = `
+    <div style="margin-bottom:20px">
+      <div class="dm-breadcrumb"><span style="color:${color};font-weight:600">${p.menu1}</span> / ${p.menu2}</div>
+      <div class="dm-title">${p.icon} ${p.menu2}</div>
+      <div class="dm-sub">本迭代标记：<span class="badge ${t.cls}">${t.cn}</span></div>
+    </div>
+    <div style="margin-bottom:16px">
+      <span style="font-size:13px;color:rgba(0,0,0,.45)">📂 共 ${p.files.length} 个原型文件</span>
+    </div>
+    ${p.files.length > 0 ? `
+      <div class="file-grid">
+        ${p.files.map(f => `
+          <a href="${f.url || '#'}" class="file-card" ${f.url ? 'target="_blank"' : 'onclick="return false"'}>
+            <div class="fc-icon">📄</div>
+            <div class="fc-title">${f.name}</div>
+            <div class="fc-desc">${f.url || '待生成'}</div>
+            <span class="fc-badge badge ${t.cls}">${t.cn}</span>
+          </a>
+        `).join('')}
+      </div>
+    ` : `<div class="empty-files">此模块的原型尚未生成</div>`}
+  `;
+}
+
+function backToHome() {
+  document.getElementById('detailView').classList.remove('active');
+  document.getElementById('homeView').classList.add('active');
+  renderHome();
 }
 
 init();
