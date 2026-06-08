@@ -3,162 +3,285 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>视频云平台 — 原型总览</title>
+<title>视频云平台 — 原型导航</title>
 <style>
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-  body {
-    font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
-    background: #f5f5f5;
-    color: rgba(0,0,0,0.88);
-    display: flex;
-    min-height: 100vh;
-  }
-  .sidebar {
-    width: 240px;
-    background: #001529;
-    color: #fff;
-    display: flex;
-    flex-direction: column;
-    flex-shrink: 0;
-    overflow-y: auto;
-  }
-  .sidebar-header {
-    padding: 16px 20px;
-    border-bottom: 1px solid rgba(255,255,255,0.1);
-  }
-  .sidebar-header h1 { font-size: 16px; font-weight: 600; color: #fff; }
-  .sidebar-header p { font-size: 12px; color: rgba(255,255,255,0.45); margin-top: 4px; }
-  .sidebar-section { padding: 12px 0; }
-  .sidebar-section-title {
-    font-size: 12px; color: rgba(255,255,255,0.45);
-    padding: 4px 20px; text-transform: uppercase; letter-spacing: 0.05em;
-  }
-  .nav-item {
-    padding: 8px 20px; cursor: pointer; font-size: 14px;
-    color: rgba(255,255,255,0.85); display: flex; align-items: center;
-    gap: 8px; transition: all 0.15s; border-left: 3px solid transparent;
-  }
-  .nav-item:hover { background: rgba(255,255,255,0.08); color: #fff; }
-  .nav-item.active { background: #165DFF; color: #fff; border-left-color: #fff; }
-  .nav-item .badge { font-size: 11px; padding: 1px 6px; border-radius: 10px; margin-left: auto; }
-  .badge-new { background: #F6FFED; color: #52C41A; }
-  .badge-update { background: #FFF7E6; color: #D46B08; }
-  .badge-keep { background: #E6F4FF; color: #165DFF; }
-  .main { flex: 1; display: flex; flex-direction: column; }
-  .topbar {
-    height: 48px; background: #165DFF; display: flex; align-items: center;
-    padding: 0 20px; color: #fff; gap: 12px;
-  }
-  .topbar .product-name { font-size: 14px; font-weight: 500; }
-  .topbar .page-title { font-size: 13px; opacity: 0.8; margin-left: auto; }
-  .content {
-    flex: 1; padding: 0; display: flex; flex-direction: column;
-  }
-  .content iframe {
-    width: 100%; height: 100%; border: none;
-    display: none; position: absolute; top: 0; left: 0;
-  }
-  .content iframe.active { display: block; }
-  .preview-container {
-    flex: 1; position: relative; overflow: hidden;
-  }
-  .empty-state {
-    display: flex; flex-direction: column; align-items: center;
-    justify-content: center; height: 100%; gap: 12px;
-    color: rgba(0,0,0,0.45);
-  }
-  .empty-state .icon { font-size: 48px; margin-bottom: 12px; }
-  .empty-state h2 { font-size: 18px; color: rgba(0,0,0,0.88); margin-bottom: 8px; }
-  .empty-state p { font-size: 14px; max-width: 400px; line-height: 1.6; }
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
+  font-size: 14px;
+  color: rgba(0,0,0,.88);
+  background: #f0f2f5;
+}
+/* ===== 顶部栏 ===== */
+.topbar {
+  background: #165DFF;
+  color: #fff;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  padding: 0 20px;
+  gap: 12px;
+}
+.topbar-left { display: flex; align-items: center; gap: 10px; }
+.topbar h1 { font-size: 15px; font-weight: 600; }
+.topbar .version { font-size: 12px; opacity: .5; }
+.topbar .tabs { display: flex; margin-left: auto; gap: 4px; }
+.tab-btn {
+  height: 30px; padding: 0 16px; border: none; border-radius: 4px;
+  background: rgba(255,255,255,.15); color: #fff; cursor: pointer;
+  font-size: 13px; transition: all .15s;
+}
+.tab-btn:hover { background: rgba(255,255,255,.25); }
+.tab-btn.active { background: #fff; color: #165DFF; font-weight: 600; }
+
+/* ===== 主内容 ===== */
+.main { max-width: 1200px; margin: 0 auto; padding: 20px; }
+
+/* ===== 图例 ===== */
+.legend {
+  display: flex; gap: 16px; align-items: center;
+  padding: 10px 16px; background: #fff; border-radius: 8px;
+  border: 1px solid #f0f0f0; margin-bottom: 20px; font-size: 13px;
+  box-shadow: 0 1px 2px rgba(0,0,0,.03);
+}
+.legend-item { display: flex; align-items: center; gap: 6px; }
+.badge {
+  font-size: 11px; padding: 1px 8px; border-radius: 10px;
+  display: inline-block; line-height: 20px;
+}
+.badge-new { background: #fff2f0; color: #ff4d4f; border: 1px solid #ffccc7; }
+.badge-change { background: #fffbe6; color: #d46b08; border: 1px solid #ffe58f; }
+.badge-keep { background: #f6ffed; color: #52c41a; border: 1px solid #b7eb8f; }
+.badge-stub { background: #fafafa; color: rgba(0,0,0,.45); border: 1px solid #f0f0f0; }
+
+/* ===== 区块 ===== */
+.section { margin-bottom: 32px; }
+.section-hd { display: flex; align-items: center; gap: 8px; margin-bottom: 16px; }
+.section-bar { width: 4px; height: 18px; border-radius: 2px; }
+.section-hd h2 { font-size: 16px; font-weight: 600; }
+.section-hd .sub { font-size: 12px; color: rgba(0,0,0,.45); margin-left: 4px; }
+.stat-line { font-size: 12px; color: rgba(0,0,0,.45); margin-left: auto; }
+
+/* ===== 卡片网格 ===== */
+.grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+.card {
+  display: flex; flex-direction: column;
+  background: #fff; border-radius: 8px; padding: 16px;
+  border: 1px solid #f0f0f0; text-decoration: none; color: inherit;
+  transition: all .2s; cursor: pointer;
+  box-shadow: 0 1px 2px rgba(0,0,0,.03), 0 1px 6px -1px rgba(0,0,0,.02);
+}
+.card:hover { border-color: #165DFF; box-shadow: 0 4px 12px rgba(22,93,255,.12); transform: translateY(-1px); }
+.card.new { border-left: 3px solid #ff4d4f; }
+.card.change { border-left: 3px solid #faad14; }
+.card.keep { border-left: 3px solid #52c41a; }
+.card.stub { opacity: .55; border-left: 3px solid #d9d9d9; }
+.card.stub:hover { opacity: 1; }
+.card-top { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 10px; }
+.card-icon {
+  width: 36px; height: 36px; border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px; flex-shrink: 0;
+}
+.card-body { flex: 1; min-width: 0; }
+.card-title { font-size: 14px; font-weight: 600; }
+.card-desc { font-size: 12px; color: rgba(0,0,0,.45); margin-top: 2px; }
+.card-tag { margin-left: auto; flex-shrink: 0; }
+.card-bottom { font-size: 11px; color: rgba(0,0,0,.45); margin-top: 8px; padding-top: 8px; border-top: 1px solid #f0f0f0; }
+
+/* ===== 统计 ===== */
+.stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-top: 24px; }
+.stat-card { background: #fff; border-radius: 8px; padding: 18px; text-align: center; border: 1px solid #f0f0f0; }
+.stat-num { font-size: 28px; font-weight: 700; }
+.stat-label { font-size: 13px; color: rgba(0,0,0,.45); margin-top: 4px; }
+
+/* ===== 响应式 ===== */
+@media (max-width: 900px) { .grid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 600px) { .grid { grid-template-columns: 1fr; } }
 </style>
 </head>
 <body>
-<div class="sidebar" id="sidebar">
-  <div class="sidebar-header">
+
+<!-- 顶部栏 -->
+<div class="topbar">
+  <div class="topbar-left">
     <h1>视频云平台</h1>
-    <p>v1.0 · 原型总览</p>
+    <span class="version">v1.0</span>
   </div>
-  <div class="sidebar-section" id="navList"></div>
+  <div class="tabs">
+    <button class="tab-btn active" onclick="filter('all')">全部</button>
+    <button class="tab-btn" onclick="filter('dg')">数据治理域</button>
+    <button class="tab-btn" onclick="filter('ops')">智能运维域</button>
+    <button class="tab-btn" onclick="filter('track')">轨迹查询</button>
+  </div>
 </div>
+
 <div class="main">
-  <div class="topbar">
-    <span class="product-name">视频云平台</span>
-    <span class="page-title" id="currentPage">选择左侧页面查看原型</span>
+  <!-- 图例 -->
+  <div class="legend">
+    <div class="legend-item"><span class="badge badge-new">全新</span> 本次新建页面</div>
+    <div class="legend-item"><span class="badge badge-change">改造</span> 现有页面优化</div>
+    <div class="legend-item"><span class="badge badge-keep">保留</span> 现有功能参考</div>
+    <div class="legend-item"><span class="badge badge-stub">占位</span> 后续迭代</div>
   </div>
-  <div class="content">
-    <div class="empty-state" id="emptyState">
-      <div class="icon">📋</div>
-      <h2>选择左侧页面查看原型</h2>
-      <p>通过左侧导航栏查看本期迭代的页面原型。</p>
+
+  <!-- ===== 数据治理域 ===== -->
+  <section class="section" data-section="dg">
+    <div class="section-hd">
+      <span class="section-bar" style="background:#722ed1;"></span>
+      <h2>数据治理域</h2>
+      <span class="sub">Epic G~L · 智能标注 / 治理效能 / 标签管理 / 基础目录 / 业务目录 / 经纬度治理</span>
     </div>
-    <div class="preview-container">
-      <iframe id="previewFrame"></iframe>
+    <div class="grid" id="dg-grid"></div>
+  </section>
+
+  <!-- ===== 智能运维域 ===== -->
+  <section class="section" data-section="ops">
+    <div class="section-hd">
+      <span class="section-bar" style="background:#13c2c2;"></span>
+      <h2>智能运维域</h2>
+      <span class="sub">Epic A~E · 故障预警 / 设备告警 / 检测算法 / 巡检任务 / 巡检日志 / 可用性报告</span>
     </div>
+    <div class="grid" id="ops-grid"></div>
+  </section>
+
+  <!-- ===== 轨迹查询域 ===== -->
+  <section class="section" data-section="track">
+    <div class="section-hd">
+      <span class="section-bar" style="background:#1677ff;"></span>
+      <h2>轨迹查询域</h2>
+      <span class="sub">人员轨迹 / 车辆轨迹 / 多目标对比</span>
+    </div>
+    <div class="grid" id="track-grid"></div>
+  </section>
+
+  <!-- 统计 -->
+  <div class="stats">
+    <div class="stat-card"><div class="stat-num" style="color:#ff4d4f;">0</div><div class="stat-label">全新页面</div></div>
+    <div class="stat-card"><div class="stat-num" style="color:#faad14;">0</div><div class="stat-label">改造页面</div></div>
+    <div class="stat-card"><div class="stat-num" style="color:#165DFF;">0</div><div class="stat-label">原型文件</div></div>
+    <div class="stat-card"><div class="stat-num" style="color:#52c41a;">0</div><div class="stat-label">可导航页面</div></div>
   </div>
 </div>
+
 <script>
+// ===== 页面配置（你改这里就行）=====
 const PAGES = [
-  { name: "概览", items: [
-    { label: "平台迭代总览", type: "new", url: "" }
-  ]},
-  { name: "数据治理域", items: [
-    { label: "点位智能标注", type: "new", url: "" },
-    { label: "点位治理效能", type: "new", url: "" },
-    { label: "标签管理", type: "update", url: "" },
-    { label: "基础目录设备管理", type: "update", url: "" }
-  ]},
-  { name: "智能运维域", items: [
-    { label: "故障预警", type: "new", url: "" },
-    { label: "设备告警", type: "new", url: "" },
-    { label: "检测算法管理", type: "update", url: "" },
-    { label: "巡检任务", type: "update", url: "" },
-    { label: "巡检日志", type: "new", url: "" },
-    { label: "可用性报告", type: "new", url: "" }
-  ]},
-  { name: "轨迹查询", items: [
-    { label: "人员轨迹查询", type: "update", url: "" },
-    { label: "车辆轨迹查询", type: "new", url: "" },
-    { label: "多目标对比", type: "new", url: "" },
-    { label: "视频预览", type: "new", url: "" }
-  ]},
-  { name: "布控管理", items: [
-    { label: "目标库", type: "update", url: "" },
-    { label: "布控任务", type: "update", url: "" },
-    { label: "布控告警", type: "update", url: "" }
-  ]}
+  // 数据治理域
+  { section: "dg", icon: "🤖", iconBg: "#f9f0ff",
+    title: "点位智能标注", desc: "Epic-G · 业务标签智能标注",
+    type: "keep", pages: "list.html + detail.html · 标注任务与结果确认",
+    url: "" },
+  { section: "dg", icon: "📊", iconBg: "#e6fffb",
+    title: "点位治理效能", desc: "Epic-H · 部门治理效能总览",
+    type: "change", pages: "index.html · 治理总览 + 部门排行",
+    url: "" },
+  { section: "dg", icon: "🏷️", iconBg: "#e6f4ff",
+    title: "标签管理", desc: "Epic-I · 单一标签管理视图",
+    type: "keep", pages: "list.html · 业务域管理 + 多级标签树维护",
+    url: "" },
+  { section: "dg", icon: "📹", iconBg: "#fff7e6",
+    title: "基础目录设备管理", desc: "Epic-J · 批量配置 + 管理单位",
+    type: "change", pages: "list.html + detail.html · 目录联动 + 批量操作",
+    url: "" },
+  { section: "dg", icon: "📁", iconBg: "#e6f4ff",
+    title: "业务目录管理", desc: "Epic-K · 6种目录生成规则",
+    type: "change", pages: "list.html · 新增3种规则",
+    url: "" },
+  { section: "dg", icon: "🌐", iconBg: "#fff2f0",
+    title: "经纬度治理", desc: "Epic-L · 坐标拾取与补全",
+    type: "new", pages: "index.html · 地图拾取 + 设备卡片",
+    url: "" },
+  // 智能运维域
+  { section: "ops", icon: "⚙️", iconBg: "#f0f5ff",
+    title: "检测算法管理", desc: "Epic-A · 算法库与配置",
+    type: "change", pages: "list.html · 算法卡片列表 · 链路检测",
+    url: "" },
+  { section: "ops", icon: "📋", iconBg: "#fff0f6",
+    title: "巡检任务", desc: "Epic-B · 多维度巡检管理",
+    type: "change", pages: "list.html + create.html + detail.html",
+    url: "" },
+  { section: "ops", icon: "📄", iconBg: "#f6ffed",
+    title: "巡检日志", desc: "Epic-C · 替换链路日志",
+    type: "new", pages: "list.html + detail.html + topology.html",
+    url: "" },
+  { section: "ops", icon: "📈", iconBg: "#e6fffb",
+    title: "可用性报告", desc: "Epic-D · SLA大盘统计",
+    type: "new", pages: "index.html · KPI卡片 + 趋势图 + 不稳定设备TOP20",
+    url: "" },
+  { section: "ops", icon: "🔮", iconBg: "#f0f5ff",
+    title: "故障预警", desc: "Epic-E · 模型预判 · 提前预警",
+    type: "new", pages: "ops-predict/ · 2个页面 · 含预警配置Tab",
+    url: "" },
+  { section: "ops", icon: "🔔", iconBg: "#fff2f0",
+    title: "设备告警", desc: "Epic-F · 告警列表 + 详情处置",
+    type: "new", pages: "list + detail · 含处置备注/批量确认",
+    url: "" },
+  // 轨迹查询域
+  { section: "track", icon: "👤", iconBg: "#e6f7ff",
+    title: "人员轨迹查询", desc: "以图搜人(ReID) / 文本搜人",
+    type: "change", pages: "搜索页 + 结果页 · Tab切换",
+    url: "" },
+  { section: "track", icon: "🚗", iconBg: "#f6ffed",
+    title: "车辆轨迹查询", desc: "以图搜车 / 车牌号查询",
+    type: "new", pages: "搜索页 + 结果页 · 三Tab切换",
+    url: "" },
+  { section: "track", icon: "🔀", iconBg: "#fff7e6",
+    title: "多目标对比", desc: "2-3人轨迹叠加 / 同行检测",
+    type: "new", pages: "独立页面 · 含时空分析摘要",
+    url: "" }
 ];
-const TYPE_MAP = { new: { label: "新增", cls: "badge-new" }, update: { label: "优化", cls: "badge-update" }, keep: { label: "保留", cls: "badge-keep" } };
-function renderNav() {
-  document.getElementById('navList').innerHTML = PAGES.map(g => `
-    <div class="sidebar-section-title">${g.name}</div>
-    ${g.items.map(i => `
-      <div class="nav-item" data-url="${i.url}" data-label="${i.label}" onclick="openPage(this)">
-        <span>${i.label}</span>
-        <span class="badge ${TYPE_MAP[i.type].cls}">${TYPE_MAP[i.type].label}</span>
-      </div>
-    `).join('')}
-  `).join('');
-}
-function openPage(el) {
-  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-  el.classList.add('active');
-  document.getElementById('currentPage').textContent = el.dataset.label;
-  const frame = document.getElementById('previewFrame');
-  const empty = document.getElementById('emptyState');
-  if (el.dataset.url) {
-    frame.src = el.dataset.url;
-    frame.classList.add('active');
-    empty.style.display = 'none';
-    document.querySelector('.preview-container').style.display = 'block';
-  } else {
-    frame.classList.remove('active');
-    frame.src = '';
-    empty.style.display = 'flex';
-    empty.querySelector('h2').textContent = '原型待生成';
-    empty.querySelector('p').textContent = '"' + el.dataset.label + '" 的原型尚未生成。';
+
+const TYPE_CN = { new: "全新", change: "改造", keep: "保留", stub: "占位" };
+
+function render() {
+  const grids = { dg: "dg-grid", ops: "ops-grid", track: "track-grid" };
+  const counts = { new: 0, change: 0, total: 0, nav: 0 };
+
+  for (const [sec, gridId] of Object.entries(grids)) {
+    const items = PAGES.filter(p => p.section === sec);
+    const grid = document.getElementById(gridId);
+    grid.innerHTML = items.map(p => {
+      counts[p.type]++;
+      counts.total++;
+      if (p.url) counts.nav++;
+      return `
+        <a href="${p.url || '#'}" class="card ${p.type}">
+          <div class="card-top">
+            <div class="card-icon" style="background:${p.iconBg};">${p.icon}</div>
+            <div class="card-body">
+              <div class="card-title">${p.title}</div>
+              <div class="card-desc">${p.desc}</div>
+            </div>
+            <span class="badge badge-${p.type}">${TYPE_CN[p.type]}</span>
+          </div>
+          <div class="card-bottom">${p.pages}</div>
+        </a>
+      `;
+    }).join('');
   }
+
+  // 更新统计
+  const statEls = document.querySelectorAll('.stat-num');
+  statEls[0].textContent = counts.new;
+  statEls[1].textContent = counts.change;
+  statEls[2].textContent = counts.total;
+  statEls[3].textContent = counts.nav;
 }
-renderNav();
+
+function filter(type) {
+  document.querySelectorAll('section[data-section]').forEach(s => {
+    s.style.display = (type === 'all' || s.dataset.section === type) ? '' : 'none';
+  });
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => {
+    if (b.textContent.includes({ all: "全部", dg: "数据治理", ops: "智能运维", track: "轨迹查询" }[type] || '')) {
+      b.classList.add('active');
+    }
+  });
+}
+
+render();
 </script>
 </body>
 </html>
