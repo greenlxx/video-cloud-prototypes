@@ -82,7 +82,6 @@ body {
 .itop .back { background: rgba(255,255,255,.15); border: none; color: #fff; width: 28px; height: 28px; border-radius: 4px; cursor: pointer; font-size: 14px; display: flex; align-items: center; justify-content: center; }
 .itop .back:hover { background: rgba(255,255,255,.25); }
 .itop .pn { font-size: 14px; font-weight: 500; }
-.itop .loc { font-size: 12px; opacity: .6; margin-left: 20px; }
 
 .ibody { display: flex; flex: 1; overflow: hidden; }
 
@@ -135,7 +134,6 @@ body {
   <div class="itop">
     <button class="back" onclick="backHome()">←</button>
     <span class="pn">视频云平台</span>
-    <span class="loc" id="detailLoc">数据治理 / 点位智能标注</span>
   </div>
   <div class="ibody">
     <aside class="iside" id="detailSidebar"></aside>
@@ -255,7 +253,6 @@ function openDetail(domain, menu2) {
 
   document.getElementById('homeView').classList.remove('active');
   document.getElementById('detailView').classList.add('active');
-  document.getElementById('detailLoc').textContent = `${domain} / ${menu2}`;
 
   const color = DOMAIN_COLORS[domain] || '#165DFF';
   const sidebar = document.getElementById('detailSidebar');
@@ -273,7 +270,6 @@ function showProto(menu2) {
   if (!p) return;
 
   document.querySelectorAll('.iitem').forEach(el => el.classList.toggle('active', el.textContent.trim().includes(menu2)));
-  document.getElementById('detailLoc').textContent = `${curDomain} / ${menu2}`;
 
   const frame = document.getElementById('protoFrame');
   const wrap = document.getElementById('iframeWrap');
