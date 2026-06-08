@@ -314,6 +314,9 @@ function openDetail(domain, menu2) {
   document.getElementById('homeView').classList.remove('active');
   document.getElementById('detailView').classList.add('active');
 
+  // 隐藏首页顶栏
+  document.querySelector('.topbar').style.display = 'none';
+
   // 构建全菜单（用于侧边栏）
   renderSidebar(domain, menu2);
 
@@ -461,6 +464,9 @@ function backHome() {
   if (empty) empty.remove();
   openTabs = [];
   activeTab = null;
+
+  // 恢复首页顶栏
+  document.querySelector('.topbar').style.display = 'flex';
   renderHome();
 }
 
