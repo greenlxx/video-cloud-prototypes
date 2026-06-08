@@ -18,13 +18,13 @@ body {
   background: #165DFF; color: #fff;
   height: 48px; display: flex; align-items: center;
   padding: 0 24px; gap: 12px;
-  position: sticky; top: 0; z-index: 100;
 }
-.topbar h1 { font-size: 15px; font-weight: 600; white-space: nowrap; }
+.topbar h1 { font-size: 15px; font-weight: 600; }
 .ver-select {
   background: rgba(255,255,255,.15); color: #fff;
   border: none; border-radius: 4px; padding: 4px 10px;
   font-size: 12px; cursor: pointer;
+  margin-left: 8px;
 }
 .ver-select option { color: #333; background: #fff; }
 
@@ -73,68 +73,22 @@ body {
 .cbot { display: flex; align-items: center; gap: 8px; font-size: 12px; color: rgba(0,0,0,.45); margin-top: auto; padding-top: 10px; border-top: 1px solid #f0f0f0; }
 
 /* ================================================================
-   原型内页
+   原型内页（顶栏+侧栏+iframe）
    ================================================================ */
 .detail { display: none; height: 100vh; flex-direction: column; }
 .detail.active { display: flex; }
 
-/* 内页顶栏 */
-.dtop { background: #165DFF; color: #fff; height: 48px; display: flex; align-items: center; padding: 0 20px; gap: 12px; flex-shrink: 0; }
-.dtop .back { background: rgba(255,255,255,.15); border: none; color: #fff; width: 28px; height: 28px; border-radius: 4px; cursor: pointer; font-size: 14px; display: flex; align-items: center; justify-content: center; }
-.dtop .back:hover { background: rgba(255,255,255,.25); }
-.dtop .brand { font-size: 14px; font-weight: 500; white-space: nowrap; }
-.dtop .tab-bar { display: flex; align-items: center; gap: 0; overflow-x: auto; flex: 1; scrollbar-width: none; }
-.dtop .tab-bar::-webkit-scrollbar { display: none; }
-.dtop .tab-item {
-  display: inline-flex; align-items: center; gap: 6px;
-  padding: 6px 14px; font-size: 12px; color: rgba(255,255,255,.7);
-  cursor: pointer; white-space: nowrap; border-radius: 4px 4px 0 0;
-  transition: all .15s; position: relative;
-}
-.dtop .tab-item:hover { background: rgba(255,255,255,.1); color: #fff; }
-.dtop .tab-item.active { background: #fff; color: #165DFF; font-weight: 600; }
-.dtop .tab-item .close-tab {
-  width: 14px; height: 14px; border-radius: 50%; border: none;
-  background: transparent; color: rgba(255,255,255,.4); cursor: pointer;
-  font-size: 10px; display: flex; align-items: center; justify-content: center;
-  padding: 0; line-height: 1; margin-left: 2px;
-}
-.dtop .tab-item .close-tab:hover { background: rgba(0,0,0,.15); color: #fff; }
-.dtop .tab-item.active .close-tab { color: rgba(0,0,0,.3); }
-.dtop .tab-item.active .close-tab:hover { background: rgba(0,0,0,.08); color: #333; }
+.itop { background: #165DFF; color: #fff; height: 48px; display: flex; align-items: center; padding: 0 20px; gap: 12px; }
+.itop .back { background: rgba(255,255,255,.15); border: none; color: #fff; width: 28px; height: 28px; border-radius: 4px; cursor: pointer; font-size: 14px; display: flex; align-items: center; justify-content: center; }
+.itop .back:hover { background: rgba(255,255,255,.25); }
+.itop .pn { font-size: 14px; font-weight: 500; }
+.itop .loc { font-size: 12px; opacity: .6; margin-left: 20px; }
 
-/* Tab 栏容器 */
-.tab-bar-wrap {
-  background: #fff;
-  border-bottom: 1px solid #f0f0f0;
-  padding: 0 20px;
-  display: flex;
-  align-items: center;
-  height: 36px;
-  flex-shrink: 0;
-}
-.tab-bar-wrap .tab-bar { display: flex; align-items: center; gap: 0; overflow-x: auto; flex: 1; scrollbar-width: none; }
-
-/* 内页主体 */
 .ibody { display: flex; flex: 1; overflow: hidden; }
 
-/* 内页侧栏 */
-.iside {
-  width: 220px; background: #001529; color: #fff;
-  display: flex; flex-direction: column; flex-shrink: 0;
-  overflow-y: auto; padding: 8px 0;
-}
-.isec {
-  padding: 10px 16px 4px;
-  font-size: 10px; color: rgba(255,255,255,.3);
-  text-transform: uppercase; letter-spacing: .06em;
-}
-.iitem {
-  padding: 10px 16px; cursor: pointer; font-size: 13px;
-  color: rgba(255,255,255,.7); display: flex; align-items: center;
-  gap: 8px; transition: all .15s;
-  border-left: 3px solid transparent;
-}
+.iside { width: 220px; background: #001529; color: #fff; display: flex; flex-direction: column; flex-shrink: 0; overflow-y: auto; padding: 8px 0; }
+.isec { padding: 10px 16px 4px; font-size: 11px; text-transform: uppercase; letter-spacing: .05em; }
+.iitem { padding: 10px 16px; cursor: pointer; font-size: 13px; color: rgba(255,255,255,.7); display: flex; align-items: center; gap: 8px; transition: all .15s; border-left: 3px solid transparent; }
 .iitem:hover { background: rgba(255,255,255,.08); color: #fff; }
 .iitem.active { background: #165DFF; color: #fff; border-left-color: #fff; }
 .idot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
@@ -142,24 +96,7 @@ body {
 .idot.c { background: #faad14; }
 .idot.k { background: #52c41a; }
 
-/* 右侧内容区 */
-.imain { flex: 1; display: flex; flex-direction: column; overflow: hidden; background: #f5f5f5; }
-
-/* 页面标题区 */
-.page-hd {
-  padding: 16px 20px 0;
-  display: flex; align-items: center; gap: 10px;
-  flex-shrink: 0;
-}
-.page-bar { width: 3px; height: 16px; border-radius: 1.5px; flex-shrink: 0; }
-.page-title { font-size: 16px; font-weight: 600; }
-.page-type { font-size: 11px; padding: 1px 8px; border-radius: 10px; }
-.page-type.n { background: #fff2f0; color: #ff4d4f; }
-.page-type.c { background: #fffbe6; color: #d46b08; }
-.page-type.k { background: #f6ffed; color: #52c41a; }
-
-/* iframe 容器 */
-.iframe-wrap { flex: 1; margin: 12px 20px 20px; background: #fff; border-radius: 8px; overflow: hidden; box-shadow: 0 1px 2px rgba(0,0,0,.03); position: relative; }
+.iframe-wrap { flex: 1; background: #fff; position: relative; }
 .iframe-wrap iframe { width: 100%; height: 100%; border: none; }
 .iframe-empty { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; color: rgba(0,0,0,.25); gap: 12px; font-size: 14px; }
 .iframe-empty .big { font-size: 48px; }
@@ -195,33 +132,15 @@ body {
 
 <!-- ===== 原型内页 ===== -->
 <div class="detail" id="detailView">
-  <!-- 顶栏 -->
-  <div class="dtop">
+  <div class="itop">
     <button class="back" onclick="backHome()">←</button>
-    <span class="brand">视频云平台</span>
+    <span class="pn">视频云平台</span>
+    <span class="loc" id="detailLoc">数据治理 / 点位智能标注</span>
   </div>
-
-  <!-- Tab 栏 -->
-  <div class="tab-bar-wrap">
-    <div class="tab-bar" id="tabBar"></div>
-  </div>
-
   <div class="ibody">
-    <!-- 侧边栏 -->
     <aside class="iside" id="detailSidebar"></aside>
-
-    <!-- 右侧 -->
-    <div class="imain">
-      <!-- 页面标题 -->
-      <div class="page-hd" id="pageHeader">
-        <span class="page-bar" id="pageBar" style="background:#722ED1"></span>
-        <span class="page-title" id="pageTitle">点位智能标注</span>
-        <span class="page-type" id="pageTypeBadge">● 保留</span>
-      </div>
-      <!-- iframe -->
-      <div class="iframe-wrap" id="iframeWrap">
-        <iframe id="protoFrame" allowfullscreen></iframe>
-      </div>
+    <div class="iframe-wrap" id="iframeWrap">
+      <iframe id="protoFrame" allowfullscreen></iframe>
     </div>
   </div>
 </div>
@@ -235,7 +154,7 @@ const DOMAIN_COLORS = { "数据治理":"#722ED1", "智能运维":"#13C2C2", "轨
 const T = { n:{cn:"全新",cls:"n"}, c:{cn:"改造",cls:"c"}, k:{cn:"保留",cls:"k"}, s:{cn:"占位",cls:"s"} };
 
 // ================================================================
-// 📦 数据
+// 📦 数据配置 — 每个卡片 = 一个原型 HTML
 // ================================================================
 const DATA = {
   "v202606": {
@@ -275,9 +194,8 @@ const DATA = {
 
 // ================================================================
 let curVer = "v202606";
-let allData = {};
-let openTabs = [];   // [{menu2, domain, item}] 按打开顺序
-let activeTab = null; // 当前选中的 menu2
+let curItems = [];
+let curDomain = "";
 
 function init() {
   document.getElementById('versionSelect').innerHTML = Object.entries(VERSIONS).map(([k,v]) => `<option value="${k}">${v.label}</option>`).join('');
@@ -285,12 +203,10 @@ function init() {
 }
 function switchVer(v) { curVer = v; backHome(); }
 
-/* ---- 首页 ---- */
 function renderHome() {
   const data = DATA[curVer];
   if (!data) return;
   const { domains } = data;
-  allData = data;
 
   let nN=0, nC=0, nK=0, nM=0, nU=0;
   Object.values(domains).forEach(items => { items.forEach(p => {
@@ -325,142 +241,48 @@ function renderHome() {
   document.getElementById('homeCards').innerHTML = html;
 }
 
-/* ---- 打开内页 ---- */
 function openDetail(domain, menu2) {
+  const data = DATA[curVer];
+  if (!data) return;
+  const items = data.domains[domain];
+  if (!items) return;
+
+  const p = items.find(x => x.menu2 === menu2);
+  if (!p) return;
+
+  curItems = items;
+  curDomain = domain;
+
   document.getElementById('homeView').classList.remove('active');
   document.getElementById('detailView').classList.add('active');
+  document.getElementById('detailLoc').textContent = `${domain} / ${menu2}`;
 
-  // 隐藏首页顶栏
-  document.querySelector('.topbar').style.display = 'none';
-
-  // 确保数据
-  if (!allData || !allData.domains) allData = DATA[curVer];
-
-  // 构建全菜单（用于侧边栏）
-  renderSidebar(domain, menu2);
-
-  // 如果这个 tab 已经打开，直接切换
-  const existing = openTabs.find(t => t.menu2 === menu2);
-  if (existing) {
-    activeTab = menu2;
-    renderTabs();
-    showProto(menu2);
-    return;
-  }
-
-  // 新开 tab
-  const data = allData;
-  let foundItem = null;
-  outer: for (const [d, items] of Object.entries(data.domains)) {
-    for (const item of items) {
-      if (item.menu2 === menu2) { foundItem = item; break outer; }
-    }
-  }
-  if (!foundItem) return;
-
-  openTabs.push({ menu2, domain, item: foundItem });
-  activeTab = menu2;
-  renderTabs();
-  showProto(menu2);
-}
-
-/* ---- 侧边栏 ---- */
-function renderSidebar(activeDomain, activeMenu2) {
-  const data = allData;
-  if (!data) return;
-  const doms = data.domains;
-  const dk = Object.keys(doms);
-  let html = '';
-  dk.forEach(d => {
-    const color = DOMAIN_COLORS[d] || '#165DFF';
-    html += `<div class="isec" style="color:${color}">${d}</div>`;
-    doms[d].forEach(p => {
-      const t = T[p.type];
-      const active = (p.menu2 === activeMenu2) ? ' active' : '';
-      html += `<div class="iitem${active}" onclick="switchToTab('${p.menu2}')"><span class="idot ${t.cls}"></span><span>${p.menu2}</span></div>`;
-    });
-  });
-  document.getElementById('detailSidebar').innerHTML = html;
-}
-
-/* ---- Tab 栏 ---- */
-function renderTabs() {
-  const bar = document.getElementById('tabBar');
-  bar.innerHTML = openTabs.map(t => {
-    const active = (t.menu2 === activeTab) ? ' active' : '';
-    return `<div class="tab-item${active}" onclick="switchToTab('${t.menu2}')">
-      ${t.menu2}
-      <button class="close-tab" onclick="event.stopPropagation();closeTab('${t.menu2}')">×</button>
-    </div>`;
-  }).join('');
-}
-
-/* ---- Tab/侧栏切换 ---- */
-function switchToTab(menu2) {
-  activeTab = menu2;
-  renderTabs();
-
-  // 更新侧边栏高亮
-  document.querySelectorAll('.iitem').forEach(el => {
-    el.classList.toggle('active', el.textContent.trim().includes(menu2));
-  });
+  const color = DOMAIN_COLORS[domain] || '#165DFF';
+  const sidebar = document.getElementById('detailSidebar');
+  sidebar.innerHTML = `<div class="isec" style="color:${color}">${domain}</div>` +
+    items.map((item,i) => {
+      const t = T[item.type];
+      return `<div class="iitem ${item.menu2===menu2?'active':''}" onclick="showProto('${item.menu2}')"><span class="idot ${t.cls}"></span><span>${item.menu2}</span></div>`;
+    }).join('');
 
   showProto(menu2);
 }
 
-/* ---- 关闭 Tab ---- */
-function closeTab(menu2) {
-  const idx = openTabs.findIndex(t => t.menu2 === menu2);
-  if (idx === -1) return;
-  openTabs.splice(idx, 1);
-
-  if (openTabs.length === 0) {
-    backHome();
-    return;
-  }
-
-  // 如果关掉的是当前激活的，跳到隔壁
-  if (activeTab === menu2) {
-    activeTab = openTabs[Math.min(idx, openTabs.length - 1)].menu2;
-  }
-
-  renderTabs();
-  // 更新侧边栏高亮
-  document.querySelectorAll('.iitem').forEach(el => {
-    el.classList.toggle('active', el.textContent.trim().includes(activeTab));
-  });
-  showProto(activeTab);
-}
-
-/* ---- 显示原型 ---- */
 function showProto(menu2) {
-  const data = allData;
-  if (!data) return;
-  let foundItem = null, foundDomain = null;
-  outer: for (const [d, items] of Object.entries(data.domains)) {
-    for (const item of items) {
-      if (item.menu2 === menu2) { foundItem = item; foundDomain = d; break outer; }
-    }
-  }
-  if (!foundItem) return;
+  const p = curItems.find(x => x.menu2 === menu2);
+  if (!p) return;
 
-  const color = DOMAIN_COLORS[foundDomain] || '#165DFF';
-  const t = T[foundItem.type];
+  document.querySelectorAll('.iitem').forEach(el => el.classList.toggle('active', el.textContent.trim().includes(menu2)));
+  document.getElementById('detailLoc').textContent = `${curDomain} / ${menu2}`;
 
-  // 页面标题
-  document.getElementById('pageBar').style.background = color;
-  document.getElementById('pageTitle').textContent = foundItem.menu2;
-  document.getElementById('pageTypeBadge').textContent = '● ' + t.cn;
-  document.getElementById('pageTypeBadge').className = 'page-type ' + t.cls;
-
-  // iframe
   const frame = document.getElementById('protoFrame');
   const wrap = document.getElementById('iframeWrap');
-  if (foundItem.url) {
-    frame.src = foundItem.url;
+  if (p.url) {
+    frame.src = p.url;
     frame.style.display = 'block';
-    const empty = wrap.querySelector('.iframe-empty');
-    if (empty) empty.remove();
+    // 检查是否有空状态覆盖
+    const existing = wrap.querySelector('.iframe-empty');
+    if (existing) existing.remove();
   } else {
     frame.style.display = 'none';
     let empty = wrap.querySelector('.iframe-empty');
@@ -473,19 +295,14 @@ function showProto(menu2) {
   }
 }
 
-/* ---- 返回首页 ---- */
 function backHome() {
   document.getElementById('detailView').classList.remove('active');
   document.getElementById('homeView').classList.add('active');
+  // 清理 iframe
   document.getElementById('protoFrame').src = '';
   const wrap = document.getElementById('iframeWrap');
   const empty = wrap.querySelector('.iframe-empty');
   if (empty) empty.remove();
-  openTabs = [];
-  activeTab = null;
-
-  // 恢复首页顶栏
-  document.querySelector('.topbar').style.display = 'flex';
   renderHome();
 }
 
