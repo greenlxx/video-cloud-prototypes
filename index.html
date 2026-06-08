@@ -83,7 +83,7 @@ body {
 .dtop .back { background: rgba(255,255,255,.15); border: none; color: #fff; width: 28px; height: 28px; border-radius: 4px; cursor: pointer; font-size: 14px; display: flex; align-items: center; justify-content: center; }
 .dtop .back:hover { background: rgba(255,255,255,.25); }
 .dtop .brand { font-size: 14px; font-weight: 500; white-space: nowrap; }
-.dtop .tab-bar { display: flex; align-items: center; gap: 0; margin-left: 24px; overflow-x: auto; flex: 1; scrollbar-width: none; }
+.dtop .tab-bar { display: flex; align-items: center; gap: 0; overflow-x: auto; flex: 1; scrollbar-width: none; }
 .dtop .tab-bar::-webkit-scrollbar { display: none; }
 .dtop .tab-item {
   display: inline-flex; align-items: center; gap: 6px;
@@ -102,6 +102,18 @@ body {
 .dtop .tab-item .close-tab:hover { background: rgba(0,0,0,.15); color: #fff; }
 .dtop .tab-item.active .close-tab { color: rgba(0,0,0,.3); }
 .dtop .tab-item.active .close-tab:hover { background: rgba(0,0,0,.08); color: #333; }
+
+/* Tab 栏容器 */
+.tab-bar-wrap {
+  background: #fff;
+  border-bottom: 1px solid #f0f0f0;
+  padding: 0 20px;
+  display: flex;
+  align-items: center;
+  height: 36px;
+  flex-shrink: 0;
+}
+.tab-bar-wrap .tab-bar { display: flex; align-items: center; gap: 0; overflow-x: auto; flex: 1; scrollbar-width: none; }
 
 /* 内页主体 */
 .ibody { display: flex; flex: 1; overflow: hidden; }
@@ -187,6 +199,10 @@ body {
   <div class="dtop">
     <button class="back" onclick="backHome()">←</button>
     <span class="brand">视频云平台</span>
+  </div>
+
+  <!-- Tab 栏 -->
+  <div class="tab-bar-wrap">
     <div class="tab-bar" id="tabBar"></div>
   </div>
 
@@ -316,6 +332,9 @@ function openDetail(domain, menu2) {
 
   // 隐藏首页顶栏
   document.querySelector('.topbar').style.display = 'none';
+
+  // 确保数据
+  if (!allData || !allData.domains) allData = DATA[curVer];
 
   // 构建全菜单（用于侧边栏）
   renderSidebar(domain, menu2);
