@@ -255,6 +255,7 @@ function openDetail(domain, menu2) {
 
   document.getElementById('homeView').classList.remove('active');
   document.getElementById('detailView').classList.add('active');
+  document.querySelector('.topbar').style.display = 'none';
   document.getElementById('detailLoc').textContent = `${domain} / ${menu2}`;
 
   const color = DOMAIN_COLORS[domain] || '#165DFF';
@@ -298,6 +299,7 @@ function showProto(menu2) {
 function backHome() {
   document.getElementById('detailView').classList.remove('active');
   document.getElementById('homeView').classList.add('active');
+  document.querySelector('.topbar').style.display = 'flex';
   // 清理 iframe
   document.getElementById('protoFrame').src = '';
   const wrap = document.getElementById('iframeWrap');
