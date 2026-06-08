@@ -10,104 +10,114 @@ body {
   font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
   font-size: 14px;
   color: rgba(0,0,0,.88);
-  background: #f0f2f5;
+  background: #f5f5f5;
 }
 
-/* ===== 顶部栏 ===== */
+/* ===== 顶部栏（总） ===== */
 .topbar {
-  background: #165DFF;
-  color: #fff;
-  height: 48px;
-  display: flex;
-  align-items: center;
-  padding: 0 20px;
-  gap: 12px;
-  flex-shrink: 0;
+  background: #165DFF; color: #fff;
+  height: 48px; display: flex; align-items: center;
+  padding: 0 24px; gap: 12px; flex-shrink: 0;
 }
-.topbar-left { display: flex; align-items: center; gap: 10px; }
 .topbar h1 { font-size: 15px; font-weight: 600; }
 .version-select {
-  background: rgba(255,255,255,.15);
-  color: #fff; border: none; border-radius: 4px;
-  padding: 4px 10px; font-size: 12px; cursor: pointer;
+  background: rgba(255,255,255,.15); color: #fff;
+  border: none; border-radius: 4px; padding: 4px 10px;
+  font-size: 12px; cursor: pointer;
+  margin-left: 8px;
 }
 .version-select option { color: #333; background: #fff; }
 
 /* ===== 首页 ===== */
 .home { display: none; }
 .home.active { display: block; }
-.main { max-width: 1200px; margin: 0 auto; padding: 20px; }
+.home-scroll { overflow-y: auto; height: calc(100vh - 48px); }
+.main { max-width: 1200px; margin: 0 auto; padding: 24px; }
+
+/* ===== 概览首行 ===== */
+.overview {
+  display: grid; grid-template-columns: 1fr 1fr 1fr 1fr;
+  gap: 12px; margin-bottom: 28px;
+}
+.ov-card {
+  background: #fff; border-radius: 8px; padding: 20px;
+  text-align: center; border: 1px solid #f0f0f0;
+  box-shadow: 0 1px 2px rgba(0,0,0,.03);
+}
+.ov-num { font-size: 32px; font-weight: 700; line-height: 1; }
+.ov-label { font-size: 13px; color: rgba(0,0,0,.45); margin-top: 6px; }
+.ov-sub { font-size: 11px; color: rgba(0,0,0,.25); margin-top: 2px; }
 
 /* ===== 图例 ===== */
 .legend {
-  display: flex; gap: 16px; align-items: center;
-  padding: 10px 16px; background: #fff; border-radius: 8px;
-  border: 1px solid #f0f0f0; margin-bottom: 20px; font-size: 13px;
+  display: flex; gap: 24px; align-items: center;
+  padding: 12px 20px; background: #fff; border-radius: 8px;
+  border: 1px solid #f0f0f0; margin-bottom: 24px;
   box-shadow: 0 1px 2px rgba(0,0,0,.03);
 }
-.legend-item { display: flex; align-items: center; gap: 6px; }
-.badge {
-  font-size: 11px; padding: 1px 8px; border-radius: 10px;
-  display: inline-block; line-height: 20px;
-}
-.badge-new { background: #fff2f0; color: #ff4d4f; border: 1px solid #ffccc7; }
-.badge-change { background: #fffbe6; color: #d46b08; border: 1px solid #ffe58f; }
-.badge-keep { background: #f6ffed; color: #52c41a; border: 1px solid #b7eb8f; }
-.badge-stub { background: #fafafa; color: rgba(0,0,0,.45); border: 1px solid #f0f0f0; }
+.legend-item { display: flex; align-items: center; gap: 8px; font-size: 13px; }
+.legend-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
+.legend-dot.red { background: #ff4d4f; }
+.legend-dot.orange { background: #faad14; }
+.legend-dot.green { background: #52c41a; }
 
-/* ===== 分隔标题 ===== */
-.section-hd {
-  display: flex; align-items: center; gap: 8px;
-  margin: 28px 0 16px;
+/* ===== 域标题 ===== */
+.domain-hd {
+  display: flex; align-items: center; gap: 10px;
+  margin-bottom: 16px; padding-bottom: 12px;
+  border-bottom: 1px solid #f0f0f0;
 }
-.section-hd:first-of-type { margin-top: 0; }
-.section-bar { width: 4px; height: 18px; border-radius: 2px; flex-shrink: 0; }
-.section-hd h2 { font-size: 16px; font-weight: 600; }
-.section-hd .sub { font-size: 12px; color: rgba(0,0,0,.45); margin-left: 8px; }
+.domain-bar { width: 4px; height: 20px; border-radius: 2px; flex-shrink: 0; }
+.domain-hd h2 { font-size: 16px; font-weight: 600; }
+.domain-hd .sub { font-size: 12px; color: rgba(0,0,0,.45); margin-left: 8px; }
+.domain-hd .stats-tag {
+  margin-left: auto; font-size: 12px; color: rgba(0,0,0,.45);
+  display: flex; gap: 12px;
+}
+.stats-tag span { display: inline-flex; align-items: center; gap: 4px; }
 
-/* ===== 二级模块卡片 ===== */
+/* ===== 卡片网格 ===== */
 .cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 24px; }
 .card {
   display: flex; flex-direction: column;
-  background: #fff; border-radius: 8px; padding: 16px;
-  border: 1px solid #f0f0f0; text-decoration: none; color: inherit;
-  transition: all .2s; cursor: pointer;
+  background: #fff; border-radius: 8px; padding: 20px;
+  border: 1px solid #f0f0f0; cursor: pointer;
+  transition: all .2s; text-decoration: none; color: inherit;
   box-shadow: 0 1px 2px rgba(0,0,0,.03), 0 1px 6px -1px rgba(0,0,0,.02);
 }
-.card:hover { border-color: #165DFF; box-shadow: 0 4px 12px rgba(22,93,255,.12); transform: translateY(-1px); }
-.card.new { border-left: 3px solid #ff4d4f; }
-.card.change { border-left: 3px solid #faad14; }
-.card.keep { border-left: 3px solid #52c41a; }
-.card.stub { opacity: .55; border-left: 3px solid #d9d9d9; }
-.card.stub:hover { opacity: 1; }
-.card-top { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 10px; }
+.card:hover { border-color: #165DFF; box-shadow: 0 4px 16px rgba(22,93,255,.12); transform: translateY(-2px); }
+.card-top { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 12px; }
 .card-icon {
-  width: 36px; height: 36px; border-radius: 8px;
+  width: 40px; height: 40px; border-radius: 8px;
   display: flex; align-items: center; justify-content: center;
-  font-size: 18px; flex-shrink: 0;
+  font-size: 20px; flex-shrink: 0;
 }
 .card-body { flex: 1; min-width: 0; }
-.card-title { font-size: 14px; font-weight: 600; }
-.card-desc { font-size: 12px; color: rgba(0,0,0,.45); margin-top: 2px; }
-.card-tag { margin-left: auto; flex-shrink: 0; }
-.card-bottom { font-size: 11px; color: rgba(0,0,0,.45); margin-top: 8px; padding-top: 8px; border-top: 1px solid #f0f0f0; }
-
-/* ===== 统计 ===== */
-.stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-top: 24px; }
-.stat-card { background: #fff; border-radius: 8px; padding: 18px; text-align: center; border: 1px solid #f0f0f0; box-shadow: 0 1px 2px rgba(0,0,0,.03); }
-.stat-num { font-size: 28px; font-weight: 700; }
-.stat-label { font-size: 13px; color: rgba(0,0,0,.45); margin-top: 4px; }
+.card-title { font-size: 15px; font-weight: 600; }
+.card-desc { font-size: 12px; color: rgba(0,0,0,.45); margin-top: 4px; }
+.card-type {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 12px; padding: 2px 10px; border-radius: 12px; font-weight: 500;
+}
+.card-type.new { background: #fff2f0; color: #ff4d4f; }
+.card-type.change { background: #fffbe6; color: #d46b08; }
+.card-type.keep { background: #f6ffed; color: #52c41a; }
+.card-bottom {
+  display: flex; align-items: center; gap: 12px;
+  font-size: 12px; color: rgba(0,0,0,.45); margin-top: auto;
+  padding-top: 12px; border-top: 1px solid #f0f0f0;
+}
 
 /* ================================================================
-   内部二级页面
+   原型详情页（带顶栏+侧栏）
    ================================================================ */
-.detail { display: none; }
-.detail.active { display: flex; flex-direction: column; height: 100vh; }
+.detail { display: none; height: 100vh; flex-direction: column; }
+.detail.active { display: flex; }
 
-/* 内部顶栏 */
+/* 内页顶栏 */
 .inner-topbar {
-  background: #165DFF; color: #fff;
-  height: 48px; display: flex; align-items: center;
+  background: #165DFF; color: #fff; height: 48px;
+  display: flex; align-items: center;
   padding: 0 20px; gap: 12px; flex-shrink: 0;
 }
 .inner-topbar .back-btn {
@@ -116,69 +126,69 @@ body {
   font-size: 14px; display: flex; align-items: center; justify-content: center;
 }
 .inner-topbar .back-btn:hover { background: rgba(255,255,255,.25); }
-.inner-topbar .product-name { font-size: 14px; font-weight: 500; }
-.inner-topbar .page-title { font-size: 13px; opacity: .7; margin-left: 24px; }
+.inner-topbar .prod-name { font-size: 14px; font-weight: 500; }
+.inner-topbar .page-loc { font-size: 12px; opacity: .6; margin-left: 20px; }
 
-/* 内部主体 */
+/* 内页主体 */
 .inner-body { display: flex; flex: 1; overflow: hidden; }
 
-/* 内部侧栏 */
+/* 内页侧栏 */
 .inner-sidebar {
   width: 220px; background: #001529; color: #fff;
-  display: flex; flex-direction: column; flex-shrink: 0; overflow-y: auto;
-  padding: 12px 0;
+  display: flex; flex-direction: column; flex-shrink: 0;
+  overflow-y: auto; padding: 8px 0;
 }
-.is-section-title {
+.is-section {
+  padding: 10px 16px 4px;
   font-size: 11px; color: rgba(255,255,255,.35);
-  padding: 8px 16px 4px; text-transform: uppercase; letter-spacing: .05em;
+  text-transform: uppercase; letter-spacing: .05em;
 }
 .is-item {
   padding: 10px 16px; cursor: pointer; font-size: 13px;
-  color: rgba(255,255,255,.75); display: flex; align-items: center;
+  color: rgba(255,255,255,.7); display: flex; align-items: center;
   gap: 8px; transition: all .15s;
   border-left: 3px solid transparent;
 }
 .is-item:hover { background: rgba(255,255,255,.08); color: #fff; }
 .is-item.active { background: #165DFF; color: #fff; border-left-color: #fff; }
 .is-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
-.dot-new { background: #ff4d4f; }
-.dot-change { background: #faad14; }
-.dot-keep { background: #52c41a; }
-.dot-stub { background: rgba(255,255,255,.25); }
+.is-dot.new { background: #ff4d4f; }
+.is-dot.change { background: #faad14; }
+.is-dot.keep { background: #52c41a; }
 
-/* 内部内容区 */
+/* 内页内容区 */
 .inner-content {
-  flex: 1; padding: 20px; overflow-y: auto; background: #f0f2f5;
+  flex: 1; padding: 24px; overflow-y: auto; background: #f5f5f5;
 }
 .ic-breadcrumb { font-size: 12px; color: rgba(0,0,0,.45); margin-bottom: 8px; }
-.ic-title { font-size: 20px; font-weight: 600; margin-bottom: 4px; display: flex; align-items: center; gap: 8px; }
-.ic-sub { font-size: 14px; color: rgba(0,0,0,.45); margin-bottom: 20px; }
+.ic-title { font-size: 20px; font-weight: 600; margin-bottom: 6px; display: flex; align-items: center; gap: 10px; }
+.ic-desc { font-size: 14px; color: rgba(0,0,0,.45); margin-bottom: 24px; }
 
-/* 文件卡片 */
+/* 原型文件卡片 */
 .file-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
 .file-card {
   display: flex; flex-direction: column;
-  background: #fff; border-radius: 8px; padding: 16px;
+  background: #fff; border-radius: 8px; padding: 20px;
   border: 1px solid #f0f0f0; text-decoration: none; color: inherit;
   transition: all .2s;
   box-shadow: 0 1px 2px rgba(0,0,0,.03);
 }
 .file-card:hover { border-color: #165DFF; box-shadow: 0 4px 12px rgba(22,93,255,.12); transform: translateY(-1px); }
-.fc-icon { font-size: 24px; margin-bottom: 8px; }
-.fc-title { font-size: 14px; font-weight: 600; }
-.fc-desc { font-size: 12px; color: rgba(0,0,0,.45); margin-top: 2px; }
-.fc-badge { margin-top: 8px; align-self: flex-start; }
-.empty-files { color: rgba(0,0,0,.45); padding: 40px; background: #fff; border-radius: 8px; text-align: center; border: 1px solid #f0f0f0; }
+.fc-icon { font-size: 28px; margin-bottom: 10px; }
+.fc-title { font-size: 15px; font-weight: 600; }
+.fc-desc { font-size: 12px; color: rgba(0,0,0,.45); margin-top: 4px; }
+.fc-badge { margin-top: 10px; align-self: flex-start; }
+.empty-msg { color: rgba(0,0,0,.45); padding: 48px; background: #fff; border-radius: 8px; text-align: center; border: 1px solid #f0f0f0; }
 
-@media (max-width: 900px) { .cards { grid-template-columns: repeat(2,1fr); } .file-grid { grid-template-columns: repeat(2,1fr); } }
-@media (max-width: 600px) { .cards { grid-template-columns: 1fr; } .file-grid { grid-template-columns: 1fr; } }
+@media (max-width: 900px) { .cards { grid-template-columns: repeat(2,1fr); } .file-grid { grid-template-columns: repeat(2,1fr); } .overview { grid-template-columns: repeat(2,1fr); } }
+@media (max-width: 600px) { .cards { grid-template-columns: 1fr; } .file-grid { grid-template-columns: 1fr; } .inner-sidebar { width: 160px; } }
 </style>
 </head>
 <body>
 
-<!-- 顶部栏 -->
+<!-- 顶部总栏 -->
 <div class="topbar">
-  <div class="topbar-left">
+  <div class="topbar-left" style="display:flex;align-items:center;gap:8px;">
     <h1>视频云平台</h1>
     <select class="version-select" id="versionSelect" onchange="switchVersion(this.value)"></select>
   </div>
@@ -186,109 +196,145 @@ body {
 
 <!-- ===== 首页 ===== -->
 <div class="home active" id="homeView">
-  <div class="main">
-    <div class="legend">
-      <div class="legend-item"><span class="badge badge-new">全新</span> 本次新建页面</div>
-      <div class="legend-item"><span class="badge badge-change">改造</span> 现有页面优化</div>
-      <div class="legend-item"><span class="badge badge-keep">保留</span> 现有功能参考</div>
-      <div class="legend-item"><span class="badge badge-stub">占位</span> 后续迭代</div>
+  <div class="home-scroll">
+    <div class="main">
+
+      <!-- 概览 -->
+      <div class="overview" id="overviewGrid"></div>
+
+      <!-- 图例 -->
+      <div class="legend">
+        <div class="legend-item"><span class="legend-dot red"></span> 全新 — 本期新建设的页面</div>
+        <div class="legend-item"><span class="legend-dot orange"></span> 改造 — 本期优化改造的功能</div>
+        <div class="legend-item"><span class="legend-dot green"></span> 保留 — 现已有功能参考展示</div>
+      </div>
+
+      <!-- 域 + 卡片 -->
+      <div id="homeCards"></div>
     </div>
-    <div id="homeContent"></div>
-    <div class="stats" id="statGrid"></div>
   </div>
 </div>
 
-<!-- ===== 内部详情页 ===== -->
+<!-- ===== 原型详情页 ===== -->
 <div class="detail" id="detailView">
   <div class="inner-topbar">
-    <button class="back-btn" onclick="backToHome()">←</button>
-    <span class="product-name">视频云平台</span>
-    <span class="page-title" id="detailBreadcrumb">数据治理 / 点位智能标注</span>
+    <button class="back-btn" onclick="backHome()">←</button>
+    <span class="prod-name">视频云平台</span>
+    <span class="page-loc" id="detailLoc">数据治理 / 点位智能标注</span>
   </div>
   <div class="inner-body">
     <aside class="inner-sidebar" id="detailSidebar"></aside>
     <div class="inner-content" id="detailContent">
-      <div class="empty-files">选择左侧模块查看原型文件</div>
+      <div class="empty-msg">选择左侧模块查看原型文件</div>
     </div>
   </div>
 </div>
 
 <script>
 const VERSIONS = {
-  "v202606": { label: "v202606 · 6月基线版本", type: "baseline", date: "2026-06" },
-  "龙江市监-v202606": { label: "龙江市监 · 6月项目版本", type: "project", date: "2026-06" }
+  "v202606": { label: "v202606 · 6月基线版本", type:"baseline", date:"2026-06" },
+  "龙江市监-v202606": { label: "龙江市监 · 6月项目版本", type:"project", date:"2026-06" }
 };
-const MENU1_COLORS = {
-  "平台概览": "#165DFF", "数据治理": "#722ED1", "智能运维": "#13C2C2",
-  "轨迹查询": "#1677FF", "布控管理": "#FA8C16", "设备管理": "#52C41A",
-  "报警中心": "#FF4D4F", "系统管理": "#86909C"
+const DOMAIN_COLORS = {
+  "数据治理":"#722ED1", "智能运维":"#13C2C2", "轨迹查询":"#1677FF",
+  "布控管理":"#FA8C16", "设备管理":"#52C41A",
+  "报警中心":"#FF4D4F", "系统管理":"#86909C", "平台概览":"#165DFF"
 };
 const TYPE_MAP = {
-  new: { cn:"全新", cls:"badge-new", dot:"dot-new" },
-  change: { cn:"改造", cls:"badge-change", dot:"dot-change" },
-  keep: { cn:"保留", cls:"badge-keep", dot:"dot-keep" },
-  stub: { cn:"占位", cls:"badge-stub", dot:"dot-stub" }
+  new:{cn:"全新",cls:"new",dot:"new"},
+  change:{cn:"改造",cls:"change",dot:"change"},
+  keep:{cn:"保留",cls:"keep",dot:"keep"},
+  stub:{cn:"占位",cls:"stub",dot:"stub"}
 };
 
 const DATA = {
-  "v202606": [
-    { menu1:"数据治理", menu2:"点位智能标注", icon:"🤖", iconBg:"#f9f0ff",
-      type:"keep", desc:"Epic-G · 业务标签智能标注", pages:"list.html + detail.html · 标注任务与结果确认",
-      files:[{name:"标注任务列表",url:"v202606/dg-annotation/list.html"},{name:"标注结果详情",url:"v202606/dg-annotation/detail.html"}]},
-    { menu1:"数据治理", menu2:"点位治理效能", icon:"📊", iconBg:"#e6fffb",
-      type:"change", desc:"Epic-H · 部门治理效能总览", pages:"index.html · 治理总览 + 部门排行",
-      files:[{name:"治理总览",url:"v202606/dg-governance/index.html"}]},
-    { menu1:"数据治理", menu2:"标签管理", icon:"🏷️", iconBg:"#e6f4ff",
-      type:"keep", desc:"Epic-I · 单一标签管理视图", pages:"list.html · 业务域管理 + 多级标签树维护",
-      files:[{name:"标签列表",url:"v202606/dg-tag/list.html"}]},
-    { menu1:"数据治理", menu2:"基础目录设备管理", icon:"📹", iconBg:"#fff7e6",
-      type:"change", desc:"Epic-J · 批量配置 + 管理单位", pages:"list.html + detail.html · 目录联动 + 批量操作",
-      files:[{name:"设备列表",url:"v202606/dg-device/list.html"},{name:"设备详情",url:"v202606/dg-device/detail.html"}]},
-    { menu1:"数据治理", menu2:"业务目录管理", icon:"📁", iconBg:"#e6f4ff",
-      type:"change", desc:"Epic-K · 6种目录生成规则", pages:"list.html · 新增3种规则",
-      files:[{name:"目录列表",url:"v202606/admin-bdg/list.html"},{name:"目录预览",url:"v202606/admin-bdg/preview.html"}]},
-    { menu1:"数据治理", menu2:"经纬度治理", icon:"🌐", iconBg:"#fff2f0",
-      type:"new", desc:"Epic-L · 坐标拾取与补全", pages:"index.html · 地图拾取 + 设备卡片",
-      files:[{name:"坐标治理页",url:"v202606/dg-coord/index.html"}]},
-    { menu1:"智能运维", menu2:"检测算法管理", icon:"⚙️", iconBg:"#f0f5ff",
-      type:"change", desc:"Epic-A · 算法库与配置", pages:"list.html · 算法卡片列表",
-      files:[{name:"算法列表",url:"v202606/ops-algorithm/list.html"}]},
-    { menu1:"智能运维", menu2:"巡检任务", icon:"📋", iconBg:"#fff0f6",
-      type:"change", desc:"Epic-B · 多维度巡检管理", pages:"list.html + create.html + detail.html",
-      files:[{name:"任务列表",url:"v202606/ops-inspection/list.html"}]},
-    { menu1:"智能运维", menu2:"巡检日志", icon:"📄", iconBg:"#f6ffed",
-      type:"new", desc:"Epic-C · 替换链路日志", pages:"list.html + detail.html + topology.html",
-      files:[{name:"日志列表",url:"v202606/ops-log/list.html"}]},
-    { menu1:"智能运维", menu2:"可用性报告", icon:"📈", iconBg:"#e6fffb",
-      type:"new", desc:"Epic-D · SLA大盘统计", pages:"index.html · KPI卡片 + 趋势图",
-      files:[{name:"SLA总览",url:"v202606/ops-sla/index.html"}]},
-    { menu1:"智能运维", menu2:"故障预警", icon:"🔮", iconBg:"#f0f5ff",
-      type:"new", desc:"Epic-E · 模型预判 · 提前预警", pages:"2个页面 · 含预警配置Tab",
-      files:[]},
-    { menu1:"智能运维", menu2:"设备告警", icon:"🔔", iconBg:"#fff2f0",
-      type:"new", desc:"Epic-F · 告警列表 + 详情处置", pages:"list + detail · 含处置备注/批量确认",
-      files:[{name:"告警列表",url:"v202606/ops-alert/list.html"}]},
-    { menu1:"轨迹查询", menu2:"人员轨迹查询", icon:"👤", iconBg:"#e6f7ff",
-      type:"change", desc:"以图搜人(ReID) / 文本搜人", pages:"搜索页 + 结果页 · Tab切换",
-      files:[{name:"搜索页",url:"v202606/track/person-search.html"},{name:"结果页",url:"v202606/track/person-result.html"}]},
-    { menu1:"轨迹查询", menu2:"车辆轨迹查询", icon:"🚗", iconBg:"#f6ffed",
-      type:"new", desc:"以图搜车 / 车牌号查询", pages:"搜索页 + 结果页 · 三Tab切换",
-      files:[]},
-    { menu1:"轨迹查询", menu2:"多目标对比", icon:"🔀", iconBg:"#fff7e6",
-      type:"new", desc:"2-3人轨迹叠加 / 同行检测", pages:"独立页面 · 含时空分析摘要",
-      files:[]}
-  ],
-  "龙江市监-v202606": [
-    { menu1:"数据治理", menu2:"点位治理效能", icon:"📊", iconBg:"#e6fffb",
-      type:"new", desc:"部门治理效能总览", pages:"index.html",
-      files:[{name:"部门治理统计",url:"longjiang/dg-governance/index.html"}]},
-    { menu1:"数据治理", menu2:"治理进度统计", icon:"📈", iconBg:"#e6f4ff",
-      type:"new", desc:"治理进度概览", pages:"index.html",
-      files:[{name:"治理概览",url:"longjiang/dg-progress/index.html"}]}
-  ]
+  "v202606": {
+    domains: {
+      "数据治理": [
+        {menu2:"点位智能标注", icon:"🤖", iconBg:"#f9f0ff",
+         type:"keep", desc:"Epic-G · 业务标签智能标注",
+         pagesInfo:"list.html + detail.html · 标注任务与结果确认",
+         files:[{name:"标注任务列表",url:"v202606/dg-annotation/list.html"},{name:"标注结果详情",url:"v202606/dg-annotation/detail.html"}]},
+        {menu2:"点位治理效能", icon:"📊", iconBg:"#e6fffb",
+         type:"change", desc:"Epic-H · 部门治理效能总览",
+         pagesInfo:"index.html · 治理总览 + 部门排行",
+         files:[{name:"治理总览",url:"v202606/dg-governance/index.html"}]},
+        {menu2:"标签管理", icon:"🏷️", iconBg:"#e6f4ff",
+         type:"keep", desc:"Epic-I · 单一标签管理视图",
+         pagesInfo:"list.html · 业务域管理 + 多级标签树维护",
+         files:[{name:"标签列表",url:"v202606/dg-tag/list.html"}]},
+        {menu2:"基础目录设备管理", icon:"📹", iconBg:"#fff7e6",
+         type:"change", desc:"Epic-J · 批量配置 + 管理单位",
+         pagesInfo:"list.html + detail.html · 目录联动 + 批量操作",
+         files:[{name:"设备列表",url:"v202606/dg-device/list.html"},{name:"设备详情",url:"v202606/dg-device/detail.html"}]},
+        {menu2:"业务目录管理", icon:"📁", iconBg:"#e6f4ff",
+         type:"change", desc:"Epic-K · 6种目录生成规则",
+         pagesInfo:"list.html + preview.html · 2个页面",
+         files:[{name:"目录列表",url:"v202606/admin-bdg/list.html"},{name:"目录预览",url:"v202606/admin-bdg/preview.html"}]},
+        {menu2:"经纬度治理", icon:"🌐", iconBg:"#fff2f0",
+         type:"new", desc:"Epic-L · 坐标拾取与补全",
+         pagesInfo:"index.html · 地图拾取 + 设备卡片",
+         files:[{name:"坐标治理页",url:"v202606/dg-coord/index.html"}]}
+      ],
+      "智能运维": [
+        {menu2:"检测算法管理", icon:"⚙️", iconBg:"#f0f5ff",
+         type:"change", desc:"Epic-A · 算法库与配置",
+         pagesInfo:"list.html · 算法卡片列表",
+         files:[{name:"算法列表",url:"v202606/ops-algorithm/list.html"}]},
+        {menu2:"巡检任务", icon:"📋", iconBg:"#fff0f6",
+         type:"change", desc:"Epic-B · 多维度巡检管理",
+         pagesInfo:"list.html + create.html + detail.html",
+         files:[{name:"任务列表",url:"v202606/ops-inspection/list.html"}]},
+        {menu2:"巡检日志", icon:"📄", iconBg:"#f6ffed",
+         type:"new", desc:"Epic-C · 替换链路日志",
+         pagesInfo:"list.html + detail.html + topology.html",
+         files:[{name:"日志列表",url:"v202606/ops-log/list.html"}]},
+        {menu2:"可用性报告", icon:"📈", iconBg:"#e6fffb",
+         type:"new", desc:"Epic-D · SLA大盘统计",
+         pagesInfo:"index.html · KPI卡片 + 趋势图",
+         files:[{name:"SLA总览",url:"v202606/ops-sla/index.html"}]},
+        {menu2:"故障预警", icon:"🔮", iconBg:"#f0f5ff",
+         type:"new", desc:"Epic-E · 模型预判 · 提前预警",
+         pagesInfo:"2个页面 · 含预警配置Tab",
+         files:[]},
+        {menu2:"设备告警", icon:"🔔", iconBg:"#fff2f0",
+         type:"new", desc:"Epic-F · 告警列表 + 详情处置",
+         pagesInfo:"list + detail · 含处置备注/批量确认",
+         files:[{name:"告警列表",url:"v202606/ops-alert/list.html"}]}
+      ],
+      "轨迹查询": [
+        {menu2:"人员轨迹查询", icon:"👤", iconBg:"#e6f7ff",
+         type:"change", desc:"以图搜人(ReID) / 文本搜人",
+         pagesInfo:"搜索页 + 结果页 · Tab切换",
+         files:[{name:"搜索页",url:"v202606/track/person-search.html"},{name:"结果页",url:"v202606/track/person-result.html"}]},
+        {menu2:"车辆轨迹查询", icon:"🚗", iconBg:"#f6ffed",
+         type:"new", desc:"以图搜车 / 车牌号查询",
+         pagesInfo:"搜索页 + 结果页 · 三Tab切换",
+         files:[]},
+        {menu2:"多目标对比", icon:"🔀", iconBg:"#fff7e6",
+         type:"new", desc:"2-3人轨迹叠加 / 同行检测",
+         pagesInfo:"独立页面 · 含时空分析摘要",
+         files:[]}
+      ]
+    }
+  },
+  "龙江市监-v202606": {
+    domains: {
+      "数据治理": [
+        {menu2:"点位治理效能", icon:"📊", iconBg:"#e6fffb",
+         type:"new", desc:"部门治理效能总览",
+         pagesInfo:"index.html",
+         files:[{name:"部门治理统计",url:"longjiang/dg-governance/index.html"}]},
+        {menu2:"治理进度统计", icon:"📈", iconBg:"#e6f4ff",
+         type:"new", desc:"治理进度概览",
+         pagesInfo:"index.html",
+         files:[{name:"治理概览",url:"longjiang/dg-progress/index.html"}]}
+      ]
+    }
+  }
 };
 
-let currentVersion = "v202606";
+let curVer = "v202606";
 
 function init() {
   const sel = document.getElementById('versionSelect');
@@ -296,113 +342,122 @@ function init() {
   renderHome();
 }
 
-function switchVersion(v) { currentVersion = v; backToHome(); }
+function switchVersion(v) { curVer = v; backHome(); }
 
 function renderHome() {
-  const pages = DATA[currentVersion] || [];
-  const groups = {};
-  pages.forEach(p => {
-    if (!groups[p.menu1]) groups[p.menu1] = [];
-    groups[p.menu1].push(p);
+  const data = DATA[curVer];
+  if (!data) return;
+  const { domains } = data;
+
+  // 统计
+  let nNew=0, nChange=0, nKeep=0, nFiles=0, nModules=0;
+  Object.values(domains).forEach(items => {
+    items.forEach(p => {
+      nModules++;
+      if (p.type==='new') nNew++;
+      else if (p.type==='change') nChange++;
+      else if (p.type==='keep') nKeep++;
+      p.files.forEach(f => { if (f.url) nFiles++; });
+    });
   });
 
-  const menu1Order = Object.keys(groups);
+  document.getElementById('overviewGrid').innerHTML = `
+    <div class="ov-card"><div class="ov-num" style="color:#ff4d4f;">${nNew}</div><div class="ov-label">全新模块</div><div class="ov-sub">本期新增</div></div>
+    <div class="ov-card"><div class="ov-num" style="color:#faad14;">${nChange}</div><div class="ov-label">改造模块</div><div class="ov-sub">本期优化</div></div>
+    <div class="ov-card"><div class="ov-num" style="color:#165DFF;">${nModules}</div><div class="ov-label">迭代模块</div><div class="ov-sub">本期范围</div></div>
+    <div class="ov-card"><div class="ov-num" style="color:#52c41a;">${nFiles}</div><div class="ov-label">可导航文件</div><div class="ov-sub">含原型</div></div>
+  `;
+
+  // 卡片
+  const domainKeys = Object.keys(domains);
   let html = '';
-  menu1Order.forEach(m1 => {
-    const color = MENU1_COLORS[m1] || '#165DFF';
-    const items = groups[m1];
+  domainKeys.forEach(d => {
+    const items = domains[d];
+    const color = DOMAIN_COLORS[d] || '#165DFF';
+    const dn = items.filter(i=>i.type==='new').length;
+    const dc = items.filter(i=>i.type==='change').length;
     html += `
-      <div class="section-hd">
-        <span class="section-bar" style="background:${color}"></span>
-        <h2>${m1}</h2>
-        <span class="sub">${items.length}个模块 · ${items.filter(i=>i.type==='new').length}个全新 ${items.filter(i=>i.type==='change').length}个改造</span>
+      <div class="domain-hd">
+        <span class="domain-bar" style="background:${color}"></span>
+        <h2>${d}</h2>
+        <span class="sub">${items.length}个模块</span>
+        <div class="stats-tag">
+          ${dn ? `<span><span class="legend-dot red"></span>${dn}个全新</span>` : ''}
+          ${dc ? `<span><span class="legend-dot orange"></span>${dc}个改造</span>` : ''}
+        </div>
       </div>
       <div class="cards">
-        ${items.map(p => `
-          <div class="card ${p.type}" onclick="openDetail('${p.menu1}','${p.menu2}')">
+        ${items.map(p => {
+          const t = TYPE_MAP[p.type];
+          return `<div class="card" onclick="openDetail('${d}','${p.menu2}')">
             <div class="card-top">
-              <div class="card-icon" style="background:${p.iconBg};">${p.icon}</div>
+              <div class="card-icon" style="background:${p.iconBg}">${p.icon}</div>
               <div class="card-body">
                 <div class="card-title">${p.menu2}</div>
                 <div class="card-desc">${p.desc}</div>
               </div>
-              <span class="card-tag badge badge-${p.type}">${TYPE_MAP[p.type].cn}</span>
+              <span class="card-type ${t.cls}">● ${t.cn}</span>
             </div>
-            <div class="card-bottom">${p.pages}</div>
-          </div>
-        `).join('')}
+            <div class="card-bottom">
+              <span>📄 ${p.files.length}个原型文件</span>
+              <span>${p.pagesInfo}</span>
+            </div>
+          </div>`;
+        }).join('')}
       </div>
     `;
   });
-  document.getElementById('homeContent').innerHTML = html;
-
-  const counts = { new:0, change:0, total:0, nav:0 };
-  pages.forEach(p => { if(p.type!=='stub'){counts[p.type]++;counts.total++;} p.files.forEach(f=>{if(f.url)counts.nav++;}); });
-  document.getElementById('statGrid').innerHTML = `
-    <div class="stat-card"><div class="stat-num" style="color:#ff4d4f;">${counts.new}</div><div class="stat-label">全新模块</div></div>
-    <div class="stat-card"><div class="stat-num" style="color:#faad14;">${counts.change}</div><div class="stat-label">改造模块</div></div>
-    <div class="stat-card"><div class="stat-num" style="color:#165DFF;">${counts.total}</div><div class="stat-label">迭代模块</div></div>
-    <div class="stat-card"><div class="stat-num" style="color:#52c41a;">${counts.nav}</div><div class="stat-label">可导航文件</div></div>
-  `;
+  document.getElementById('homeCards').innerHTML = html;
 }
 
-function openDetail(m1, m2) {
-  const pages = DATA[currentVersion] || [];
-  const items = pages.filter(p => p.menu1 === m1);
-  if (!items.length) return;
+function openDetail(domain, menu2) {
+  const data = DATA[curVer];
+  if (!data) return;
+  const items = data.domains[domain];
+  if (!items) return;
 
   document.getElementById('homeView').classList.remove('active');
   const dv = document.getElementById('detailView');
   dv.classList.add('active');
+  document.getElementById('detailLoc').textContent = `${domain} / ${menu2}`;
 
-  const color = MENU1_COLORS[m1] || '#165DFF';
-
-  // 侧栏
+  const color = DOMAIN_COLORS[domain] || '#165DFF';
   const sidebar = document.getElementById('detailSidebar');
   sidebar.innerHTML = `
-    <div class="is-section-title">${m1}</div>
-    ${items.map((p,i) => `
-      <div class="is-item ${p.menu2===m2?'active':''}" onclick="showFile('${p.menu2}')">
-        <span class="is-dot ${TYPE_MAP[p.type].dot}"></span>
+    <div class="is-section" style="color:${color}">${domain}</div>
+    ${items.map((p,i) => {
+      const t = TYPE_MAP[p.type];
+      return `<div class="is-item ${p.menu2===menu2?'active':''}" onclick="showFiles('${p.menu2}','${domain}')">
+        <span class="is-dot ${t.dot}"></span>
         <span>${p.menu2}</span>
-      </div>
-    `).join('')}
+      </div>`;
+    }).join('')}
   `;
 
-  // 全局存储
   window._detailItems = items;
-  window._detailM1 = m1;
-  window._detailM1Color = color;
-
-  // 更新面包屑
-  document.getElementById('detailBreadcrumb').textContent = `${m1} / ${m2}`;
-
-  // 显示当前模块文件
-  showFiles(m2);
+  window._detailDomain = domain;
+  window._detailColor = color;
+  showFiles(menu2, domain);
 }
 
-function showFiles(m2) {
+function showFiles(menu2, domain) {
   const items = window._detailItems;
-  const p = items.find(x => x.menu2 === m2);
+  const p = items.find(x => x.menu2 === menu2);
   if (!p) return;
 
   document.querySelectorAll('.is-item').forEach(el => {
-    el.classList.toggle('active', el.textContent.trim().includes(m2));
+    el.classList.toggle('active', el.textContent.trim().includes(menu2));
   });
-
-  document.getElementById('detailBreadcrumb').textContent = `${window._detailM1} / ${m2}`;
+  document.getElementById('detailLoc').textContent = `${domain || window._detailDomain} / ${menu2}`;
   const t = TYPE_MAP[p.type];
+  const color = window._detailColor || '#165DFF';
 
   const content = document.getElementById('detailContent');
   content.innerHTML = `
-    <div style="margin-bottom:20px">
-      <div class="ic-breadcrumb"><span style="color:${window._detailM1Color};font-weight:600">${window._detailM1}</span> / ${m2}</div>
-      <div class="ic-title">${p.icon} ${m2} <span class="badge ${t.cls}">${t.cn}</span></div>
-      <div class="ic-sub">${p.desc}</div>
-    </div>
-    <div style="margin-bottom:12px">
-      <span style="font-size:13px;color:rgba(0,0,0,.45)">📂 共 ${p.files.length} 个原型文件</span>
-    </div>
+    <div class="ic-breadcrumb"><span style="color:${color};font-weight:600">${domain || window._detailDomain}</span> / ${menu2}</div>
+    <div class="ic-title">${p.icon} ${menu2} <span class="card-type ${t.cls}">● ${t.cn}</span></div>
+    <div class="ic-desc">${p.desc}</div>
+    <div style="margin-bottom:16px;font-size:13px;color:rgba(0,0,0,.45)">📂 共 ${p.files.length} 个原型文件</div>
     ${p.files.length > 0 ? `
       <div class="file-grid">
         ${p.files.map(f => `
@@ -410,15 +465,15 @@ function showFiles(m2) {
             <div class="fc-icon">📄</div>
             <div class="fc-title">${f.name}</div>
             <div class="fc-desc">${f.url||'待生成'}</div>
-            <span class="fc-badge badge ${t.cls}">${t.cn}</span>
+            <span class="fc-badge card-type ${t.cls}">● ${t.cn}</span>
           </a>
         `).join('')}
       </div>
-    ` : `<div class="empty-files">此模块的原型尚未生成</div>`}
+    ` : `<div class="empty-msg">此模块的原型尚未生成</div>`}
   `;
 }
 
-function backToHome() {
+function backHome() {
   document.getElementById('detailView').classList.remove('active');
   document.getElementById('homeView').classList.add('active');
   renderHome();
