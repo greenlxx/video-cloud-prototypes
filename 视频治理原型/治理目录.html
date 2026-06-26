@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>视频智能运维管理平台 - 原型导航</title>
+<style>
+:root {
+  --ant-primary: #1677ff; --ant-primary-bg: #e6f4ff;
+  --ant-success: #52c41a; --ant-error: #ff4d4f; --ant-warning: #faad14;
+  --ant-border: #d9d9d9; --ant-border-secondary: #f0f0f0;
+  --ant-text: rgba(0,0,0,.88); --ant-text-secondary: rgba(0,0,0,.65); --ant-text-tertiary: rgba(0,0,0,.45);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: -apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif; font-size: 14px; color: var(--ant-text); background: #f0f2f5; }
+.header { background: #001529; color: #fff; padding: 16px 24px; display: flex; align-items: center; justify-content: space-between; }
+.header-left { display: flex; align-items: center; gap: 12px; }
+.header-logo { width: 32px; height: 32px; background: var(--ant-primary); border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 16px; color: #fff; flex-shrink: 0; }
+.header h1 { font-size: 17px; font-weight: 600; }
+.header p { font-size: 12px; color: rgba(255,255,255,.5); margin-top: 2px; }
+.header-right { display: flex; gap: 8px; }
+.tab-btn { height: 32px; padding: 0 16px; border: 1px solid rgba(255,255,255,.3); border-radius: 4px; background: transparent; color: rgba(255,255,255,.7); cursor: pointer; font-size: 13px; }
+.tab-btn.active { background: var(--ant-primary); border-color: var(--ant-primary); color: #fff; }
+.main { max-width: 1100px; margin: 0 auto; padding: 24px; }
+.legend { display: flex; gap: 16px; margin-bottom: 24px; padding: 12px 18px; background: #fff; border-radius: 8px; border: 1px solid var(--ant-border-secondary); font-size: 13px; }
+.badge { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; padding: 0 8px; border-radius: 10px; border: 1px solid; }
+.badge-new { color: var(--ant-error); background: #fff2f0; border-color: #ffccc7; }
+.badge-change { color: var(--ant-warning); background: #fffbe6; border-color: #ffe58f; }
+.badge-keep { color: var(--ant-success); background: #f6ffed; border-color: #b7eb8f; }
+.badge-stub { color: var(--ant-text-tertiary); background: #fafafa; border-color: var(--ant-border-secondary); }
+.section-hd { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; }
+.section-bar { width: 4px; height: 16px; border-radius: 2px; }
+.section-hd h2 { font-size: 16px; font-weight: 600; }
+.section-hd .sub { font-size: 12px; color: var(--ant-text-tertiary); margin-left: 8px; }
+.cards { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 12px; margin-bottom: 32px; }
+.card { display: block; text-decoration: none; color: inherit; background: #fff; border-radius: 8px; padding: 16px; border: 1px solid var(--ant-border-secondary); transition: all .2s; }
+.card:hover { border-color: var(--ant-primary); box-shadow: 0 4px 12px rgba(22,119,255,.12); transform: translateY(-1px); }
+.card.half { opacity: .6; }
+.card.half:hover { opacity: 1; }
+.card-top { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 12px; }
+.card-icon { width: 36px; height: 36px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
+.card-info { flex: 1; margin-left: 10px; min-width: 0; }
+.card-title { font-size: 14px; font-weight: 600; }
+.card-desc { font-size: 11px; color: var(--ant-text-tertiary); margin-top: 2px; }
+.card-bottom { font-size: 11px; color: var(--ant-text-tertiary); }
+.stats { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 12px; margin-top: 8px; }
+.stat { background: #fff; border-radius: 8px; padding: 18px; border: 1px solid var(--ant-border-secondary); text-align: center; }
+.stat-num { font-size: 28px; font-weight: 700; }
+.stat-label { font-size: 13px; color: var(--ant-text-tertiary); margin-top: 4px; }
+</style>
+</head>
+<body>
+<div class="header">
+  <div class="header-left">
+    <div class="header-logo">&#9654;</div>
+    <div>
+      <h1>视频智能运维管理平台</h1>
+      <p>产品原型导航 · 数据治理域 + 智能运维域 · 2026.06</p>
+    </div>
+  </div>
+  <div class="header-right">
+    <button class="tab-btn active" id="tab-all" onclick="filter('all')">全部</button>
+    <button class="tab-btn" id="tab-dg" onclick="filter('dg')">数据治理域</button>
+    <button class="tab-btn" id="tab-ops" onclick="filter('ops')">智能运维域</button>
+  </div>
+</div>
+
+<div class="main">
+  <div class="legend">
+    <span class="badge badge-change">改造</span><span>本次迭代改造页面</span>
+    <span class="badge badge-new">全新</span><span>本次迭代新建页面</span>
+    <span class="badge badge-keep">保留</span><span>现有功能保留</span>
+    <span class="badge badge-stub">占位</span><span>后续迭代开发</span>
+  </div>
+
+  <!-- 数据治理域 -->
+  <section data-section="dg">
+    <div class="section-hd"><span class="section-bar" style="background:#722ed1;"></span><h2>数据治理域</h2><span class="sub">Epic G~K · 智能标注 / 治理效能 / 标签管理 / 批量配置 / 目录生成 / 经纬度治理</span></div>
+    <div class="cards">
+      <a href="dg-annotation/list.html" class="card">
+        <div class="card-top">
+          <div class="card-icon" style="background:#f9f0ff;">&#129302;</div>
+          <div class="card-info"><div class="card-title">点位智能标注</div><div class="card-desc">Epic-G · 业务标签智能标注</div></div>
+          <span class="badge badge-keep">保留</span>
+        </div>
+        <div class="card-bottom">list.html + detail.html · 标注任务与结果确认</div>
+      </a>
+
+      <a href="dg-governance/index.html" class="card">
+        <div class="card-top">
+          <div class="card-icon" style="background:#e6fffb;">&#128200;</div>
+          <div class="card-info"><div class="card-title">点位治理效能</div><div class="card-desc">Epic-H · 部门治理效能总览</div></div>
+          <span class="badge badge-change">改造</span>
+        </div>
+        <div class="card-bottom">index.html · 按目录/按单位统计 + 治理排行</div>
+      </a>
+
+      <a href="dg-tag/list.html" class="card">
+        <div class="card-top">
+          <div class="card-icon" style="background:#e6f4ff;">&#127991;</div>
+          <div class="card-info"><div class="card-title">标签管理</div><div class="card-desc">Epic-I · 单一标签管理视图</div></div>
+          <span class="badge badge-keep">保留</span>
+        </div>
+        <div class="card-bottom">list.html · 业务域管理 + 多级标签树维护</div>
+      </a>
+
+      <a href="dg-device/list.html" class="card">
+        <div class="card-top">
+          <div class="card-icon" style="background:#fff7e6;">&#128249;</div>
+          <div class="card-info"><div class="card-title">基础目录设备管理</div><div class="card-desc">Epic-J · 批量配置 + 管理单位</div></div>
+          <span class="badge badge-change">改造</span>
+        </div>
+        <div class="card-bottom">list.html · 批量操作(标签/单位/命名) + 配置中心</div>
+      </a>
+
+      <a href="admin-bdg/list.html" class="card">
+        <div class="card-top">
+          <div class="card-icon" style="background:#e6f4ff;">&#128193;</div>
+          <div class="card-info"><div class="card-title">业务目录管理</div><div class="card-desc">Epic-K · 6种目录生成规则</div></div>
+          <span class="badge badge-change">改造</span>
+        </div>
+        <div class="card-bottom">list.html · 新增3种规则(仅区域/先单位后区域/先单位后业务)</div>
+      </a>
+
+      <a href="dg-coord/index.html" class="card">
+        <div class="card-top">
+          <div class="card-icon" style="background:#fff2f0;">&#127758;</div>
+          <div class="card-info"><div class="card-title">经纬度治理</div><div class="card-desc">Epic-L · 坐标拾取与补全</div></div>
+          <span class="badge badge-new">全新</span>
+        </div>
+        <div class="card-bottom">index.html · 地图拾取 + 设备卡片 + 确认治理/标记不适用</div>
+      </a>
+    </div>
+  </section>
+
+  <!-- 智能运维域 -->
+  <section data-section="ops">
+    <div class="section-hd"><span class="section-bar" style="background:#13c2c2;"></span><h2>智能运维域</h2><span class="sub">Epic A~E · 检测算法 / 巡检任务 / 巡检日志 / 可用性报告 / 故障预警</span></div>
+    <div class="cards">
+      <a href="ops-algorithm/list.html" class="card half">
+        <div class="card-top">
+          <div class="card-icon" style="background:#f5f5f5;">&#9903;</div>
+          <div class="card-info"><div class="card-title">检测算法</div><div class="card-desc">Epic-A · 算法库与配置</div></div>
+          <span class="badge badge-stub">占位</span>
+        </div>
+        <div class="card-bottom">list.html · 后续迭代开发</div>
+      </a>
+      <a href="ops-inspection/list.html" class="card half">
+        <div class="card-top">
+          <div class="card-icon" style="background:#f5f5f5;">&#128203;</div>
+          <div class="card-info"><div class="card-title">巡检任务</div><div class="card-desc">Epic-B · 巡检计划管理</div></div>
+          <span class="badge badge-stub">占位</span>
+        </div>
+        <div class="card-bottom">list.html · 后续迭代开发</div>
+      </a>
+      <a href="ops-log/list.html" class="card half">
+        <div class="card-top">
+          <div class="card-icon" style="background:#f5f5f5;">&#128196;</div>
+          <div class="card-info"><div class="card-title">巡检日志</div><div class="card-desc">Epic-C · 巡检记录查询</div></div>
+          <span class="badge badge-stub">占位</span>
+        </div>
+        <div class="card-bottom">list.html · 后续迭代开发</div>
+      </a>
+      <a href="ops-sla/index.html" class="card half">
+        <div class="card-top">
+          <div class="card-icon" style="background:#f5f5f5;">&#128202;</div>
+          <div class="card-info"><div class="card-title">可用性报告</div><div class="card-desc">Epic-D · SLA统计与报表</div></div>
+          <span class="badge badge-stub">占位</span>
+        </div>
+        <div class="card-bottom">index.html · 后续迭代开发</div>
+      </a>
+      <a href="ops-alert/list.html" class="card half">
+        <div class="card-top">
+          <div class="card-icon" style="background:#f5f5f5;">&#9888;</div>
+          <div class="card-info"><div class="card-title">故障预警</div><div class="card-desc">Epic-E · 告警规则与通知</div></div>
+          <span class="badge badge-stub">占位</span>
+        </div>
+        <div class="card-bottom">list.html · 后续迭代开发</div>
+      </a>
+    </div>
+  </section>
+
+  <!-- 统计 -->
+  <div class="stats">
+    <div class="stat"><div class="stat-num" style="color:var(--ant-error);">2</div><div class="stat-label">全新页面</div></div>
+    <div class="stat"><div class="stat-num" style="color:var(--ant-warning);">4</div><div class="stat-label">改造模块</div></div>
+    <div class="stat"><div class="stat-num" style="color:var(--ant-primary);">17</div><div class="stat-label">原型文件</div></div>
+    <div class="stat"><div class="stat-num" style="color:var(--ant-success);">12</div><div class="stat-label">可导航页面</div></div>
+  </div>
+</div>
+
+<script>
+function filter(type) {
+  document.querySelectorAll('section[data-section]').forEach(function(s) {
+    s.style.display = (type === 'all' || s.dataset.section === type) ? '' : 'none';
+  });
+  document.querySelectorAll('.tab-btn').forEach(function(b) { b.classList.remove('active'); });
+  document.getElementById('tab-' + type).classList.add('active');
+}
+</script>
+</body>
+</html>

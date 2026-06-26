@@ -1,0 +1,1302 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>业务目录管理 - 视频智能运维平台</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style id="tailwind-fallback">
+    .hidden{display:none}.flex{display:flex}.grid{display:grid}.items-center{align-items:center}.justify-between{justify-content:space-between}.gap-2{gap:.5rem}.gap-3{gap:.75rem}.gap-4{gap:1rem}.p-4{padding:1rem}.p-6{padding:1.5rem}.w-full{width:100%}
+  </style>
+  <script>
+    window.addEventListener('load', function () {
+      var el = document.createElement('div');
+      el.className = 'hidden';
+      document.body.appendChild(el);
+      if (getComputedStyle(el).display === 'none') {
+        var fb = document.getElementById('tailwind-fallback');
+        if (fb) fb.remove();
+      }
+      document.body.removeChild(el);
+    });
+  </script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --ant-primary: #1677ff;
+      --ant-primary-hover: #4096ff;
+      --ant-primary-bg: #e6f4ff;
+      --ant-success: #52c41a;
+      --ant-warning: #faad14;
+      --ant-error: #ff4d4f;
+      --ant-text: rgba(0,0,0,.88);
+      --ant-text-secondary: rgba(0,0,0,.65);
+      --ant-text-tertiary: rgba(0,0,0,.45);
+      --ant-border: #d9d9d9;
+      --ant-border-secondary: #f0f0f0;
+      --ant-bg: #f5f5f5;
+      --ant-bg-container: #fff;
+      --shadow-1: 0 1px 2px rgba(0,0,0,.04),0 2px 8px rgba(0,0,0,.06);
+      --shadow-2: 0 8px 24px rgba(0,0,0,.12);
+      --radius-base: 4px;
+      --radius-lg: 8px;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial; color: var(--ant-text); background: var(--ant-bg); }
+
+    .layout { min-height: 100vh; display: flex; }
+    .sidebar { width: 220px; background: #001529; color: #fff; flex-shrink: 0; }
+    .sidebar-logo { height: 64px; border-bottom: 1px solid rgba(255,255,255,.12); display: flex; align-items: center; gap: 10px; padding: 0 18px; font-size: 16px; font-weight: 600; }
+    .sidebar-item { display: flex; align-items: center; gap: 10px; height: 40px; margin: 8px 12px; padding: 0 14px; border-radius: 4px; color: rgba(255,255,255,.75); text-decoration: none; }
+    .sidebar-item.active { color: #fff; background: var(--ant-primary); }
+
+    .main { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+    .header { height: 56px; background: #fff; border-bottom: 1px solid var(--ant-border-secondary); padding: 0 24px; display: flex; align-items: center; justify-content: space-between; }
+    .content { padding: 24px; overflow: auto; }
+    .breadcrumb { display: flex; align-items: center; gap: 8px; color: var(--ant-text-tertiary); font-size: 14px; }
+
+    .page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+    .page-title { margin: 0; font-size: 22px; font-weight: 600; }
+
+    .card { background: #fff; border: 1px solid var(--ant-border-secondary); border-radius: var(--radius-lg); }
+    .search-bar { padding: 14px 16px; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+
+    .ant-input { width: 240px; height: 32px; border: 1px solid var(--ant-border); border-radius: var(--radius-base); padding: 0 10px; outline: none; }
+    .ant-input:focus { border-color: var(--ant-primary); box-shadow: 0 0 0 2px rgba(22,119,255,.1); }
+    .ant-select { width: 100%; height: 32px; border: 1px solid var(--ant-border); border-radius: var(--radius-base); padding: 0 10px; background: #fff; }
+    .ant-select:disabled { background: #f5f5f5; color: var(--ant-text-tertiary); cursor: not-allowed; }
+
+    .ant-btn { height: 32px; padding: 0 14px; border: 1px solid var(--ant-border); border-radius: var(--radius-base); background: #fff; color: var(--ant-text); cursor: pointer; display: inline-flex; align-items: center; gap: 6px; }
+    .ant-btn:hover { border-color: var(--ant-primary-hover); color: var(--ant-primary-hover); }
+    .ant-btn-primary { background: var(--ant-primary); border-color: var(--ant-primary); color: #fff; }
+    .ant-btn-primary:hover { background: var(--ant-primary-hover); border-color: var(--ant-primary-hover); color: #fff; }
+    .ant-btn-dangerous { color: var(--ant-error); border-color: var(--ant-error); }
+    .ant-btn-text { background: transparent; border-color: transparent; color: var(--ant-primary); padding: 0 8px; height: 24px; }
+    .ant-btn[disabled] { opacity: .55; cursor: not-allowed; }
+
+    .table-wrap { overflow: auto; }
+    .ant-table { width: 100%; border-collapse: collapse; }
+    .ant-table th { text-align: left; font-size: 13px; color: var(--ant-text-secondary); padding: 12px 14px; border-bottom: 1px solid var(--ant-border-secondary); background: #fafafa; white-space: nowrap; }
+    .ant-table td { padding: 12px 14px; border-bottom: 1px solid var(--ant-border-secondary); vertical-align: middle; }
+    .ant-table tbody tr:hover { background: #fafcff; }
+
+    .ant-tag { display: inline-flex; align-items: center; gap: 4px; font-size: 12px; border-radius: 10px; padding: 2px 8px; border: 1px solid transparent; }
+    .ant-tag-blue { color: #1677ff; background: #e6f4ff; border-color: #91caff; }
+    .ant-tag-green { color: #389e0d; background: #f6ffed; border-color: #b7eb8f; }
+    .ant-tag-red { color: #cf1322; background: #fff1f0; border-color: #ffa39e; }
+    .ant-tag-orange { color: #d46b08; background: #fff7e6; border-color: #ffd591; }
+
+    .ant-switch { width: 36px; height: 20px; border-radius: 10px; background: #d9d9d9; position: relative; cursor: pointer; transition: all .2s; }
+    .ant-switch::after { content:''; width: 16px; height: 16px; border-radius: 50%; background: #fff; position: absolute; top: 2px; left: 2px; transition: all .2s; box-shadow: 0 1px 3px rgba(0,0,0,.2); }
+    .ant-switch.checked { background: var(--ant-success); }
+    .ant-switch.checked::after { left: 18px; }
+    .status-cell { display: inline-flex; align-items: center; gap: 8px; }
+
+    .pagination { display: flex; align-items: center; justify-content: space-between; padding: 10px 14px; }
+    .ant-pagination { display: flex; align-items: center; gap: 8px; }
+    .ant-pagination-item { min-width: 30px; height: 30px; padding: 0 8px; border: 1px solid var(--ant-border); border-radius: var(--radius-base); display: inline-flex; align-items: center; justify-content: center; cursor: pointer; background: #fff; }
+    .ant-pagination-item.active { background: var(--ant-primary); border-color: var(--ant-primary); color: #fff; }
+
+    .drawer-mask { position: fixed; inset: 0; background: rgba(0,0,0,.35); display: none; z-index: 1000; }
+    .drawer-mask.active { display: block; }
+    .drawer { position: absolute; right: 0; top: 0; bottom: 0; width: min(1260px, 94vw); background: #fff; box-shadow: var(--shadow-2); display: flex; flex-direction: column; }
+    .drawer-header { height: 56px; border-bottom: 1px solid var(--ant-border-secondary); padding: 0 18px; display: flex; align-items: center; justify-content: space-between; }
+    .drawer-body { flex: 1; min-height: 0; display: flex; }
+    .drawer-left { flex: 1; overflow: auto; padding: 18px; border-right: 1px solid var(--ant-border-secondary); }
+    .drawer-right { width: 420px; overflow: auto; padding: 16px; background: #fafafa; }
+    .drawer-footer { height: 56px; border-top: 1px solid var(--ant-border-secondary); padding: 0 18px; display: flex; align-items: center; justify-content: flex-end; gap: 8px; }
+
+    .section-title { margin: 0 0 10px; font-size: 14px; font-weight: 600; }
+    .form-item { margin-bottom: 14px; }
+    .label { margin-bottom: 6px; font-size: 13px; display: block; }
+    .label.required::before { content:'*'; color: var(--ant-error); margin-right: 4px; }
+    .hint { margin-top: 4px; color: var(--ant-text-tertiary); font-size: 12px; }
+    .error { margin-top: 4px; color: var(--ant-error); font-size: 12px; }
+
+    .mode-grid { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 8px; }
+    .mode-card { border: 1px solid var(--ant-border); border-radius: 6px; background: #fff; padding: 10px; cursor: pointer; transition: all .2s; }
+    .mode-card:hover { border-color: var(--ant-primary-hover); }
+    .mode-card.active { border-color: var(--ant-primary); background: var(--ant-primary-bg); }
+    .mode-card .mode-num { font-size: 11px; color: var(--ant-text-tertiary); font-weight: 600; margin-bottom: 2px; }
+    .mode-title { font-size: 13px; font-weight: 600; margin-bottom: 6px; }
+    .mode-mini { font-size: 11px; color: var(--ant-text-secondary); line-height: 1.5; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; background: #fff; padding: 6px; border-radius: 4px; }
+
+    .inline-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+    .preview-card { border: 1px solid var(--ant-border-secondary); border-radius: 8px; background: #fff; margin-bottom: 10px; }
+    .preview-head { padding: 10px 12px; border-bottom: 1px solid var(--ant-border-secondary); font-size: 13px; font-weight: 600; }
+    .preview-body { padding: 10px 12px; }
+    .metric-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .metric { border: 1px dashed var(--ant-border); border-radius: 6px; padding: 8px; }
+    .metric .num { font-size: 20px; font-weight: 700; }
+
+    .tree-list { font-size: 13px; line-height: 1.65; color: var(--ant-text-secondary); }
+    .tree-other { color: var(--ant-text-tertiary); }
+    .tree-no-unit { color: var(--ant-text-tertiary); font-style: italic; }
+
+    .modal-mask { position: fixed; inset: 0; background: rgba(0,0,0,.45); display: none; align-items: center; justify-content: center; z-index: 1200; }
+    .modal-mask.active { display: flex; }
+    .modal { width: min(680px, 90vw); background: #fff; border-radius: 8px; box-shadow: var(--shadow-2); overflow: hidden; }
+    .modal-header { height: 48px; border-bottom: 1px solid var(--ant-border-secondary); padding: 0 16px; display:flex; align-items:center; justify-content:space-between; }
+    .modal-body { padding: 16px; max-height: 70vh; overflow: auto; }
+    .modal-footer { height: 52px; border-top: 1px solid var(--ant-border-secondary); padding: 0 16px; display:flex; align-items:center; justify-content:flex-end; gap:8px; }
+
+    .message-box { position: fixed; top: 14px; left: 50%; transform: translateX(-50%); z-index: 1300; display: flex; flex-direction: column; gap: 8px; }
+    .message { background: #fff; border-radius: 8px; box-shadow: var(--shadow-2); padding: 9px 14px; font-size: 13px; display: flex; align-items: center; gap: 8px; border-left: 4px solid var(--ant-primary); }
+
+    /* ===== Multi-Select Dropdown ===== */
+    .multi-select { position: relative; }
+    .multi-select-trigger {
+      min-height: 32px; border: 1px solid var(--ant-border); border-radius: var(--radius-base);
+      padding: 3px 28px 3px 8px; cursor: pointer; display: flex; align-items: center;
+      flex-wrap: wrap; gap: 4px; position: relative; background: #fff;
+    }
+    .multi-select-trigger:focus,
+    .multi-select-trigger.focused { border-color: var(--ant-primary); box-shadow: 0 0 0 2px rgba(22,119,255,.1); }
+    .multi-select-trigger .arrow {
+      position: absolute; right: 8px; top: 50%; transform: translateY(-50%);
+      color: var(--ant-text-tertiary); font-size: 12px; transition: transform .2s;
+    }
+    .multi-select-trigger .arrow.open { transform: translateY(-50%) rotate(180deg); }
+    .multi-select-placeholder { color: var(--ant-text-tertiary); font-size: 13px; padding: 2px 0; }
+    .multi-select-tag {
+      display: inline-flex; align-items: center; gap: 2px; font-size: 12px;
+      background: #f0f0f0; border-radius: 3px; padding: 1px 6px; max-width: 140px;
+    }
+    .multi-select-tag span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .multi-select-tag .close { cursor: pointer; color: var(--ant-text-tertiary); margin-left: 2px; font-size: 10px; }
+    .multi-select-tag .close:hover { color: var(--ant-text); }
+    .multi-select-overflow { font-size: 12px; color: var(--ant-text-secondary); padding: 2px 0; }
+    .multi-select-all-tag {
+      display: inline-flex; align-items: center; font-size: 12px;
+      background: var(--ant-primary-bg); color: var(--ant-primary); border-radius: 3px; padding: 1px 8px;
+    }
+    .multi-select-dropdown {
+      position: absolute; top: calc(100% + 4px); left: 0; right: 0; background: #fff;
+      border: 1px solid var(--ant-border); border-radius: var(--radius-base);
+      box-shadow: var(--shadow-2); z-index: 100; display: none; max-height: 280px; overflow-y: auto;
+    }
+    .multi-select-dropdown.open { display: block; }
+    .multi-select-option {
+      display: flex; align-items: center; gap: 8px; padding: 7px 12px; cursor: pointer; font-size: 13px;
+      transition: background .15s;
+    }
+    .multi-select-option:hover { background: #f5f5f5; }
+    .multi-select-option.disabled { opacity: .5; cursor: not-allowed; }
+    .multi-select-option.disabled:hover { background: transparent; }
+    .multi-select-option input[type="checkbox"] { accent-color: var(--ant-primary); width: 15px; height: 15px; cursor: pointer; }
+    .multi-select-option.disabled input[type="checkbox"] { cursor: not-allowed; }
+    .multi-select-divider { height: 1px; background: var(--ant-border-secondary); margin: 4px 0; }
+  </style>
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar">
+      <div class="sidebar-logo"><i class="fa-solid fa-video"></i><span>智慧运维平台</span></div>
+      <div class="sidebar-item" onclick="location.href='../ops-algorithm/list.html'"><i class="fa-solid fa-microchip"></i><span>检测算法</span></div>
+      <div class="sidebar-item" onclick="location.href='../ops-inspection/list.html'"><i class="fa-solid fa-clipboard-list"></i><span>巡检任务</span></div>
+      <div class="sidebar-item" onclick="location.href='../ops-log/list.html'"><i class="fa-solid fa-file-lines"></i><span>巡检日志</span></div>
+      <div class="sidebar-item" onclick="location.href='../ops-sla/index.html'"><i class="fa-solid fa-chart-line"></i><span>可用性报告</span></div>
+      <div class="sidebar-item" onclick="location.href='../ops-alert/list.html'"><i class="fa-solid fa-triangle-exclamation"></i><span>故障预警</span></div>
+      <div class="sidebar-item" onclick="location.href='../dg-annotation/list.html'"><i class="fa-solid fa-robot"></i><span>点位智能标注</span></div>
+      <div class="sidebar-item" onclick="location.href='../dg-governance/index.html'"><i class="fa-solid fa-gauge-high"></i><span>点位治理效能</span></div>
+      <div class="sidebar-item" onclick="location.href='../dg-tag/list.html'"><i class="fa-solid fa-tags"></i><span>标签管理</span></div>
+      <a class="sidebar-item active" href="list.html"><i class="fa-solid fa-sitemap"></i><span>业务目录管理</span></a>
+      <div class="sidebar-item" onclick="location.href='../dg-device/list.html'"><i class="fa-solid fa-camera"></i><span>基础目录设备管理</span></div>
+      <div class="sidebar-item" onclick="location.href='../dg-coord/index.html'"><i class="fa-solid fa-globe"></i><span>经纬度治理</span></div>
+    </aside>
+
+    <div class="main">
+      <header class="header">
+        <div class="breadcrumb"><span>首页</span><span>/</span><span style="color:var(--ant-text)">业务目录管理</span></div>
+        <div style="font-size:13px;color:var(--ant-text-secondary)"><i class="fa-regular fa-user"></i> 平台管理员</div>
+      </header>
+
+      <div class="content">
+        <div class="page-header">
+          <h1 class="page-title">业务目录管理</h1>
+          <button class="ant-btn ant-btn-primary" onclick="openGenerator('create')"><i class="fa-solid fa-plus"></i> 新增业务目录</button>
+        </div>
+
+        <div class="card search-bar">
+          <input id="searchInput" class="ant-input" placeholder="请输入业务目录名称" onkeydown="if(event.key==='Enter')doSearch()">
+          <button class="ant-btn ant-btn-primary" onclick="doSearch()"><i class="fa-solid fa-search"></i> 查询</button>
+          <button class="ant-btn" onclick="resetSearch()"><i class="fa-solid fa-rotate-right"></i> 重置</button>
+        </div>
+
+        <div class="card">
+          <div class="table-wrap">
+            <table class="ant-table">
+              <thead>
+                <tr>
+                  <th>业务目录名称</th>
+                  <th>生成方式</th>
+                  <th>状态</th>
+                  <th>最近更新时间</th>
+                  <th>待更新设备数</th>
+                  <th>创建人</th>
+                  <th>创建时间</th>
+                  <th style="width:220px">操作</th>
+                </tr>
+              </thead>
+              <tbody id="tableBody"></tbody>
+            </table>
+          </div>
+          <div class="pagination">
+            <div style="font-size:13px;color:var(--ant-text-secondary)">每页
+              <select id="pageSize" onchange="changePageSize()" style="height:28px;border:1px solid var(--ant-border);border-radius:4px;padding:0 8px;margin:0 6px;">
+                <option value="20">20</option>
+                <option value="50">50</option>
+                <option value="100">100</option>
+              </select>条
+            </div>
+            <div class="ant-pagination" id="pagination"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Generator Drawer -->
+  <div class="drawer-mask" id="generatorMask">
+    <div class="drawer">
+      <div class="drawer-header">
+        <div style="font-weight:600" id="generatorTitle">新增业务目录</div>
+        <button class="ant-btn" onclick="closeGenerator()"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="drawer-body">
+        <div class="drawer-left">
+          <h3 class="section-title">配置区</h3>
+
+          <!-- Directory Name -->
+          <div class="form-item">
+            <label class="label required">目录名称</label>
+            <input id="ruleName" class="ant-input" placeholder="2-50个字符，支持实时校验" oninput="onNameInput()">
+            <div class="hint" id="nameStateText">请输入目录名称</div>
+            <div class="error" id="nameError" style="display:none"></div>
+          </div>
+
+          <!-- Generation Mode: 6 cards in 3×2 grid -->
+          <div class="form-item">
+            <label class="label required">生成方式</label>
+            <div class="mode-grid" id="modeGrid">
+              <div class="mode-card active" data-mode="region_first" onclick="setMode('region_first')">
+                <div class="mode-num">①</div>
+                <div class="mode-title">先按区域，再按业务分类</div>
+                <div class="mode-mini">海淀区<br>└ 中关村街道<br>  └ 校园周边</div>
+              </div>
+              <div class="mode-card" data-mode="tag_first" onclick="setMode('tag_first')">
+                <div class="mode-num">②</div>
+                <div class="mode-title">先按业务分类，再按区域</div>
+                <div class="mode-mini">治安防控<br>└ 校园周边<br>  └ 海淀区</div>
+              </div>
+              <div class="mode-card" data-mode="tag_only" onclick="setMode('tag_only')">
+                <div class="mode-num">③</div>
+                <div class="mode-title">只按业务分类</div>
+                <div class="mode-mini">治安防控<br>└ 校园周边</div>
+              </div>
+              <div class="mode-card" data-mode="region_only" onclick="setMode('region_only')">
+                <div class="mode-num">④</div>
+                <div class="mode-title">仅按区域</div>
+                <div class="mode-mini">海淀区<br>└ 中关村街道</div>
+              </div>
+              <div class="mode-card" data-mode="unit_region" onclick="setMode('unit_region')">
+                <div class="mode-num">⑤</div>
+                <div class="mode-title">先按管理单位，再按区域</div>
+                <div class="mode-mini">公安局<br>└ 西湖分局<br>  └ 西溪街道</div>
+              </div>
+              <div class="mode-card" data-mode="unit_tag" onclick="setMode('unit_tag')">
+                <div class="mode-num">⑥</div>
+                <div class="mode-title">先按管理单位，再按业务</div>
+                <div class="mode-mini">公安局<br>└ 西湖分局<br>  └ 治安防控</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Tag Source: Multi-Select -->
+          <div class="form-item">
+            <label class="label required">业务域 / 标签来源</label>
+            <div class="multi-select" id="tagScopeWrap">
+              <div class="multi-select-trigger" id="tagScopeTrigger" tabindex="0" onclick="toggleTagScopeDropdown()" onblur="onTagScopeBlur()">
+                <span class="multi-select-placeholder" id="tagScopePlaceholder">请选择业务域</span>
+                <span class="arrow" id="tagScopeArrow"><i class="fa-solid fa-chevron-down"></i></span>
+              </div>
+              <div class="multi-select-dropdown" id="tagScopeDropdown">
+                <label class="multi-select-option" id="optAll">
+                  <input type="checkbox" value="__ALL__" onchange="onSelectAll(this)">
+                  <span><strong>全选</strong>（全部业务域）</span>
+                </label>
+                <div class="multi-select-divider"></div>
+                <label class="multi-select-option domain-opt"><input type="checkbox" value="GA" onchange="onDomainChange()"><span>公共安全 (GA)</span></label>
+                <label class="multi-select-option domain-opt"><input type="checkbox" value="CG" onchange="onDomainChange()"><span>城市管理 (CG)</span></label>
+                <label class="multi-select-option domain-opt"><input type="checkbox" value="JT" onchange="onDomainChange()"><span>交通运输 (JT)</span></label>
+                <label class="multi-select-option domain-opt"><input type="checkbox" value="MS" onchange="onDomainChange()"><span>社会民生 (MS)</span></label>
+                <label class="multi-select-option domain-opt"><input type="checkbox" value="ZB" onchange="onDomainChange()"><span>重点保障 (ZB)</span></label>
+                <label class="multi-select-option domain-opt"><input type="checkbox" value="FS" onchange="onDomainChange()"><span>食品安全 (FS)</span></label>
+              </div>
+            </div>
+            <div class="hint">勾选"全选"=全平台设备，无标签设备归入「其他/未分类」</div>
+          </div>
+
+          <!-- Rule ①: region_first -->
+          <div id="regionFirstRow" class="inline-2" style="display:grid">
+            <div class="form-item">
+              <label class="label required">区域展开到</label>
+              <select id="regionExpandTo" class="ant-select" onchange="onFieldChange()">
+                <option value="district">区</option>
+                <option value="street" selected>街道</option>
+                <option value="community">社区</option>
+              </select>
+              <div class="hint">主维度连续展开终点</div>
+            </div>
+            <div class="form-item">
+              <label class="label required">业务挂接层级</label>
+              <select id="tagAttachLevel" class="ant-select" onchange="onFieldChange()">
+                <option value="L1">L1</option>
+                <option value="L2" selected>L2</option>
+                <option value="L3">L3</option>
+              </select>
+              <div class="hint">次维度单层挂接层级</div>
+            </div>
+          </div>
+
+          <!-- Rule ②: tag_first -->
+          <div id="tagFirstRow" class="inline-2" style="display:none">
+            <div class="form-item">
+              <label class="label required">业务展开到</label>
+              <select id="tagExpandTo" class="ant-select" onchange="onFieldChange()">
+                <option value="L1">L1</option>
+                <option value="L2" selected>L2</option>
+                <option value="L3">L3</option>
+              </select>
+              <div class="hint">主维度连续展开终点</div>
+            </div>
+            <div class="form-item">
+              <label class="label required">区域挂接粒度</label>
+              <select id="regionAttachLevel" class="ant-select" onchange="onFieldChange()">
+                <option value="district" selected>区</option>
+                <option value="street">街道</option>
+                <option value="community">社区</option>
+              </select>
+              <div class="hint">次维度单层挂接粒度</div>
+            </div>
+          </div>
+
+          <!-- Rule ③: tag_only -->
+          <div id="tagOnlyRow" style="display:none">
+            <div class="form-item">
+              <label class="label required">业务展开到</label>
+              <select id="tagExpandToOnly" class="ant-select" onchange="onFieldChange()">
+                <option value="L1">L1</option>
+                <option value="L2" selected>L2</option>
+                <option value="L3">L3</option>
+              </select>
+              <div class="hint">仅业务维度连续展开终点</div>
+            </div>
+          </div>
+
+          <!-- Rule ④: region_only (NEW) -->
+          <div id="regionOnlyRow" style="display:none">
+            <div class="form-item">
+              <label class="label required">区域展开到</label>
+              <select id="regionExpandToOnly" class="ant-select" onchange="onFieldChange()">
+                <option value="district">区</option>
+                <option value="street" selected>街道</option>
+                <option value="community">社区</option>
+              </select>
+              <div class="hint">区域维度连续展开终点</div>
+            </div>
+          </div>
+
+          <!-- Rule ⑤: unit_region (NEW) -->
+          <div id="unitRegionRow" class="inline-2" style="display:none">
+            <div class="form-item">
+              <label class="label required">管理单位展开到</label>
+              <select id="unitExpandTo1" class="ant-select" onchange="onFieldChange()">
+                <option value="L1" selected>一级</option>
+                <option value="L2">二级</option>
+                <option value="L3">三级</option>
+              </select>
+              <div class="hint">单位维度连续展开终点</div>
+            </div>
+            <div class="form-item">
+              <label class="label required">区域展开到</label>
+              <select id="regionExpandToUnit1" class="ant-select" onchange="onFieldChange()">
+                <option value="district">区</option>
+                <option value="street" selected>街道</option>
+                <option value="community">社区</option>
+              </select>
+              <div class="hint">区域挂接粒度</div>
+            </div>
+          </div>
+
+          <!-- Rule ⑥: unit_tag (NEW) -->
+          <div id="unitTagRow" class="inline-2" style="display:none">
+            <div class="form-item">
+              <label class="label required">管理单位展开到</label>
+              <select id="unitExpandTo2" class="ant-select" onchange="onFieldChange()">
+                <option value="L1" selected>一级</option>
+                <option value="L2">二级</option>
+                <option value="L3">三级</option>
+              </select>
+              <div class="hint">单位维度连续展开终点</div>
+            </div>
+            <div class="form-item">
+              <label class="label required">业务展开到</label>
+              <select id="tagExpandToUnit2" class="ant-select" onchange="onFieldChange()">
+                <option value="L1" selected>L1</option>
+                <option value="L2">L2</option>
+                <option value="L3">L3</option>
+              </select>
+              <div class="hint">业务挂接层级</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="drawer-right">
+          <h3 class="section-title">预览区</h3>
+
+          <div class="preview-card">
+            <div class="preview-head">目录示例</div>
+            <div class="preview-body tree-list" id="treeBox">请先刷新预览。</div>
+          </div>
+
+          <div class="preview-card" id="statsCard" style="display:none">
+            <div class="preview-head">影响统计</div>
+            <div class="preview-body">
+              <div class="metric-grid" id="statsGrid"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="drawer-footer">
+        <button class="ant-btn" onclick="closeGenerator()">取消</button>
+        <button class="ant-btn" onclick="refreshPreview()"><i class="fa-solid fa-rotate"></i> 刷新预览</button>
+        <button class="ant-btn ant-btn-primary" id="saveBtn" onclick="saveRule()" disabled><i class="fa-solid fa-floppy-disk"></i> 生成并保存</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-mask" id="confirmModal">
+    <div class="modal" style="width:min(440px,90vw)">
+      <div class="modal-header"><span id="confirmTitle">确认操作</span><button class="ant-btn" onclick="closeConfirm()"><i class="fa-solid fa-xmark"></i></button></div>
+      <div class="modal-body" id="confirmText"></div>
+      <div class="modal-footer">
+        <button class="ant-btn" onclick="closeConfirm()">取消</button>
+        <button class="ant-btn ant-btn-primary" id="confirmBtn">确定</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="message-box" id="messageBox"></div>
+
+  <script>
+    // ===== 常量 =====
+    const modeTextMap = {
+      region_first: '先区域后业务',
+      tag_first: '先业务后区域',
+      tag_only: '仅业务',
+      region_only: '仅区域',
+      unit_region: '先单位后区域',
+      unit_tag: '先单位后业务'
+    };
+
+    const domainLabelMap = {
+      GA: '公共安全', CG: '城市管理', JT: '交通运输',
+      MS: '社会民生', ZB: '重点保障', FS: '食品安全'
+    };
+
+    const allDomainCodes = Object.keys(domainLabelMap);
+
+    // ===== 列表数据 =====
+    const rules = [
+      { id: 1, rule_name: '全市治安防控目录', generation_rule: 'region_first', domain_codes: ['GA'], status: 1, pending: 18, unit_level: null, updated_at: '2026-04-24 09:20:00', created_by: '张管理员', created_at: '2026-04-20 10:11:23' },
+      { id: 2, rule_name: '校园周边安全目录', generation_rule: 'tag_first', domain_codes: ['GA'], status: 1, pending: 0, unit_level: null, updated_at: '2026-04-23 18:02:10', created_by: '李专员', created_at: '2026-04-20 15:22:11' },
+      { id: 3, rule_name: '城市管理专题目录', generation_rule: 'tag_only', domain_codes: ['CG'], status: 0, pending: 0, unit_level: null, updated_at: '2026-04-23 16:30:00', created_by: '王管理员', created_at: '2026-04-19 09:00:00' },
+      { id: 4, rule_name: '交通路口整治目录', generation_rule: 'tag_first', domain_codes: ['JT'], status: 1, pending: 6, unit_level: null, updated_at: '2026-04-24 08:01:00', created_by: '刘专员', created_at: '2026-04-18 11:40:22' },
+      { id: 5, rule_name: '社会民生网格目录', generation_rule: 'region_first', domain_codes: ['MS'], status: 1, pending: 2, unit_level: null, updated_at: '2026-04-22 11:09:09', created_by: '赵管理员', created_at: '2026-04-18 08:38:19' },
+      { id: 6, rule_name: '重点保障行动目录', generation_rule: 'tag_only', domain_codes: ['ZB'], status: 1, pending: 0, unit_level: null, updated_at: '2026-04-21 10:00:00', created_by: '张管理员', created_at: '2026-04-17 14:22:03' },
+      { id: 7, rule_name: '全区域覆盖目录', generation_rule: 'region_only', domain_codes: ['__ALL__'], status: 1, pending: 12, unit_level: null, updated_at: '2026-05-15 14:30:00', created_by: '张管理员', created_at: '2026-05-10 09:15:00' },
+      { id: 8, rule_name: '各单位区域分布', generation_rule: 'unit_region', domain_codes: ['__ALL__'], status: 1, pending: 5, unit_level: 'L2', updated_at: '2026-05-20 10:00:00', created_by: '李专员', created_at: '2026-05-18 16:30:22' },
+      { id: 9, rule_name: '各单位业务场景分布', generation_rule: 'unit_tag', domain_codes: ['__ALL__'], status: 1, pending: 3, unit_level: 'L2', updated_at: '2026-05-22 08:45:00', created_by: '王管理员', created_at: '2026-05-20 11:00:00' }
+    ];
+
+    let filtered = [...rules];
+    let page = 1;
+    let pageSize = 20;
+
+    // ===== 表单状态 =====
+    const formState = {
+      mode: 'create',
+      editId: null,
+      rule_name: '',
+      generation_rule: 'region_first',
+      domain_codes: ['GA'],
+      unit_level: 'L1',
+      region_level: 'street',
+      tag_level: 'L2',
+      nameStatus: 'empty',
+      previewReady: false,
+      canSave: false,
+      preview: null
+    };
+
+    let nameTimer = null;
+    let tagScopeOpen = false;
+
+    // ===== 消息提示 =====
+    function showMessage(text, type = 'success') {
+      const box = document.getElementById('messageBox');
+      const node = document.createElement('div');
+      node.className = 'message';
+      node.style.borderLeftColor = type === 'error' ? 'var(--ant-error)' : (type === 'warn' ? 'var(--ant-warning)' : 'var(--ant-primary)');
+      node.innerHTML = `<i class="fa-solid ${type === 'error' ? 'fa-circle-xmark' : 'fa-circle-check'}" style="color:${type === 'error' ? '#ff4d4f' : '#52c41a'}"></i><span>${text}</span>`;
+      box.appendChild(node);
+      setTimeout(() => node.remove(), 2600);
+    }
+
+    // ===== 搜索 & 分页 =====
+    function doSearch() {
+      const kw = document.getElementById('searchInput').value.trim().toLowerCase();
+      filtered = kw ? rules.filter(r => r.rule_name.toLowerCase().includes(kw)) : [...rules];
+      page = 1;
+      renderTable();
+    }
+
+    function resetSearch() {
+      document.getElementById('searchInput').value = '';
+      filtered = [...rules];
+      page = 1;
+      renderTable();
+    }
+
+    function changePageSize() {
+      pageSize = Number(document.getElementById('pageSize').value);
+      page = 1;
+      renderTable();
+    }
+
+    function renderTable() {
+      const tbody = document.getElementById('tableBody');
+      const start = (page - 1) * pageSize;
+      const list = filtered.slice(start, start + pageSize);
+      tbody.innerHTML = list.map(r => {
+        const pendingTag = r.pending > 0 ? `<span class="ant-tag ant-tag-red">${r.pending} 台待更新</span>` : `<span style="color:var(--ant-text-tertiary)">-</span>`;
+        const modeLabel = modeTextMap[r.generation_rule] || r.generation_rule;
+        const tagLabel = formatDomainDisplay(r.domain_codes);
+        return `<tr>
+          <td><strong>${r.rule_name}</strong></td>
+          <td><span style="font-size:13px">${modeLabel}<span style="color:var(--ant-text-tertiary)"> / ${tagLabel}</span></span></td>
+          <td><span class="status-cell"><span class="ant-switch ${r.status ? 'checked' : ''}" onclick="toggleStatus(${r.id})"></span><span style="font-size:12px;color:${r.status ? 'var(--ant-success)' : 'var(--ant-text-tertiary)'}">${r.status ? '启用' : '停用'}</span></span></td>
+          <td style="white-space:nowrap">${r.updated_at}</td>
+          <td>${pendingTag}</td>
+          <td>${r.created_by}</td>
+          <td style="white-space:nowrap">${r.created_at}</td>
+          <td>
+            <button class="ant-btn ant-btn-text" onclick="openGenerator('edit',${r.id})">编辑</button>
+            <button class="ant-btn ant-btn-text" ${r.status ? '' : 'disabled'} onclick="startUpdate(${r.id})">更新</button>
+            <button class="ant-btn ant-btn-text ant-btn-dangerous" onclick="confirmDelete(${r.id})">删除</button>
+          </td>
+        </tr>`;
+      }).join('');
+      renderPagination();
+    }
+
+    function renderPagination() {
+      const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
+      if (page > totalPages) page = totalPages;
+      const el = document.getElementById('pagination');
+      let html = `<span class="ant-pagination-item" onclick="toPage(${Math.max(1,page-1)})">&lt;</span>`;
+      for (let i = 1; i <= totalPages; i++) html += `<span class="ant-pagination-item ${i===page?'active':''}" onclick="toPage(${i})">${i}</span>`;
+      html += `<span class="ant-pagination-item" onclick="toPage(${Math.min(totalPages,page+1)})">&gt;</span>`;
+      el.innerHTML = html;
+    }
+
+    function toPage(p) { page = p; renderTable(); }
+
+    // ===== domain_codes 显示格式化 =====
+    function formatDomainDisplay(codes) {
+      if (!codes || codes.length === 0) return '-';
+      if (codes.length === 1 && codes[0] === '__ALL__') return '全部业务域';
+      if (codes.length === 1) return domainLabelMap[codes[0]] || codes[0];
+      const names = codes.map(c => domainLabelMap[c] || c);
+      if (names.length <= 3) return names.join(' + ');
+      return names.slice(0, 3).join(' + ') + ` ...共${names.length}个`;
+    }
+
+    function isAllDomain(codes) {
+      return codes && codes.length === 1 && codes[0] === '__ALL__';
+    }
+
+    // ===== 状态切换 / 删除 =====
+    function toggleStatus(id) {
+      const item = rules.find(r => r.id === id);
+      if (!item) return;
+      if (item.status === 1) {
+        openConfirm('确认停用', '停用后不可预览和更新，已生成目录节点仍保留。是否确认停用？', () => {
+          item.status = 0;
+          renderTable();
+          showMessage('已停用');
+        });
+      } else {
+        item.status = 1;
+        renderTable();
+        showMessage('已启用');
+      }
+    }
+
+    function confirmDelete(id) {
+      const item = rules.find(r => r.id === id);
+      if (!item) return;
+      openConfirm('确认删除', `确定删除「${item.rule_name}」吗？该操作不可恢复。`, () => {
+        const idx = rules.findIndex(r => r.id === id);
+        if (idx >= 0) rules.splice(idx, 1);
+        filtered = [...rules];
+        renderTable();
+        showMessage('删除成功');
+      });
+    }
+
+    function startUpdate(id) {
+      const item = rules.find(r => r.id === id);
+      if (!item) return;
+      if (item.status !== 1) {
+        showMessage('停用状态不可更新', 'error');
+        return;
+      }
+      showMessage('更新功能：将根据最新规则重新生成目录节点', 'warn');
+    }
+
+    // ===== 多选下拉逻辑 =====
+    function toggleTagScopeDropdown() {
+      tagScopeOpen = !tagScopeOpen;
+      const dd = document.getElementById('tagScopeDropdown');
+      const arrow = document.getElementById('tagScopeArrow');
+      const trigger = document.getElementById('tagScopeTrigger');
+      if (tagScopeOpen) {
+        dd.classList.add('open');
+        arrow.classList.add('open');
+        trigger.classList.add('focused');
+      } else {
+        dd.classList.remove('open');
+        arrow.classList.remove('open');
+        trigger.classList.remove('focused');
+      }
+    }
+
+    function onTagScopeBlur() {
+      setTimeout(() => {
+        if (tagScopeOpen) {
+          tagScopeOpen = false;
+          document.getElementById('tagScopeDropdown').classList.remove('open');
+          document.getElementById('tagScopeArrow').classList.remove('open');
+          document.getElementById('tagScopeTrigger').classList.remove('focused');
+        }
+      }, 160);
+    }
+
+    function onSelectAll(cb) {
+      const isAll = cb.checked;
+      const domainOpts = document.querySelectorAll('#tagScopeDropdown .domain-opt input[type="checkbox"]');
+      const domainLabels = document.querySelectorAll('#tagScopeDropdown .domain-opt');
+      domainOpts.forEach((opt, i) => {
+        opt.checked = isAll;
+        if (isAll) {
+          domainLabels[i].classList.add('disabled');
+        } else {
+          domainLabels[i].classList.remove('disabled');
+        }
+      });
+      updateDomainCodes();
+      renderTagScopeTrigger();
+    }
+
+    function onDomainChange() {
+      // 如果手动勾了所有域，自动切换成全选
+      const domainOpts = document.querySelectorAll('#tagScopeDropdown .domain-opt input[type="checkbox"]');
+      const domainLabels = document.querySelectorAll('#tagScopeDropdown .domain-opt');
+      const allChecked = Array.from(domainOpts).every(o => o.checked);
+      document.getElementById('optAll').querySelector('input').checked = allChecked;
+      if (allChecked) {
+        domainLabels.forEach(el => el.classList.add('disabled'));
+      } else {
+        domainLabels.forEach(el => el.classList.remove('disabled'));
+      }
+      updateDomainCodes();
+      renderTagScopeTrigger();
+    }
+
+    function updateDomainCodes() {
+      const allCb = document.getElementById('optAll').querySelector('input');
+      if (allCb.checked) {
+        formState.domain_codes = ['__ALL__'];
+      } else {
+        const checked = [];
+        document.querySelectorAll('#tagScopeDropdown .domain-opt input[type="checkbox"]').forEach(cb => {
+          if (cb.checked) checked.push(cb.value);
+        });
+        formState.domain_codes = checked;
+      }
+      onFieldChange();
+    }
+
+    function renderTagScopeTrigger() {
+      const trigger = document.getElementById('tagScopeTrigger');
+      const placeholder = document.getElementById('tagScopePlaceholder');
+      const codes = formState.domain_codes;
+
+      // 清除旧 tags
+      trigger.querySelectorAll('.multi-select-tag,.multi-select-all-tag,.multi-select-overflow').forEach(el => el.remove());
+
+      if (codes.length === 0) {
+        placeholder.style.display = '';
+        return;
+      }
+      placeholder.style.display = 'none';
+
+      if (isAllDomain(codes)) {
+        const tag = document.createElement('span');
+        tag.className = 'multi-select-all-tag';
+        tag.textContent = '全部业务域';
+        tag.onclick = function(e) { e.stopPropagation(); };
+        trigger.insertBefore(tag, placeholder);
+      } else if (codes.length <= 3) {
+        codes.forEach(code => {
+          const tag = document.createElement('span');
+          tag.className = 'multi-select-tag';
+          tag.innerHTML = `<span>${domainLabelMap[code] || code}</span><span class="close" data-code="${code}">&times;</span>`;
+          tag.querySelector('.close').onclick = function(e) {
+            e.stopPropagation();
+            removeDomainTag(code);
+          };
+          tag.onclick = function(e) { e.stopPropagation(); };
+          trigger.insertBefore(tag, placeholder);
+        });
+      } else {
+        // Show first 2 + overflow count
+        for (let i = 0; i < 2; i++) {
+          const code = codes[i];
+          const tag = document.createElement('span');
+          tag.className = 'multi-select-tag';
+          tag.innerHTML = `<span>${domainLabelMap[code] || code}</span>`;
+          tag.onclick = function(e) { e.stopPropagation(); };
+          trigger.insertBefore(tag, placeholder);
+        }
+        const overflow = document.createElement('span');
+        overflow.className = 'multi-select-overflow';
+        overflow.textContent = `+${codes.length - 2}`;
+        overflow.onclick = function(e) { e.stopPropagation(); };
+        trigger.insertBefore(overflow, placeholder);
+      }
+    }
+
+    function removeDomainTag(code) {
+      // Uncheck the specific domain
+      const cb = document.querySelector(`#tagScopeDropdown .domain-opt input[value="${code}"]`);
+      if (cb) {
+        cb.checked = false;
+        document.getElementById('optAll').querySelector('input').checked = false;
+        // Remove disabled from all domain opts
+        document.querySelectorAll('#tagScopeDropdown .domain-opt').forEach(el => el.classList.remove('disabled'));
+        updateDomainCodes();
+        renderTagScopeTrigger();
+        // Keep dropdown open
+      }
+    }
+
+    function syncDropdownFromState() {
+      const allCb = document.getElementById('optAll').querySelector('input');
+      const domainOpts = document.querySelectorAll('#tagScopeDropdown .domain-opt');
+      const domainCbs = document.querySelectorAll('#tagScopeDropdown .domain-opt input[type="checkbox"]');
+
+      if (isAllDomain(formState.domain_codes)) {
+        allCb.checked = true;
+        domainCbs.forEach(cb => { cb.checked = true; });
+        domainOpts.forEach(el => el.classList.add('disabled'));
+      } else {
+        allCb.checked = false;
+        domainOpts.forEach(el => el.classList.remove('disabled'));
+        domainCbs.forEach(cb => {
+          cb.checked = formState.domain_codes.includes(cb.value);
+        });
+      }
+      renderTagScopeTrigger();
+    }
+
+    // ===== Drawer 开关 =====
+    function openGenerator(mode, id = null) {
+      resetFormState();
+      formState.mode = mode;
+      document.getElementById('generatorTitle').textContent = mode === 'create' ? '新增业务目录' : '编辑业务目录';
+      if (mode === 'edit' && id) {
+        const item = rules.find(r => r.id === id);
+        if (item) {
+          formState.editId = id;
+          formState.rule_name = item.rule_name;
+          formState.generation_rule = item.generation_rule || 'region_first';
+          formState.domain_codes = item.domain_codes || ['GA'];
+          formState.unit_level = item.unit_level || 'L1';
+          if (item.generation_rule === 'region_first') {
+            formState.region_level = 'street';
+            formState.tag_level = 'L2';
+          } else if (item.generation_rule === 'tag_first') {
+            formState.region_level = 'district';
+            formState.tag_level = 'L2';
+          } else if (item.generation_rule === 'tag_only') {
+            formState.region_level = null;
+            formState.tag_level = 'L2';
+          } else if (item.generation_rule === 'region_only') {
+            formState.region_level = 'street';
+            formState.tag_level = null;
+          } else if (item.generation_rule === 'unit_region') {
+            formState.unit_level = item.unit_level || 'L1';
+            formState.region_level = 'street';
+            formState.tag_level = null;
+          } else if (item.generation_rule === 'unit_tag') {
+            formState.unit_level = item.unit_level || 'L1';
+            formState.region_level = null;
+            formState.tag_level = 'L1';
+          }
+        }
+      }
+      fillFormUI();
+      setFormReadonly(mode === 'edit');
+      document.getElementById('generatorMask').classList.add('active');
+    }
+
+    function setFormReadonly(readonly) {
+      document.querySelectorAll('.mode-card').forEach(el => {
+        el.style.pointerEvents = readonly ? 'none' : '';
+        el.style.opacity = readonly ? '0.65' : '';
+      });
+      document.getElementById('tagScopeTrigger').style.pointerEvents = readonly ? 'none' : '';
+      document.getElementById('tagScopeTrigger').style.opacity = readonly ? '0.55' : '';
+
+      const allSelects = ['regionExpandTo','tagAttachLevel','tagExpandTo','regionAttachLevel','tagExpandToOnly',
+        'regionExpandToOnly','unitExpandTo1','regionExpandToUnit1','unitExpandTo2','tagExpandToUnit2'];
+      allSelects.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.disabled = readonly;
+      });
+    }
+
+    function closeGenerator() {
+      document.getElementById('generatorMask').classList.remove('active');
+      document.getElementById('tagScopeDropdown').classList.remove('open');
+      document.getElementById('tagScopeArrow').classList.remove('open');
+      tagScopeOpen = false;
+    }
+
+    function resetFormState() {
+      formState.editId = null;
+      formState.rule_name = '';
+      formState.generation_rule = 'region_first';
+      formState.domain_codes = ['GA'];
+      formState.unit_level = 'L1';
+      formState.region_level = 'street';
+      formState.tag_level = 'L2';
+      formState.nameStatus = 'empty';
+      formState.previewReady = false;
+      formState.canSave = false;
+      formState.preview = null;
+    }
+
+    function fillFormUI() {
+      document.getElementById('ruleName').value = formState.rule_name;
+      syncDropdownFromState();
+      setMode(formState.generation_rule, true);
+      // Set various selects
+      document.getElementById('regionExpandTo').value = formState.region_level || 'street';
+      document.getElementById('tagAttachLevel').value = formState.tag_level || 'L2';
+      document.getElementById('tagExpandTo').value = formState.tag_level || 'L2';
+      document.getElementById('regionAttachLevel').value = formState.region_level || 'district';
+      document.getElementById('tagExpandToOnly').value = formState.tag_level || 'L2';
+      document.getElementById('regionExpandToOnly').value = formState.region_level || 'street';
+      document.getElementById('unitExpandTo1').value = formState.unit_level || 'L1';
+      document.getElementById('regionExpandToUnit1').value = formState.region_level || 'street';
+      document.getElementById('unitExpandTo2').value = formState.unit_level || 'L1';
+      document.getElementById('tagExpandToUnit2').value = formState.tag_level || 'L1';
+      renderNameState();
+      resetPreviewUI();
+    }
+
+    // ===== 生成方式切换 =====
+    function setMode(mode, silent = false) {
+      formState.generation_rule = mode;
+      document.querySelectorAll('.mode-card').forEach(el => el.classList.toggle('active', el.dataset.mode === mode));
+
+      // Hide all rows first
+      ['regionFirstRow','tagFirstRow','tagOnlyRow','regionOnlyRow','unitRegionRow','unitTagRow'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.style.display = 'none';
+      });
+
+      if (mode === 'region_first') {
+        document.getElementById('regionFirstRow').style.display = 'grid';
+      } else if (mode === 'tag_first') {
+        document.getElementById('tagFirstRow').style.display = 'grid';
+      } else if (mode === 'tag_only') {
+        document.getElementById('tagOnlyRow').style.display = '';
+      } else if (mode === 'region_only') {
+        document.getElementById('regionOnlyRow').style.display = '';
+      } else if (mode === 'unit_region') {
+        document.getElementById('unitRegionRow').style.display = 'grid';
+      } else if (mode === 'unit_tag') {
+        document.getElementById('unitTagRow').style.display = 'grid';
+      }
+
+      if (!silent) {
+        formState.previewReady = false;
+        formState.canSave = false;
+        resetPreviewUI();
+      }
+      onFieldChange();
+    }
+
+    // ===== 名称校验 =====
+    function onNameInput() {
+      formState.rule_name = document.getElementById('ruleName').value.trim();
+      formState.nameStatus = formState.rule_name ? 'checking' : 'empty';
+      renderNameState();
+      if (nameTimer) clearTimeout(nameTimer);
+      nameTimer = setTimeout(checkNameUnique, 420);
+    }
+
+    function checkNameUnique() {
+      const name = formState.rule_name;
+      if (!name) {
+        formState.nameStatus = 'empty';
+        renderNameState();
+        return;
+      }
+      if (name.length < 2 || name.length > 50) {
+        formState.nameStatus = 'invalid';
+        renderNameState('目录名称长度需为2~50个字符');
+        return;
+      }
+      const duplicated = rules.some(r => r.rule_name.toLowerCase() === name.toLowerCase() && r.id !== formState.editId);
+      formState.nameStatus = duplicated ? 'duplicate' : 'valid';
+      renderNameState();
+      updateSaveState();
+    }
+
+    function renderNameState(customMsg = '') {
+      const hint = document.getElementById('nameStateText');
+      const err = document.getElementById('nameError');
+      err.style.display = 'none';
+      if (formState.nameStatus === 'empty') {
+        hint.innerHTML = '请输入目录名称';
+      } else if (formState.nameStatus === 'checking') {
+        hint.innerHTML = '<span style="color:var(--ant-primary)"><i class="fa-solid fa-spinner fa-spin"></i> 正在校验名称...</span>';
+      } else if (formState.nameStatus === 'valid') {
+        hint.innerHTML = '<span style="color:var(--ant-success)">名称可用</span>';
+      } else if (formState.nameStatus === 'duplicate') {
+        hint.innerHTML = '<span style="color:var(--ant-error)">名称已存在，请更换</span>';
+      } else {
+        hint.innerHTML = '<span style="color:var(--ant-error)">名称格式不合法</span>';
+      }
+      if (customMsg) {
+        err.style.display = 'block';
+        err.textContent = customMsg;
+      }
+    }
+
+    // ===== 字段变更 =====
+    function onFieldChange() {
+      // Read tag scope domain codes
+      const allCb = document.getElementById('optAll').querySelector('input');
+      // domain_codes already updated by updateDomainCodes()
+
+      // Read rule-specific fields
+      const rule = formState.generation_rule;
+      if (rule === 'region_first') {
+        formState.region_level = document.getElementById('regionExpandTo').value;
+        formState.tag_level = document.getElementById('tagAttachLevel').value;
+        formState.unit_level = null;
+      } else if (rule === 'tag_first') {
+        formState.tag_level = document.getElementById('tagExpandTo').value;
+        formState.region_level = document.getElementById('regionAttachLevel').value;
+        formState.unit_level = null;
+      } else if (rule === 'tag_only') {
+        formState.tag_level = document.getElementById('tagExpandToOnly').value;
+        formState.region_level = null;
+        formState.unit_level = null;
+      } else if (rule === 'region_only') {
+        formState.region_level = document.getElementById('regionExpandToOnly').value;
+        formState.tag_level = null;
+        formState.unit_level = null;
+      } else if (rule === 'unit_region') {
+        formState.unit_level = document.getElementById('unitExpandTo1').value;
+        formState.region_level = document.getElementById('regionExpandToUnit1').value;
+        formState.tag_level = null;
+      } else if (rule === 'unit_tag') {
+        formState.unit_level = document.getElementById('unitExpandTo2').value;
+        formState.tag_level = document.getElementById('tagExpandToUnit2').value;
+        formState.region_level = null;
+      }
+      formState.previewReady = false;
+      formState.canSave = false;
+      resetPreviewUI();
+      updateSaveState();
+    }
+
+    function resetPreviewUI() {
+      document.getElementById('treeBox').textContent = '请先刷新预览。';
+      document.getElementById('statsCard').style.display = 'none';
+      updateSaveState();
+    }
+
+    // ===== 预览校验 =====
+    function validateForPreview() {
+      if (formState.nameStatus !== 'valid') return { ok: false, msg: '目录名称未通过校验' };
+      if (!formState.domain_codes || formState.domain_codes.length === 0) return { ok: false, msg: '请至少选择一个业务域' };
+      const rule = formState.generation_rule;
+      if (rule === 'region_first') {
+        if (!formState.region_level) return { ok: false, msg: '请选择区域展开到' };
+        if (!formState.tag_level) return { ok: false, msg: '请选择业务挂接层级' };
+      } else if (rule === 'tag_first') {
+        if (!formState.tag_level) return { ok: false, msg: '请选择业务展开到' };
+        if (!formState.region_level) return { ok: false, msg: '请选择区域挂接粒度' };
+      } else if (rule === 'tag_only') {
+        if (!formState.tag_level) return { ok: false, msg: '请选择业务展开到' };
+      } else if (rule === 'region_only') {
+        if (!formState.region_level) return { ok: false, msg: '请选择区域展开到' };
+      } else if (rule === 'unit_region') {
+        if (!formState.unit_level) return { ok: false, msg: '请选择管理单位展开到' };
+        if (!formState.region_level) return { ok: false, msg: '请选择区域展开到' };
+      } else if (rule === 'unit_tag') {
+        if (!formState.unit_level) return { ok: false, msg: '请选择管理单位展开到' };
+        if (!formState.tag_level) return { ok: false, msg: '请选择业务展开到' };
+      }
+      return { ok: true };
+    }
+
+    function refreshPreview() {
+      const check = validateForPreview();
+      if (!check.ok) {
+        showMessage(check.msg, 'error');
+        return;
+      }
+
+      const rule = formState.generation_rule;
+      const isFull = isAllDomain(formState.domain_codes);
+      let regionNodes = 0, bizNodes = 0, unitNodes = 0;
+
+      if (rule === 'region_first') {
+        regionNodes = formState.region_level === 'community' ? 6 : formState.region_level === 'street' ? 4 : 2;
+        bizNodes = formState.tag_level === 'L3' ? 6 : formState.tag_level === 'L2' ? 4 : 2;
+      } else if (rule === 'tag_first') {
+        bizNodes = formState.tag_level === 'L3' ? 6 : formState.tag_level === 'L2' ? 4 : 2;
+        regionNodes = formState.region_level === 'community' ? 6 : formState.region_level === 'street' ? 4 : 2;
+      } else if (rule === 'tag_only') {
+        bizNodes = formState.tag_level === 'L3' ? 9 : formState.tag_level === 'L2' ? 5 : 2;
+      } else if (rule === 'region_only') {
+        regionNodes = formState.region_level === 'community' ? 8 : formState.region_level === 'street' ? 5 : 3;
+      } else if (rule === 'unit_region') {
+        unitNodes = formState.unit_level === 'L3' ? 8 : formState.unit_level === 'L2' ? 5 : 3;
+        regionNodes = formState.region_level === 'community' ? 6 : formState.region_level === 'street' ? 4 : 2;
+      } else if (rule === 'unit_tag') {
+        unitNodes = formState.unit_level === 'L3' ? 8 : formState.unit_level === 'L2' ? 5 : 3;
+        bizNodes = formState.tag_level === 'L3' ? 6 : formState.tag_level === 'L2' ? 4 : 2;
+      }
+
+      const tagsWithLabel = rule === 'region_only' ? regionNodes * (isFull ? 3 : 2) : 0;
+      let count;
+      if (rule === 'tag_only') count = bizNodes;
+      else if (rule === 'region_only') count = regionNodes + tagsWithLabel;
+      else if (rule === 'unit_region') count = unitNodes * regionNodes;
+      else if (rule === 'unit_tag') count = unitNodes * bizNodes;
+      else if (rule === 'region_first') count = regionNodes * bizNodes;
+      else if (rule === 'tag_first') count = bizNodes * regionNodes;
+      else count = 0;
+
+      const dedup = Math.floor(count * 0.06);
+      formState.preview = { count, regionNodes, bizNodes, unitNodes, dedup, canSave: count > 0 && count <= 500 };
+      formState.previewReady = true;
+      formState.canSave = formState.preview.canSave;
+
+      document.getElementById('treeBox').innerHTML = buildTreePreview();
+      buildStats();
+      updateSaveState();
+      showMessage('预览已刷新');
+    }
+
+    function buildStats() {
+      const card = document.getElementById('statsCard');
+      const grid = document.getElementById('statsGrid');
+      card.style.display = '';
+      const p = formState.preview;
+      grid.innerHTML = `
+        <div class="metric"><div class="num" style="color:var(--ant-primary)">${p.count || '-'}</div><div style="font-size:12px;color:var(--ant-text-secondary)">目录节点数</div></div>
+        <div class="metric"><div class="num" style="color:var(--ant-warning)">${p.dedup || '-'}</div><div style="font-size:12px;color:var(--ant-text-secondary)">同名校验</div></div>
+      `;
+    }
+
+    function buildTreePreview() {
+      const rule = formState.generation_rule;
+      const isFull = isAllDomain(formState.domain_codes);
+
+      if (rule === 'region_first') {
+        return `<pre style="margin:0;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;line-height:1.7;color:var(--ant-text-secondary)">海淀区
+├─ 中关村街道
+│  ├─ 校园周边
+│  └─ 社区治理
+├─ 学院路街道
+│  ├─ 校园周边
+│  └─ 社区治理
+└─ 望京街道
+   └─ 校园周边
+朝阳区
+├─ 望京街道
+│  ├─ 校园周边
+│  └─ 社区治理
+└─ 三里屯街道
+   └─ 校园周边</pre>`;
+      }
+
+      if (rule === 'tag_first') {
+        return `<pre style="margin:0;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;line-height:1.7;color:var(--ant-text-secondary)">治安防控
+├─ 校园周边
+│  ├─ 海淀区
+│  └─ 朝阳区
+└─ 圈层查控
+   └─ 海淀区
+城市管理
+└─ 环卫管理
+   ├─ 海淀区
+   └─ 西城区
+重点保障
+└─ 联防联控
+   └─ 西城区</pre>`;
+      }
+
+      if (rule === 'tag_only') {
+        return `<pre style="margin:0;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;line-height:1.7;color:var(--ant-text-secondary)">治安防控
+├─ 校园周边
+└─ 圈层查控
+城市管理
+└─ 环卫管理
+重点保障
+└─ 联防联控
+${isFull ? '<span class="tree-other">└─ 其他/未分类</span>' : ''}</pre>`;
+      }
+
+      if (rule === 'region_only') {
+        const otherNode = isFull ? `\n│  └─ <span class="tree-other">其他/未分类</span>` : '';
+        return `<pre style="margin:0;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;line-height:1.7;color:var(--ant-text-secondary)">海淀区
+├─ 中关村街道
+│  ├─ 校园周边(GA)
+│  ├─ 占道经营(CG)${otherNode}
+├─ 学院路街道
+│  └─ 交通路口(GA)
+└─ 望京街道
+   ├─ 环卫管理(CG)
+   └─ 交通路口(GA)
+朝阳区
+└─ 望京街道
+   ├─ 社区治理(MS)
+   └─ <span class="tree-other">其他/未分类</span></pre>`;
+      }
+
+      if (rule === 'unit_region') {
+        return `<pre style="margin:0;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;line-height:1.7;color:var(--ant-text-secondary)">公安局
+├─ 西湖分局
+│  ├─ 西溪街道
+│  └─ 古荡街道
+└─ 拱墅分局
+   └─ 湖墅街道
+城管局
+└─ 滨江大队
+   ├─ 西溪街道
+   └─ 长河街道
+<span class="tree-no-unit">（无单位）</span>
+└─ 湖墅街道</pre>`;
+      }
+
+      if (rule === 'unit_tag') {
+        const other1 = isFull ? `\n│  └─ <span class="tree-other">其他/未分类</span>` : '';
+        const other2 = isFull ? `\n│  └─ <span class="tree-other">其他/未分类</span>` : '';
+        const other3 = isFull ? `\n│  └─ <span class="tree-other">其他/未分类</span>` : '';
+        return `<pre style="margin:0;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;line-height:1.7;color:var(--ant-text-secondary)">公安局
+├─ 西湖分局
+│  ├─ 治安防控(L1/GA)
+│  ├─ 交通管理(L1/GA)${other1}
+└─ 拱墅分局
+   ├─ 治安防控(L1/GA)${other2}
+城管局
+└─ 滨江大队
+   ├─ 市容环境(L1/CG)${other3}
+<span class="tree-no-unit">（无单位）</span>
+├─ 餐饮监管(L1/FS)
+└─ <span class="tree-other">其他/未分类</span></pre>`;
+      }
+
+      return '';
+    }
+
+    function updateSaveState() {
+      const btn = document.getElementById('saveBtn');
+      const allow = formState.nameStatus === 'valid' && formState.previewReady && formState.canSave;
+      btn.disabled = !allow;
+    }
+
+    function saveRule() {
+      if (document.getElementById('saveBtn').disabled) {
+        showMessage('请先完成校验并刷新预览', 'error');
+        return;
+      }
+      if (!formState.domain_codes || formState.domain_codes.length === 0) {
+        showMessage('请至少选择一个业务域', 'error');
+        return;
+      }
+      const data = {
+        rule_name: formState.rule_name,
+        generation_rule: formState.generation_rule,
+        domain_codes: [...formState.domain_codes],
+        unit_level: formState.unit_level,
+        region_level: formState.region_level,
+        tag_level: formState.tag_level
+      };
+
+      if (formState.mode === 'edit' && formState.editId) {
+        const item = rules.find(r => r.id === formState.editId);
+        if (item) {
+          Object.assign(item, data);
+          item.updated_at = '2026-06-02 12:00:00';
+        }
+      } else {
+        const newId = Math.max(...rules.map(r => r.id)) + 1;
+        rules.unshift({
+          id: newId,
+          ...data,
+          status: 1,
+          pending: 0,
+          updated_at: '2026-06-02 12:00:00',
+          created_by: '当前用户',
+          created_at: '2026-06-02 12:00:00'
+        });
+      }
+      filtered = [...rules];
+      renderTable();
+      closeGenerator();
+      showMessage(formState.mode === 'edit' ? '修改成功' : '生成并保存成功');
+    }
+
+    function openConfirm(title, text, onConfirm) {
+      document.getElementById('confirmTitle').textContent = title;
+      document.getElementById('confirmText').textContent = text;
+      document.getElementById('confirmBtn').onclick = () => {
+        closeConfirm();
+        onConfirm && onConfirm();
+      };
+      document.getElementById('confirmModal').classList.add('active');
+    }
+
+    function closeConfirm() {
+      document.getElementById('confirmModal').classList.remove('active');
+    }
+
+    renderTable();
+  </script>
+</body>
+</html>

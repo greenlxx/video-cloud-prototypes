@@ -1,0 +1,2699 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>基础目录设备管理 - 视频智能运维管理平台</title>
+<style>
+/* ========== CSS Variables ========== */
+:root {
+  --ant-primary: #1677ff;
+  --ant-primary-hover: #4096ff;
+  --ant-primary-bg: #e6f4ff;
+  --ant-success: #52c41a;
+  --ant-warning: #faad14;
+  --ant-error: #ff4d4f;
+  --ant-text: rgba(0,0,0,.88);
+  --ant-text-secondary: rgba(0,0,0,.65);
+  --ant-text-tertiary: rgba(0,0,0,.45);
+  --ant-border: #d9d9d9;
+  --ant-border-secondary: #f0f0f0;
+}
+
+/* ========== Reset & Base ========== */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif;
+  font-size: 14px;
+  color: var(--ant-text);
+  background: #f5f5f5;
+  line-height: 1.5715;
+}
+
+/* ========== Layout ========== */
+.layout { display: flex; flex-direction: column; min-height: 100vh; }
+.header {
+  height: 56px;
+  background: #001529;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 24px;
+  color: #fff;
+  flex-shrink: 0;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+.header-left { display: flex; align-items: center; gap: 12px; }
+.header-logo { width: 32px; height: 32px; background: var(--ant-primary); border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: bold; color: #fff; }
+.header-title { font-size: 16px; font-weight: 600; }
+.header-right { display: flex; align-items: center; gap: 16px; }
+.header-config-btn {
+  display: flex; align-items: center; gap: 6px;
+  padding: 4px 16px;
+  background: rgba(255,255,255,.1);
+  border: 1px solid rgba(255,255,255,.2);
+  border-radius: 4px;
+  color: #fff;
+  cursor: pointer;
+  font-size: 13px;
+  transition: background .2s;
+}
+.header-config-btn:hover { background: rgba(255,255,255,.2); }
+.header-user {
+  display: flex; align-items: center; gap: 8px;
+  cursor: pointer;
+}
+.header-avatar {
+  width: 32px; height: 32px;
+  border-radius: 50%;
+  background: var(--ant-primary);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px; color: #fff;
+}
+.header-username { font-size: 13px; }
+
+.main { display: flex; flex: 1; }
+.sider {
+  width: 220px;
+  background: #001529;
+  flex-shrink: 0;
+  padding-top: 8px;
+  min-height: calc(100vh - 56px);
+}
+.sider-section { padding: 8px 0; }
+.sider-section-title {
+  padding: 8px 24px;
+  font-size: 12px;
+  color: rgba(255,255,255,.45);
+  text-transform: uppercase;
+}
+.sider-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 24px;
+  color: rgba(255,255,255,.65);
+  cursor: pointer;
+  font-size: 14px;
+  transition: all .2s;
+  border-left: 3px solid transparent;
+}
+.sider-item:hover { color: #fff; background: rgba(255,255,255,.08); }
+.sider-item .sider-icon { width: 16px; height: 16px; opacity: .65; }
+.sider-item.active {
+  color: #fff;
+  background: var(--ant-primary);
+  border-left-color: #fff;
+}
+
+/* ========== Content Area ========== */
+.content { flex: 1; display: flex; overflow: hidden; }
+
+/* ========== Breadcrumb ========== */
+.breadcrumb {
+  display: flex; align-items: center; gap: 8px;
+  padding: 12px 0;
+  font-size: 13px;
+  color: var(--ant-text-tertiary);
+}
+.breadcrumb span { color: var(--ant-text-tertiary); }
+.breadcrumb .breadcrumb-current { color: var(--ant-text); }
+.breadcrumb-sep { margin: 0 4px; }
+.breadcrumb-dir {
+  margin-left: auto;
+  font-size: 13px;
+  color: var(--ant-text-secondary);
+}
+
+/* ========== Buttons ========== */
+.ant-btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+  padding: 4px 15px;
+  height: 32px;
+  border: 1px solid var(--ant-border);
+  border-radius: 6px;
+  background: #fff;
+  color: var(--ant-text);
+  font-size: 14px;
+  cursor: pointer;
+  transition: all .2s;
+  white-space: nowrap;
+  user-select: none;
+}
+.ant-btn:hover { color: var(--ant-primary); border-color: var(--ant-primary); }
+.ant-btn-primary {
+  background: var(--ant-primary);
+  border-color: var(--ant-primary);
+  color: #fff;
+}
+.ant-btn-primary:hover { background: var(--ant-primary-hover); border-color: var(--ant-primary-hover); color: #fff; }
+.ant-btn-sm { height: 24px; padding: 0 7px; font-size: 12px; }
+.ant-btn-text {
+  border-color: transparent;
+  background: transparent;
+  color: var(--ant-text-secondary);
+}
+.ant-btn-text:hover { background: rgba(0,0,0,.04); color: var(--ant-text); }
+.ant-btn[disabled], .ant-btn:disabled {
+  opacity: .4;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+/* ========== Cards ========== */
+.ant-card {
+  background: #fff;
+  border-radius: 8px;
+  border: 1px solid var(--ant-border-secondary);
+  padding: 20px;
+  margin-bottom: 16px;
+}
+.ant-card:last-child { margin-bottom: 0; }
+
+/* ========== Inputs ========== */
+.ant-input {
+  height: 32px;
+  padding: 4px 11px;
+  border: 1px solid var(--ant-border);
+  border-radius: 6px;
+  font-size: 14px;
+  color: var(--ant-text);
+  outline: none;
+  transition: border-color .2s;
+  width: 100%;
+}
+.ant-input:focus { border-color: var(--ant-primary); box-shadow: 0 0 0 2px rgba(22,119,255,.1); }
+.ant-input::placeholder { color: var(--ant-text-tertiary); }
+
+/* ========== Select ========== */
+.ant-select {
+  position: relative;
+  display: inline-block;
+  width: 100%;
+}
+.ant-select select {
+  width: 100%;
+  height: 32px;
+  padding: 4px 11px;
+  border: 1px solid var(--ant-border);
+  border-radius: 6px;
+  font-size: 14px;
+  color: var(--ant-text);
+  background: #fff;
+  outline: none;
+  cursor: pointer;
+  appearance: auto;
+}
+.ant-select select:focus { border-color: var(--ant-primary); }
+select.ant-select {
+  width: 100%;
+  height: 32px;
+  padding: 4px 11px;
+  border: 1px solid var(--ant-border);
+  border-radius: 6px;
+  font-size: 14px;
+  color: var(--ant-text);
+  background: #fff;
+  outline: none;
+  cursor: pointer;
+}
+select.ant-select:focus { border-color: var(--ant-primary); }
+
+/* ========== Table ========== */
+.ant-table { width: 100%; border-collapse: collapse; }
+.ant-table th {
+  padding: 12px 16px;
+  text-align: left;
+  font-weight: 600;
+  font-size: 13px;
+  color: var(--ant-text-secondary);
+  background: #fafafa;
+  border-bottom: 1px solid var(--ant-border-secondary);
+  white-space: nowrap;
+}
+.ant-table td {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--ant-border-secondary);
+  font-size: 14px;
+  color: var(--ant-text);
+}
+.ant-table tbody tr:hover { background: #fafafa; }
+.ant-table .col-checkbox { width: 48px; text-align: center; }
+.ant-table .col-actions { width: 80px; text-align: center; }
+.ant-table .mono { font-family: 'SF Mono', 'Consolas', 'Monaco', monospace; font-size: 12px; color: var(--ant-text-secondary); }
+
+/* ========== Pagination ========== */
+.ant-pagination {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 16px 0;
+}
+.pagination-info { font-size: 13px; color: var(--ant-text-secondary); }
+
+/* ========== Tags ========== */
+.ant-tag {
+  display: inline-flex; align-items: center;
+  padding: 2px 8px;
+  font-size: 12px;
+  border-radius: 4px;
+  border: 1px solid var(--ant-border);
+  background: #fafafa;
+  color: var(--ant-text-secondary);
+  white-space: nowrap;
+  margin: 2px;
+}
+.ant-tag-blue { background: var(--ant-primary-bg); border-color: #91caff; color: var(--ant-primary); }
+.ant-tag-gray { background: #f5f5f5; border-color: #d9d9d9; color: var(--ant-text-tertiary); }
+
+/* ========== Form ========== */
+.form-label { font-size: 13px; color: var(--ant-text-secondary); margin-bottom: 6px; display: block; }
+.form-item { margin-bottom: 16px; }
+.form-hint { font-size: 12px; color: var(--ant-text-tertiary); margin-top: 4px; }
+
+/* ========== Modal ========== */
+.ant-modal-mask {
+  position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,.45);
+  z-index: 1000;
+  display: flex; align-items: center; justify-content: center;
+}
+.ant-modal {
+  width: 680px;
+  max-height: 80vh;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 6px 16px 0 rgba(0,0,0,.08), 0 3px 6px -4px rgba(0,0,0,.12), 0 9px 28px 8px rgba(0,0,0,.05);
+  display: flex; flex-direction: column;
+  overflow: hidden;
+}
+.ant-modal-header {
+  padding: 16px 24px;
+  border-bottom: 1px solid var(--ant-border-secondary);
+  display: flex; align-items: center; justify-content: space-between;
+}
+.ant-modal-title { font-size: 16px; font-weight: 600; color: var(--ant-text); }
+.ant-modal-close {
+  width: 32px; height: 32px;
+  display: flex; align-items: center; justify-content: center;
+  border: none; background: transparent;
+  cursor: pointer; font-size: 16px; color: var(--ant-text-tertiary);
+  border-radius: 4px;
+}
+.ant-modal-close:hover { background: rgba(0,0,0,.04); color: var(--ant-text); }
+.ant-modal-body { padding: 24px; overflow-y: auto; flex: 1; }
+.ant-modal-footer {
+  padding: 12px 24px;
+  border-top: 1px solid var(--ant-border-secondary);
+  display: flex; align-items: center; justify-content: flex-end; gap: 8px;
+}
+.ant-modal-scope { font-size: 13px; color: var(--ant-text-secondary); margin-left: 12px; font-weight: normal; }
+
+/* ========== Catalog Sider ========== */
+.catalog-sider {
+  width: 260px;
+  background: #fff;
+  border-right: 1px solid var(--ant-border-secondary);
+  flex-shrink: 0;
+  display: flex; flex-direction: column;
+  position: sticky; top: 0;
+}
+.catalog-sider-header {
+  padding: 16px;
+  border-bottom: 1px solid var(--ant-border-secondary);
+}
+.catalog-sider-title { font-size: 15px; font-weight: 600; margin-bottom: 12px; color: var(--ant-text); }
+.catalog-sider-body { flex: 1; overflow-y: auto; padding: 8px 0; }
+
+/* Tree Nodes */
+.tree-node {
+  display: flex; align-items: center; gap: 6px;
+  padding: 6px 12px;
+  cursor: pointer;
+  font-size: 13px;
+  color: var(--ant-text);
+  transition: background .2s;
+  user-select: none;
+}
+.tree-node:hover { background: rgba(0,0,0,.03); }
+.tree-node.selected { background: var(--ant-primary-bg); color: var(--ant-primary); }
+.tree-node .tree-arrow { width: 16px; height: 16px; display: inline-flex; align-items: center; justify-content: center; font-size: 10px; color: var(--ant-text-tertiary); flex-shrink: 0; }
+.tree-node .tree-icon { width: 16px; height: 16px; flex-shrink: 0; }
+.tree-node .tree-label { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.tree-children { padding-left: 20px; }
+.tree-badge {
+  background: var(--ant-primary-bg);
+  color: var(--ant-primary);
+  padding: 0 6px;
+  border-radius: 10px;
+  font-size: 11px;
+  margin-left: auto;
+  flex-shrink: 0;
+}
+
+/* ========== Tag Chips ========== */
+.tag-chip {
+  display: inline-flex; align-items: center;
+  padding: 1px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  white-space: nowrap;
+  margin: 2px;
+  background: #f5f5f5;
+  color: var(--ant-text-secondary);
+  border: 1px solid var(--ant-border-secondary);
+}
+.tag-business {
+  background: var(--ant-primary-bg);
+  color: var(--ant-primary);
+  border-color: #91caff;
+}
+.tag-chip.tag-overflow {
+  background: #fff;
+  border: 1px dashed var(--ant-border);
+  color: var(--ant-text-tertiary);
+  cursor: pointer;
+}
+
+/* ========== Right Panel ========== */
+.right-panel { flex: 1; padding: 0 24px 24px; overflow-y: auto; }
+
+/* ========== Filter ========== */
+.filter-row { display: flex; gap: 12px; flex-wrap: wrap; align-items: flex-end; }
+.filter-item { display: flex; flex-direction: column; gap: 4px; min-width: 160px; }
+.filter-item .filter-label { font-size: 12px; color: var(--ant-text-secondary); }
+.filter-actions { display: flex; gap: 8px; align-items: flex-end; padding-bottom: 0; }
+
+/* ========== Config Tabs ========== */
+.config-tabs { display: flex; border-bottom: 1px solid var(--ant-border-secondary); margin-bottom: 16px; }
+.config-tab {
+  padding: 8px 16px;
+  cursor: pointer;
+  font-size: 14px;
+  color: var(--ant-text-secondary);
+  border-bottom: 2px solid transparent;
+  transition: all .2s;
+}
+.config-tab:hover { color: var(--ant-primary); }
+.config-tab.active { color: var(--ant-primary); border-bottom-color: var(--ant-primary); }
+.config-tab-body { display: none; }
+.config-tab-body.active { display: block; }
+
+/* ========== Unit Table ========== */
+.unit-table { width: 100%; border-collapse: collapse; }
+.unit-table th {
+  padding: 10px 12px;
+  text-align: left;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ant-text-secondary);
+  background: #fafafa;
+  border-bottom: 1px solid var(--ant-border-secondary);
+}
+.unit-table td {
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--ant-border-secondary);
+  font-size: 13px;
+}
+.unit-table .unit-hierarchy { padding-left: 0; }
+.unit-table .unit-level-2 { padding-left: 24px; color: var(--ant-text-secondary); }
+.unit-table .unit-actions { text-align: right; white-space: nowrap; }
+.unit-table .unit-actions .ant-btn { margin-left: 4px; }
+.unit-table tbody tr.disabled td { color: var(--ant-text-tertiary); }
+
+/* ========== Template Editor ========== */
+.tpl-chips { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; }
+.tpl-chip {
+  padding: 4px 12px;
+  border: 1px solid var(--ant-border);
+  border-radius: 4px;
+  font-size: 13px;
+  cursor: pointer;
+  background: #fff;
+  transition: all .2s;
+}
+.tpl-chip:hover { border-color: var(--ant-primary); color: var(--ant-primary); }
+.tpl-textarea {
+  width: 100%;
+  min-height: 60px;
+  padding: 8px 12px;
+  border: 1px solid var(--ant-border);
+  border-radius: 6px;
+  font-size: 14px;
+  font-family: 'SF Mono', 'Consolas', 'Monaco', monospace;
+  resize: vertical;
+  outline: none;
+}
+.tpl-textarea:focus { border-color: var(--ant-primary); }
+.tpl-error-msg { font-size: 12px; color: var(--ant-error); margin-top: 4px; display: none; }
+.tpl-preview {
+  padding: 12px;
+  background: #fafafa;
+  border-radius: 6px;
+  font-size: 13px;
+  color: var(--ant-text-secondary);
+  font-family: 'SF Mono', 'Consolas', 'Monaco', monospace;
+}
+
+/* ========== Impact ========== */
+.impact-row { display: flex; align-items: center; gap: 16px; padding: 6px 0; font-size: 13px; }
+.impact-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.impact-dot.green { background: var(--ant-success); }
+.impact-dot.yellow { background: var(--ant-warning); }
+.impact-dot.gray { background: var(--ant-text-tertiary); }
+
+/* ========== Unit List ========== */
+.unit-list { max-height: 300px; overflow-y: auto; border: 1px solid var(--ant-border-secondary); border-radius: 6px; }
+.unit-item {
+  display: flex; align-items: center; gap: 8px;
+  padding: 10px 16px;
+  cursor: pointer;
+  border-bottom: 1px solid var(--ant-border-secondary);
+  font-size: 13px;
+  transition: background .2s;
+}
+.unit-item:last-child { border-bottom: none; }
+.unit-item:hover { background: rgba(0,0,0,.02); }
+.unit-item.selected { background: var(--ant-primary-bg); }
+.check-mark {
+  width: 20px; height: 20px;
+  border: 2px solid var(--ant-border);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  font-size: 10px;
+  transition: all .2s;
+}
+.unit-item.selected .check-mark {
+  border-color: var(--ant-primary);
+  background: var(--ant-primary);
+  color: #fff;
+}
+
+/* ========== Toggle Section ========== */
+.toggle-section { margin-top: 16px; border: 1px solid var(--ant-border-secondary); border-radius: 6px; overflow: hidden; }
+.toggle-head {
+  display: flex; align-items: center; gap: 8px;
+  padding: 12px 16px;
+  cursor: pointer;
+  background: #fafafa;
+  font-size: 13px;
+  color: var(--ant-text-secondary);
+  user-select: none;
+}
+.toggle-head:hover { background: #f0f0f0; }
+.toggle-body { padding: 16px; display: none; }
+.toggle-section.expanded .toggle-body { display: block; }
+.arrow-icon { transition: transform .2s; display: inline-block; font-size: 10px; }
+.toggle-section.expanded .arrow-icon { transform: rotate(90deg); }
+
+/* ========== Filter Multi-Select ========== */
+.filter-multi-select { position: relative; }
+.filter-trigger {
+  display: flex; align-items: center; gap: 6px;
+  height: 32px;
+  padding: 4px 11px;
+  border: 1px solid var(--ant-border);
+  border-radius: 6px;
+  background: #fff;
+  cursor: pointer;
+  font-size: 14px;
+  color: var(--ant-text-tertiary);
+  min-width: 140px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.filter-trigger.has-value { color: var(--ant-text); }
+.filter-dropdown {
+  position: absolute; top: 100%; left: 0;
+  margin-top: 4px;
+  min-width: 200px;
+  max-height: 260px;
+  overflow-y: auto;
+  background: #fff;
+  border-radius: 6px;
+  box-shadow: 0 6px 16px 0 rgba(0,0,0,.08);
+  border: 1px solid var(--ant-border-secondary);
+  z-index: 200;
+  padding: 4px 0;
+  display: none;
+}
+.filter-dropdown.open { display: block; }
+.filter-dropdown-item {
+  display: flex; align-items: center; gap: 8px;
+  padding: 8px 12px;
+  cursor: pointer;
+  font-size: 13px;
+  transition: background .2s;
+}
+.filter-dropdown-item:hover { background: rgba(0,0,0,.04); }
+.filter-dropdown-item input[type="checkbox"] { margin: 0; }
+
+/* ========== Skip Table ========== */
+.skip-table { width: 100%; border-collapse: collapse; margin-top: 12px; }
+.skip-table th {
+  padding: 8px 12px;
+  text-align: left;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ant-text-secondary);
+  background: #fafafa;
+  border-bottom: 1px solid var(--ant-border-secondary);
+}
+.skip-table td {
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--ant-border-secondary);
+  font-size: 13px;
+}
+
+/* ========== Tooltip ========== */
+[data-tooltip] { position: relative; cursor: help; }
+[data-tooltip]:hover::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  bottom: calc(100% + 6px);
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 4px 8px;
+  background: rgba(0,0,0,.75);
+  color: #fff;
+  font-size: 12px;
+  border-radius: 4px;
+  white-space: nowrap;
+  z-index: 999;
+  pointer-events: none;
+}
+
+/* ========== Batch Row ========== */
+.batch-row { display: flex; align-items: center; gap: 0; padding: 0 0 16px; flex-wrap: wrap; }
+.batch-btn-group { display: flex; align-items: center; gap: 8px; }
+.batch-group-label { font-size: 12px; color: var(--ant-text-tertiary); font-weight: 500; user-select: none; }
+.batch-divider { width: 1px; height: 24px; background: var(--ant-border); margin: 0 12px; }
+.batch-info { font-size: 13px; color: var(--ant-text-secondary); margin-left: auto; }
+
+/* ========== Select All Bar ========== */
+.select-all-bar {
+  display: flex; align-items: center; gap: 8px;
+  padding: 8px 12px;
+  margin-bottom: 12px;
+  background: var(--ant-primary-bg);
+  border-radius: 6px;
+  font-size: 13px;
+  color: var(--ant-text);
+}
+.select-all-bar a { color: var(--ant-primary); cursor: pointer; text-decoration: none; }
+.select-all-bar a:hover { text-decoration: underline; }
+.select-all-bar .ant-btn { margin-left: auto; }
+
+/* ========== Utility ========== */
+.hidden { display: none !important; }
+.text-secondary { color: var(--ant-text-secondary); }
+.text-tertiary { color: var(--ant-text-tertiary); }
+.text-success { color: var(--ant-success); }
+.text-error { color: var(--ant-error); }
+.mt-8 { margin-top: 8px; }
+.mt-12 { margin-top: 12px; }
+.mt-16 { margin-top: 16px; }
+.mb-8 { margin-bottom: 8px; }
+.mb-12 { margin-bottom: 12px; }
+.mb-16 { margin-bottom: 16px; }
+.flex { display: flex; }
+.flex-col { flex-direction: column; }
+.gap-8 { gap: 8px; }
+.gap-12 { gap: 12px; }
+.items-center { align-items: center; }
+.justify-between { justify-content: space-between; }
+
+.status-dot { display: inline-block; width: 6px; height: 6px; border-radius: 50%; margin-right: 6px; }
+.status-dot.online { background: var(--ant-success); }
+.status-dot.offline { background: var(--ant-error); }
+
+.constraints-tip {
+  padding: 8px 12px;
+  background: #fffbe6;
+  border: 1px solid #ffe58f;
+  border-radius: 4px;
+  font-size: 12px;
+  color: var(--ant-text-secondary);
+  margin-top: 12px;
+}
+
+/* ========== Config: Section Head ========== */
+.config-section-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; padding-bottom: 8px; border-bottom: 1px solid var(--ant-border-secondary); }
+.config-section-title { font-size: 13px; font-weight: 600; }
+
+/* ========== Config: Template Editor ========== */
+.config-tpl-editor { border: 1px solid var(--ant-border); border-radius: 6px; padding: 14px; margin-top: 10px; background: #fafafa; }
+.config-tpl-editor .editor-label { font-size: 12px; color: var(--ant-text-tertiary); margin-bottom: 6px; }
+.config-chip-row { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }
+.config-chip { display: inline-flex; padding: 3px 10px; border-radius: 4px; font-size: 12px; background: var(--ant-primary-bg); color: var(--ant-primary); cursor: pointer; border: 1px solid transparent; transition: .2s; }
+.config-chip:hover { border-color: var(--ant-primary); }
+.config-chip-sep { padding: 3px 10px; background: #fff; color: var(--ant-text-secondary); cursor: pointer; border: 1px solid var(--ant-border); border-radius: 4px; font-size: 12px; }
+.config-chip-sep:hover { border-color: var(--ant-primary); color: var(--ant-primary); }
+.config-chip-del { color: var(--ant-error); cursor: pointer; }
+.config-editor-textarea { width: 100%; padding: 8px 12px; border: 1px solid var(--ant-border); border-radius: 6px; font-size: 13px; font-family: 'SF Mono', Consolas, monospace; color: var(--ant-text); outline: none; resize: vertical; min-height: 46px; line-height: 1.6; background: #fff; }
+.config-editor-textarea:focus { border-color: var(--ant-primary); box-shadow: 0 0 0 2px rgba(22,119,255,.1); }
+.config-preview-box { padding: 10px 12px; background: #fff; border-radius: 6px; font-size: 13px; color: var(--ant-text-secondary); margin-top: 8px; border: 1px solid var(--ant-border); }
+.config-preview-box .preview-label { font-size: 11px; color: var(--ant-text-tertiary); margin-right: 4px; }
+
+/* ========== Config: Empty State ========== */
+.config-empty-state { padding: 20px; text-align: center; color: var(--ant-text-tertiary); font-size: 13px; }
+
+/* ========== Config: Display Row ========== */
+.config-display-row { display: flex; align-items: center; gap: 12px; padding: 8px 12px; border: 1px solid var(--ant-border); border-radius: 6px; background: #fff; margin-top: 10px; }
+.config-display-row .config-display-text { flex: 1; font-size: 13px; color: var(--ant-text); font-family: 'SF Mono', Consolas, monospace; }
+.config-display-preview { font-size: 12px; color: var(--ant-text-tertiary); margin-top: 6px; }
+
+/* ========== Config: Switch Toggle ========== */
+.config-switch { position: relative; display: inline-block; width: 34px; height: 18px; }
+.config-switch input { opacity: 0; width: 0; height: 0; }
+.config-switch .switch-slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background: #ccc; border-radius: 9px; transition: .2s; }
+.config-switch .switch-slider::before { content: ""; position: absolute; height: 12px; width: 12px; left: 3px; bottom: 3px; background: #fff; border-radius: 50%; transition: .2s; }
+.config-switch input:checked + .switch-slider { background: var(--ant-primary); }
+.config-switch input:checked + .switch-slider::before { transform: translateX(15px); }
+
+/* ========== Config: Confirm Dialog ========== */
+.config-confirm-dialog { background: #fff; border-radius: 8px; width: 380px; max-width: 90vw; box-shadow: 0 6px 16px rgba(0,0,0,.08); }
+.config-confirm-body { padding: 20px 20px 0; font-size: 14px; }
+.config-confirm-footer { padding: 12px 20px; display: flex; justify-content: flex-end; gap: 8px; }
+
+/* ========== Config: Map Coordinate Row ========== */
+.config-coord-row { display: flex; gap: 8px; align-items: flex-end; }
+.config-coord-row .config-field { flex: 1; }
+
+/* ========== Config: Badges ========== */
+.config-badge { display: inline-block; padding: 1px 8px; border-radius: 10px; font-size: 11px; }
+.config-badge-blue { background: var(--ant-primary-bg); color: var(--ant-primary); }
+.config-badge-gray { background: #f5f5f5; color: var(--ant-text-tertiary); }
+
+/* ========== Config: Unit Dict Tree ========== */
+.config-tree-indent { display: inline-block; }
+.config-tree-l1 { padding-left: 0; }
+.config-tree-l2 { padding-left: 20px; }
+.config-tree-l3 { padding-left: 40px; }
+.config-tree-marker { display: inline-block; width: 14px; text-align: center; margin-right: 4px; color: var(--ant-text-tertiary); font-size: 11px; }
+
+/* ========== Batch Checkbox ========== */
+.batch-select-all { display: flex; align-items: center; gap: 6px; cursor: pointer; font-size: 13px; user-select: none; }
+
+input[type="checkbox"] { width: 16px; height: 16px; cursor: pointer; accent-color: var(--ant-primary); }
+</style>
+</head>
+<body>
+
+<div class="layout">
+
+<!-- ===== HEADER ===== -->
+<div class="header">
+  <div class="header-left">
+    <div class="header-logo">V</div>
+    <span class="header-title">视频智能运维管理平台</span>
+  </div>
+  <div class="header-right">
+    <button class="header-config-btn" onclick="openConfigCenter()">&#9881; 配置中心</button>
+    <div class="header-user">
+      <div class="header-avatar">张</div>
+      <span class="header-username">张管理员</span>
+    </div>
+  </div>
+</div>
+
+<!-- ===== MAIN ===== -->
+<div class="main">
+
+  <!-- Sidebar -->
+  <div class="sider">
+    <div class="sider-section">
+      <div class="sider-section-title">智能运维</div>
+      <div class="sider-item" onclick="location.href='../ops-algorithm/list.html'"><span class="sider-icon">&#9744;</span> 检测算法</div>
+      <div class="sider-item" onclick="location.href='../ops-inspection/list.html'"><span class="sider-icon">&#9744;</span> 巡检任务</div>
+      <div class="sider-item" onclick="location.href='../ops-log/list.html'"><span class="sider-icon">&#9744;</span> 巡检日志</div>
+      <div class="sider-item" onclick="location.href='../ops-sla/index.html'"><span class="sider-icon">&#9744;</span> 可用性报告</div>
+      <div class="sider-item" onclick="location.href='../ops-alert/list.html'"><span class="sider-icon">&#9744;</span> 故障预警</div>
+    </div>
+    <div class="sider-section">
+      <div class="sider-section-title">数据治理</div>
+      <div class="sider-item" onclick="location.href='../dg-annotation/list.html'"><span class="sider-icon">&#9744;</span> 点位智能标注</div>
+      <div class="sider-item" onclick="location.href='../dg-governance/index.html'"><span class="sider-icon">&#9744;</span> 点位治理效能</div>
+      <div class="sider-item" onclick="location.href='../dg-tag/list.html'"><span class="sider-icon">&#9744;</span> 标签管理</div>
+      <div class="sider-item" onclick="location.href='../admin-bdg/list.html'"><span class="sider-icon">&#9744;</span> 业务目录管理</div>
+      <div class="sider-item active"><span class="sider-icon">&#9744;</span> 基础目录设备管理</div>
+      <div class="sider-item" onclick="location.href='../dg-coord/index.html'"><span class="sider-icon">&#127758;</span> 经纬度治理</div>
+    </div>
+  </div>
+
+  <!-- Content -->
+  <div class="content">
+
+    <!-- Catalog Sider -->
+    <div class="catalog-sider">
+      <div class="catalog-sider-header">
+        <div class="catalog-sider-title">目录列表</div>
+        <div class="ant-select mb-8">
+          <select id="catalogSetSelect" onchange="switchCatalogSet(this.value)">
+            <option value="basic">基础目录</option>
+            <option value="business">业务目录</option>
+          </select>
+        </div>
+        <input type="text" class="ant-input" placeholder="搜索目录..." id="catalogSearch" oninput="renderCatalogTree()">
+      </div>
+      <div class="catalog-sider-body" id="catalogTree"></div>
+    </div>
+
+    <!-- Right Panel -->
+    <div class="right-panel">
+
+      <!-- Breadcrumb -->
+      <div class="breadcrumb">
+        <span>首页</span><span class="breadcrumb-sep">/</span>
+        <span>数据治理</span><span class="breadcrumb-sep">/</span>
+        <span class="breadcrumb-current">基础目录设备管理</span>
+        <span class="breadcrumb-dir" id="breadcrumbDir">当前目录：智慧园区</span>
+      </div>
+
+      <!-- Filter Card -->
+      <div class="ant-card">
+        <div class="filter-row">
+          <div class="filter-item">
+            <span class="filter-label">设备名称</span>
+            <input type="text" class="ant-input" id="searchName" placeholder="请输入设备名称" style="width:180px">
+          </div>
+          <div class="filter-item">
+            <span class="filter-label">通道编码</span>
+            <input type="text" class="ant-input" id="searchChannel" placeholder="请输入通道编码" style="width:180px">
+          </div>
+          <div class="filter-item">
+            <span class="filter-label">在线状态</span>
+            <div class="ant-select" style="width:140px">
+              <select id="filterStatus">
+                <option value="">全部</option>
+                <option value="online">在线</option>
+                <option value="offline">离线</option>
+              </select>
+            </div>
+          </div>
+          <div class="filter-item">
+            <span class="filter-label">管理单位</span>
+            <div class="filter-multi-select" id="filterUnitWrap">
+              <div class="filter-trigger" id="filterUnitTrigger" onclick="toggleFilterUnit()">请选择管理单位</div>
+              <div class="filter-dropdown" id="filterUnitDropdown"></div>
+            </div>
+          </div>
+          <div class="filter-item">
+            <span class="filter-label">标签</span>
+            <div class="filter-multi-select" id="filterTagWrap">
+              <div class="filter-trigger" id="filterTagTrigger" onclick="toggleFilterTag()">请选择标签</div>
+              <div class="filter-dropdown" id="filterTagDropdown"></div>
+            </div>
+          </div>
+          <div class="filter-actions">
+            <button class="ant-btn ant-btn-primary" onclick="doFilter()">查询</button>
+            <button class="ant-btn" onclick="resetFilter()">重置</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Batch Operations Row -->
+      <div class="batch-row">
+        <label class="batch-select-all">
+          <input type="checkbox" id="selectAllBatch" onchange="selectAllBatch()"> 选择全部
+        </label>
+        <div class="batch-divider"></div>
+        <div class="batch-btn-group">
+          <span class="batch-group-label">标签操作</span>
+          <button class="ant-btn ant-btn-default" id="btnAssociateTag" onclick="openTagModal()" disabled>关联标签</button>
+          <button class="ant-btn ant-btn-default" id="btnClearTags" onclick="confirmClearTags()" disabled>清除标签</button>
+        </div>
+        <div class="batch-divider"></div>
+        <div class="batch-btn-group">
+          <span class="batch-group-label">管理单位操作</span>
+          <button class="ant-btn ant-btn-default" id="btnSetUnit" onclick="openSetUnitModal()" disabled>配置管理单位</button>
+          <button class="ant-btn ant-btn-default" id="btnClearUnit" onclick="confirmClearUnit()" disabled>清除管理单位</button>
+        </div>
+        <div class="batch-divider"></div>
+        <div class="batch-btn-group">
+          <span class="batch-group-label">名称操作</span>
+          <button class="ant-btn ant-btn-default" id="btnRename" onclick="openRenamePreview()" disabled>规范命名</button>
+        </div>
+        <span class="batch-info text-secondary" id="batchInfo">已选 0 台设备</span>
+      </div>
+
+      <!-- Device Table -->
+      <div class="ant-card" style="padding:0; overflow:auto;">
+        <table class="ant-table">
+          <thead>
+            <tr>
+              <th class="col-checkbox"><input type="checkbox" id="selectAll" onchange="toggleSelectAll()"></th>
+              <th>设备名称</th>
+              <th>设备编码</th>
+              <th>在线状态</th>
+              <th>管理单位</th>
+              <th>业务标签</th>
+              <th class="col-actions">操作</th>
+            </tr>
+          </thead>
+          <tbody id="deviceTableBody"></tbody>
+        </table>
+      </div>
+
+      <!-- Pagination -->
+      <div class="ant-pagination">
+        <span class="pagination-info" id="paginationInfo">共 0 台设备</span>
+      </div>
+
+    </div><!-- /right-panel -->
+  </div><!-- /content -->
+</div><!-- /main -->
+</div><!-- /layout -->
+
+<!-- ===== MODALS ===== -->
+
+<!-- Tag Modal -->
+<div class="ant-modal-mask hidden" id="tagModal">
+  <div class="ant-modal" style="width:560px;">
+    <div class="ant-modal-header">
+      <span class="ant-modal-title">关联标签 <span class="ant-modal-scope" id="tagModalScope"></span></span>
+      <button class="ant-modal-close" onclick="closeTagModal()">&#10005;</button>
+    </div>
+    <div class="ant-modal-body">
+      <div id="modalTagTree"></div>
+      <div id="modalSelectedTags" class="mt-12"></div>
+    </div>
+    <div class="ant-modal-footer">
+      <button class="ant-btn" onclick="closeTagModal()">取消</button>
+      <button class="ant-btn ant-btn-primary" onclick="saveTags()">保存</button>
+    </div>
+  </div>
+</div>
+
+<!-- Unit Modal -->
+<div class="ant-modal-mask hidden" id="unitModal">
+  <div class="ant-modal" style="width:600px;">
+    <div class="ant-modal-header">
+      <span class="ant-modal-title">设置管理单位 <span class="ant-modal-scope" id="unitModalScope"></span></span>
+      <button class="ant-modal-close" onclick="closeUnitModal()">&#10005;</button>
+    </div>
+    <div class="ant-modal-body">
+      <div id="unitImpact" class="mb-16"></div>
+      <div class="form-label">方式一：选择管理单位</div>
+      <input type="text" class="ant-input mb-12" id="unitSearch" placeholder="搜索管理单位..." oninput="renderUnitList()">
+      <div class="unit-list" id="unitList"></div>
+      <div class="toggle-section mt-16" id="naSection">
+        <div class="toggle-head" onclick="toggleNASection()">
+          <span class="arrow-icon">&#9654;</span> 方式二：标记为不适用
+        </div>
+        <div class="toggle-body">
+          <div class="form-item">
+            <input type="checkbox" id="naCheck" onchange="onNACheck()">
+            <label for="naCheck" style="font-size:13px;margin-left:6px;">标记为不适用</label>
+          </div>
+          <div class="form-item" id="naReasonWrap" style="display:none;">
+            <span class="form-label">不适用原因</span>
+            <div class="ant-select">
+              <select id="naReason" onchange="onNAReasonChange()">
+                <option value="">请选择原因</option>
+                <option value="跨区域设备">跨区域设备</option>
+                <option value="临时设备">临时设备</option>
+                <option value="测试设备">测试设备</option>
+                <option value="其他">其他</option>
+              </select>
+            </div>
+            <input type="text" class="ant-input mt-8" id="naOtherInput" placeholder="请输入其他原因..." style="display:none;">
+          </div>
+          <div class="form-hint" id="naNote" style="display:none;">标记后该设备在管理单位统计中将显示为"不适用"</div>
+        </div>
+      </div>
+    </div>
+    <div class="ant-modal-footer">
+      <button class="ant-btn" onclick="closeUnitModal()">取消</button>
+      <button class="ant-btn ant-btn-primary" id="unitConfirmBtn" onclick="saveUnit()">确认</button>
+    </div>
+  </div>
+</div>
+
+<!-- Rename Modal -->
+<div class="ant-modal-mask hidden" id="renameModal">
+  <div class="ant-modal" style="width:640px;">
+    <div class="ant-modal-header">
+      <span class="ant-modal-title">规范命名 <span class="ant-modal-scope" id="renameModalScope"></span></span>
+      <button class="ant-modal-close" onclick="closeRenameModal()">&#10005;</button>
+    </div>
+    <div class="ant-modal-body">
+      <div class="form-label mb-8">命名模板</div>
+      <div class="tpl-preview" id="renameTemplate"></div>
+      <div class="impact-row mt-12" id="renameImpact"></div>
+      <div class="form-label mt-16 mb-8">命名示例</div>
+      <div class="tpl-preview" id="renameExample"></div>
+      <div class="mt-12">
+        <div class="form-label mb-8">以下设备因缺少必填字段将被跳过</div>
+        <div id="renameSkips"></div>
+      </div>
+    </div>
+    <div class="ant-modal-footer">
+      <button class="ant-btn" onclick="closeRenameModal()">取消</button>
+      <button class="ant-btn ant-btn-primary" id="renameConfirmBtn" onclick="doRename()">确认命名</button>
+    </div>
+  </div>
+</div>
+
+<!-- Config Center Modal -->
+<div class="ant-modal-mask hidden" id="configModal">
+  <div class="ant-modal" style="width:740px;">
+    <div class="ant-modal-header">
+      <span class="ant-modal-title">配置中心</span>
+      <button class="ant-modal-close" onclick="closeConfigCenter()">&#10005;</button>
+    </div>
+    <div class="ant-modal-body">
+      <div class="config-tabs">
+        <div class="config-tab active" data-tab="dict" onclick="switchConfigTab('dict')">管理单位字典</div>
+        <div class="config-tab" data-tab="naming" onclick="switchConfigTab('naming')">命名规则</div>
+        <div class="config-tab" data-tab="map" onclick="switchConfigTab('map')">地图设置</div>
+      </div>
+
+      <!-- ══ Tab 1: 管理单位字典 ══ -->
+      <div class="config-tab-body active" id="configTabDict">
+        <div class="flex justify-between items-center mb-12">
+          <span class="text-secondary" style="font-size:13px;">共 <strong id="unitDictCount">0</strong> 个管理单位</span>
+          <button class="ant-btn ant-btn-primary ant-btn-sm" onclick="openUnitEditModal(null)">+ 新增单位</button>
+        </div>
+        <table class="unit-table">
+          <thead>
+            <tr><th style="width:38%">单位名称</th><th style="width:22%">上级单位</th><th style="width:12%">关联设备</th><th style="width:12%">启用</th><th style="text-align:right;">操作</th></tr>
+          </thead>
+          <tbody id="unitDictBody"></tbody>
+        </table>
+        <div class="constraints-tip">注意：已有设备关联的单位不可删除。停用状态不影响已关联设备，但新增设备时不可选择停用单位。</div>
+      </div>
+
+      <!-- ══ Tab 2: 命名规则 ══ -->
+      <div class="config-tab-body" id="configTabNaming">
+        <!-- ─── 全局命名模板 ─── -->
+        <div class="config-section-head" style="display:flex;align-items:center;">
+          <span class="config-section-title">全局命名模板</span>
+          <button class="ant-btn ant-btn-primary ant-btn-sm" id="cfgGlobalBtn" style="margin-left:auto;" onclick="showCfgGlobalEdit()">新增</button>
+        </div>
+
+        <!-- 场景1: 初始空 → 提示 -->
+        <div id="cfgGlobalEmpty">
+          <div class="config-empty-state">暂未配置全局命名模板</div>
+        </div>
+
+        <!-- 场景2: 只读 → 展示 -->
+        <div id="cfgGlobalView" class="hidden">
+          <div class="config-display-row">
+            <span class="config-display-text" id="cfgGlobalViewText">{管理单位}_{业务标签:L2}_{设备类型}_{序号}</span>
+          </div>
+          <div class="config-display-preview" id="cfgGlobalViewPreview">预览：杭州市公安局_治安巡逻监控_枪机_001</div>
+        </div>
+
+        <!-- 编辑态 -->
+        <div id="cfgGlobalEdit" class="config-tpl-editor hidden">
+          <div class="editor-label">占位符</div>
+          <div class="config-chip-row" id="cfgGlobalChips">
+            <span class="config-chip" onclick="insertCfgChip('{管理单位}')">{管理单位}</span>
+            <span class="config-chip" onclick="insertCfgChip('{设备类型}')">{设备类型}</span>
+            <span class="config-chip" onclick="insertCfgChip('{序号}')">{序号}</span>
+            <span class="config-chip" onclick="insertCfgChip('{行政区划:省}')">{行政区划:省}</span>
+            <span class="config-chip" onclick="insertCfgChip('{行政区划:市}')">{行政区划:市}</span>
+            <span class="config-chip" onclick="insertCfgChip('{行政区划:区县}')">{行政区划:区县}</span>
+            <span class="config-chip" onclick="insertCfgChip('{行政区划:街道}')">{行政区划:街道}</span>
+            <span class="config-chip" onclick="insertCfgChip('{业务标签:L1}')">{业务标签:L1}</span>
+            <span class="config-chip" onclick="insertCfgChip('{业务标签:L2}')">{业务标签:L2}</span>
+            <span class="config-chip" onclick="insertCfgChip('{业务标签:叶子标签}')">{业务标签:叶子标签}</span>
+          </div>
+          <div class="editor-label">分隔符</div>
+          <div class="config-chip-row">
+            <span class="config-chip config-chip-sep" onclick="insertCfgChip('_')">_</span>
+            <span class="config-chip config-chip-sep" onclick="insertCfgChip('-')">-</span>
+            <span class="config-chip config-chip-sep" onclick="insertCfgChip('.')">.</span>
+            <span class="config-chip config-chip-sep" onclick="insertCfgChip('/')">/</span>
+            <span class="config-chip config-chip-sep" onclick="insertCfgChip('·')">·</span>
+            <span class="config-chip config-chip-sep" onclick="insertCfgChip(' ')">空格</span>
+            <span class="config-chip config-chip-sep config-chip-del" onclick="clearCfgGlobalTpl()">清空</span>
+          </div>
+          <textarea class="config-editor-textarea" id="cfgGlobalTplText">{管理单位}_{业务标签:L2}_{设备类型}_{序号}</textarea>
+          <div class="config-preview-box" id="cfgGlobalPreview"><span class="preview-label">预览</span>杭州市公安局_治安巡逻监控_枪机_001</div>
+          <div style="text-align:right;margin-top:10px;display:flex;justify-content:flex-end;gap:8px;">
+            <button class="ant-btn ant-btn-sm" onclick="cancelCfgGlobalEdit()">取消</button>
+            <button class="ant-btn ant-btn-primary ant-btn-sm" onclick="saveCfgGlobal()">保存</button>
+          </div>
+        </div>
+
+        <!-- ─── 业务目录命名模板 ─── -->
+        <div class="config-section-head" style="margin-top:24px;">
+          <span class="config-section-title">业务目录命名模板</span>
+          <button class="ant-btn ant-btn-primary ant-btn-sm" onclick="showCfgDirTplEditor()" id="btnAddDirTpl">+ 新增</button>
+        </div>
+
+        <table class="unit-table" id="cfgDirTplTable">
+          <thead><tr><th style="width:28%">生效目录</th><th style="width:30%">命名模板</th><th style="width:12%">启用</th><th style="text-align:right;">操作</th></tr></thead>
+          <tbody id="cfgDirTplBody"></tbody>
+        </table>
+
+        <!-- 新增/编辑 → 在列表下方展开完整编辑器 -->
+        <div id="cfgDirTplEditor" class="config-tpl-editor hidden mt-12">
+          <div class="editor-label">生效目录</div>
+          <select class="ant-select" style="width:200px;margin-bottom:12px;" id="cfgDirTplDir">
+            <option value="">请选择目录</option>
+            <option>治安巡逻监控</option>
+            <option>交通流量监测</option>
+            <option>市容环境监测</option>
+            <option>明厨亮灶</option>
+          </select>
+          <div class="editor-label">占位符</div>
+          <div class="config-chip-row">
+            <span class="config-chip" onclick="insertCfgDirChip('{管理单位}')">{管理单位}</span>
+            <span class="config-chip" onclick="insertCfgDirChip('{设备类型}')">{设备类型}</span>
+            <span class="config-chip" onclick="insertCfgDirChip('{序号}')">{序号}</span>
+            <span class="config-chip" onclick="insertCfgDirChip('{行政区划:省}')">{行政区划:省}</span>
+            <span class="config-chip" onclick="insertCfgDirChip('{行政区划:市}')">{行政区划:市}</span>
+            <span class="config-chip" onclick="insertCfgDirChip('{行政区划:区县}')">{行政区划:区县}</span>
+            <span class="config-chip" onclick="insertCfgDirChip('{行政区划:街道}')">{行政区划:街道}</span>
+            <span class="config-chip" onclick="insertCfgDirChip('{业务标签:L1}')">{业务标签:L1}</span>
+            <span class="config-chip" onclick="insertCfgDirChip('{业务标签:L2}')">{业务标签:L2}</span>
+            <span class="config-chip" onclick="insertCfgDirChip('{业务标签:叶子标签}')">{业务标签:叶子标签}</span>
+          </div>
+          <div class="editor-label">分隔符</div>
+          <div class="config-chip-row">
+            <span class="config-chip config-chip-sep" onclick="insertCfgDirChip('_')">_</span>
+            <span class="config-chip config-chip-sep" onclick="insertCfgDirChip('-')">-</span>
+            <span class="config-chip config-chip-sep" onclick="insertCfgDirChip('.')">.</span>
+            <span class="config-chip config-chip-sep" onclick="insertCfgDirChip('/')">/</span>
+            <span class="config-chip config-chip-sep" onclick="insertCfgDirChip('·')">·</span>
+            <span class="config-chip config-chip-sep" onclick="insertCfgDirChip(' ')">空格</span>
+            <span class="config-chip config-chip-sep config-chip-del" onclick="clearCfgDirTpl()">清空</span>
+          </div>
+          <textarea class="config-editor-textarea" id="cfgDirTplText">{管理单位}_{业务标签:L2}_{设备类型}_{序号}</textarea>
+          <div class="config-preview-box" id="cfgDirTplPreview"><span class="preview-label">预览</span>杭州市公安局_治安巡逻监控_枪机_001</div>
+          <div style="text-align:right;margin-top:10px;display:flex;justify-content:flex-end;gap:8px;">
+            <button class="ant-btn ant-btn-sm" onclick="hideCfgDirTplEditor()">取消</button>
+            <button class="ant-btn ant-btn-primary ant-btn-sm" onclick="saveCfgDirTpl()">保存</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══ Tab 3: 地图设置 ══ -->
+      <div class="config-tab-body" id="configTabMap">
+        <!-- ─── 全局地图设置 ─── -->
+        <div class="config-section-head" style="display:flex;align-items:center;">
+          <span class="config-section-title">全局地图设置</span>
+          <button class="ant-btn ant-btn-primary ant-btn-sm" id="mapGlobalBtn" style="margin-left:auto;" onclick="showMapGlobalEdit()">新增</button>
+        </div>
+
+        <!-- 场景1: 初始空 -->
+        <div id="mapGlobalEmpty">
+          <div class="config-empty-state">暂未配置全局地图设置</div>
+        </div>
+
+        <!-- 场景2: 只读 -->
+        <div id="mapGlobalView" class="hidden">
+          <div class="config-display-row">
+            <span class="config-display-text" id="mapGlobalViewText">中心坐标：120.1536, 30.2875</span>
+            <span style="font-size:12px;color:var(--ant-text-secondary);margin-left:16px;">缩放级别：12</span>
+          </div>
+        </div>
+
+        <!-- 编辑态 -->
+        <div id="mapGlobalEdit" class="config-tpl-editor hidden">
+          <div class="config-coord-row">
+            <div class="config-field">
+              <span class="form-label">中心点经度</span>
+              <input class="ant-input" id="mapGlobalLng" value="120.1536" style="font-size:13px;">
+            </div>
+            <div class="config-field">
+              <span class="form-label">中心点纬度</span>
+              <input class="ant-input" id="mapGlobalLat" value="30.2875" style="font-size:13px;">
+            </div>
+            <div class="config-field" style="max-width:100px;">
+              <span class="form-label">缩放级别</span>
+              <input class="ant-input" id="mapGlobalZoom" value="12" style="font-size:13px;">
+            </div>
+            <button class="ant-btn ant-btn-sm" style="flex-shrink:0;" onclick="openMapPicker('global')">&#128205; 地图拾取</button>
+          </div>
+          <div style="text-align:right;margin-top:10px;display:flex;justify-content:flex-end;gap:8px;">
+            <button class="ant-btn ant-btn-sm" onclick="cancelMapGlobalEdit()">取消</button>
+            <button class="ant-btn ant-btn-primary ant-btn-sm" onclick="saveMapGlobal()">保存</button>
+          </div>
+        </div>
+
+        <!-- ─── 业务目录地图设置 ─── -->
+        <div class="config-section-head" style="margin-top:24px;">
+          <span class="config-section-title">业务目录地图设置</span>
+          <button class="ant-btn ant-btn-primary ant-btn-sm" onclick="showMapDirEditor()" id="btnAddMapDir">+ 新增</button>
+        </div>
+
+        <table class="unit-table">
+          <thead><tr><th style="width:28%">生效目录</th><th style="width:34%">中心坐标</th><th style="width:12%">缩放</th><th style="width:12%">启用</th><th style="text-align:right;">操作</th></tr></thead>
+          <tbody id="cfgMapDirBody"></tbody>
+        </table>
+
+        <!-- 新增/编辑 → 列表下方展开 -->
+        <div id="mapDirEditor" class="config-tpl-editor hidden mt-12">
+          <div class="editor-label">生效目录</div>
+          <select class="ant-select" style="width:200px;margin-bottom:12px;" id="mapDirSelect">
+            <option value="">请选择目录</option>
+            <option>余杭区</option>
+            <option>西湖区</option>
+            <option>萧山区</option>
+          </select>
+          <div class="config-coord-row">
+            <div class="config-field">
+              <span class="form-label">中心点经度</span>
+              <input class="ant-input" id="mapDirLng" value="120.1536" style="font-size:13px;">
+            </div>
+            <div class="config-field">
+              <span class="form-label">中心点纬度</span>
+              <input class="ant-input" id="mapDirLat" value="30.2875" style="font-size:13px;">
+            </div>
+            <div class="config-field" style="max-width:100px;">
+              <span class="form-label">缩放级别</span>
+              <input class="ant-input" id="mapDirZoom" value="13" style="font-size:13px;">
+            </div>
+            <button class="ant-btn ant-btn-sm" style="flex-shrink:0;" onclick="openMapPicker('dir')">&#128205; 地图拾取</button>
+          </div>
+          <div style="text-align:right;margin-top:10px;display:flex;justify-content:flex-end;gap:8px;">
+            <button class="ant-btn ant-btn-sm" onclick="hideMapDirEditor()">取消</button>
+            <button class="ant-btn ant-btn-primary ant-btn-sm" onclick="saveMapDir()">保存</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="ant-modal-footer">
+      <button class="ant-btn" onclick="closeConfigCenter()">取消</button>
+      <button class="ant-btn ant-btn-primary" onclick="saveConfig()">保存配置</button>
+    </div>
+  </div>
+</div>
+
+<!-- Unit Edit Modal -->
+<div class="ant-modal-mask hidden" id="unitEditModal">
+  <div class="ant-modal" style="width:480px;">
+    <div class="ant-modal-header">
+      <span class="ant-modal-title" id="unitEditTitle">新增管理单位</span>
+      <button class="ant-modal-close" onclick="closeUnitEditModal()">&#10005;</button>
+    </div>
+    <div class="ant-modal-body">
+      <div class="form-item">
+        <span class="form-label">单位名称 <span style="color:var(--ant-error)">*</span></span>
+        <input type="text" class="ant-input" id="unitEditName" placeholder="请输入单位名称">
+      </div>
+      <div class="form-item">
+        <span class="form-label">上级单位</span>
+        <div class="ant-select">
+          <select id="unitEditParent">
+            <option value="">无（顶级单位）</option>
+          </select>
+        </div>
+        <div class="form-hint">留空则作为顶级单位创建</div>
+      </div>
+    </div>
+    <div class="ant-modal-footer">
+      <button class="ant-btn" onclick="closeUnitEditModal()">取消</button>
+      <button class="ant-btn ant-btn-primary" id="unitEditSaveBtn" onclick="saveUnitEdit()">保存</button>
+    </div>
+  </div>
+</div>
+
+<!-- Map Picker Modal -->
+<div class="ant-modal-mask hidden" id="mapPickerModal">
+  <div class="ant-modal" style="width:560px;">
+    <div class="ant-modal-header">
+      <span class="ant-modal-title">&#128205; 地图拾取</span>
+      <button class="ant-modal-close" onclick="closeMapPicker()">&#10005;</button>
+    </div>
+    <div style="padding:12px 24px;font-size:12px;color:var(--ant-text-secondary);">点击地图选择中心点，或拖拽标记调整位置</div>
+    <div id="pickerMap" style="width:calc(100% - 48px);height:320px;background:#e8f0e8;position:relative;cursor:crosshair;overflow:hidden;margin:0 24px;border-radius:4px;">
+      <!-- Simulated map grid -->
+      <div style="position:absolute;top:0;left:0;right:0;bottom:0;background:linear-gradient(#d4e4d4 1px,transparent 1px),linear-gradient(90deg,#d4e4d4 1px,transparent 1px);background-size:40px 40px;"></div>
+      <div style="position:absolute;top:50%;left:50%;width:200px;height:120px;background:rgba(22,119,255,.08);border:2px solid rgba(22,119,255,.3);border-radius:6px;transform:translate(-50%,-50%);font-size:11px;color:rgba(22,119,255,.5);display:flex;align-items:center;justify-content:center;pointer-events:none;">杭州市区域示意</div>
+      <!-- Marker -->
+      <div id="pickerMarker" style="position:absolute;width:24px;height:24px;transform:translate(-12px,-24px);pointer-events:none;display:none;">
+        <svg width="24" height="24" viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z" fill="#1677ff" stroke="#fff" stroke-width="1.5"/><circle cx="12" cy="9" r="3" fill="#fff"/></svg>
+      </div>
+      <!-- Coordinate display -->
+      <div id="pickerCoords" style="position:absolute;bottom:8px;left:8px;background:rgba(0,0,0,.65);color:#fff;font-size:11px;padding:4px 8px;border-radius:4px;display:none;">120.1536, 30.2875</div>
+    </div>
+    <div style="padding:12px 24px;display:flex;justify-content:space-between;align-items:center;">
+      <div><span style="font-size:12px;color:var(--ant-text-secondary);">当前选中：</span><span id="pickerResult" style="font-size:13px;color:var(--ant-text);">—</span></div>
+      <div style="display:flex;gap:8px;">
+        <button class="ant-btn ant-btn-sm" onclick="closeMapPicker()">取消</button>
+        <button class="ant-btn ant-btn-primary ant-btn-sm" onclick="confirmMapPicker()">确定</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Delete Confirm Modal -->
+<div class="ant-modal-mask hidden" id="cfgDelModal">
+  <div class="config-confirm-dialog">
+    <div class="config-confirm-body" id="cfgDelMsg">确定删除吗？</div>
+    <div class="config-confirm-footer">
+      <button class="ant-btn ant-btn-sm" onclick="closeCfgDel()">取消</button>
+      <button class="ant-btn ant-btn-sm" style="background:var(--ant-error);color:#fff;border-color:var(--ant-error);" onclick="closeCfgDel()">删除</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- ===== SCRIPTS ===== -->
+<script>
+// ==================== DATA ====================
+
+// Catalog Sets
+var catalogSets = {
+  basic: {
+    name: '基础目录',
+    children: [
+      {
+        id: 'basic_zn',
+        name: '智慧园区',
+        children: [
+          {
+            id: 'basic_zn_hd',
+            name: '华东区域',
+            children: [
+              { id: 'basic_zn_hd_hz', name: '杭州市', children: [{ id: 'basic_zn_hd_hz_xh', name: '西湖区', count: 120 }] },
+              { id: 'basic_zn_hd_nb', name: '宁波市', children: [{ id: 'basic_zn_hd_nb_hs', name: '海曙区', count: 85 }] }
+            ]
+          },
+          {
+            id: 'basic_zn_hn',
+            name: '华南区域',
+            children: [
+              { id: 'basic_zn_hn_sz', name: '深圳市', children: [{ id: 'basic_zn_hn_sz_ns', name: '南山区', count: 95 }] },
+              { id: 'basic_zn_hn_gz', name: '广州市', children: [{ id: 'basic_zn_hn_gz_th', name: '天河区', count: 68 }] }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  business: {
+    name: '业务目录',
+    children: [
+      {
+        id: 'biz_all',
+        name: '全部业务目录',
+        children: [
+          { id: 'biz_ga', name: 'GA-公安', children: [
+            { id: 'biz_ga_ry', name: '重点人员管控', count: 45 },
+            { id: 'biz_ga_zl', name: '治安巡逻监控', count: 38 }
+          ]},
+          { id: 'biz_cg', name: 'CG-城管', children: [
+            { id: 'biz_cg_sr', name: '市容环境监测', count: 28 }
+          ]},
+          { id: 'biz_jt', name: 'JT-交通', children: [
+            { id: 'biz_jt_ll', name: '交通流量监测', count: 55 }
+          ]},
+          { id: 'biz_ms', name: 'MS-民生', children: [
+            { id: 'biz_ms_sq', name: '社区服务监控', count: 22 }
+          ]},
+          { id: 'biz_zb', name: 'ZB-专网', children: [
+            { id: 'biz_zb_zw', name: '政务专网监控', count: 18 }
+          ]}
+        ]
+      }
+    ]
+  }
+};
+
+// Unit Dictionary
+var unitDict = [
+  { id: 'u1', name: '杭州市公安局', parentId: null, parentName: '—', deviceCount: 3, status: 'active', level: 1, children: [] },
+  { id: 'u2', name: '深圳市公安局', parentId: null, parentName: '—', deviceCount: 2, status: 'active', level: 1, children: [] },
+  { id: 'u3', name: '西湖区城管局', parentId: null, parentName: '—', deviceCount: 1, status: 'active', level: 1, children: [] },
+  { id: 'u4', name: '天河区城管局', parentId: null, parentName: '—', deviceCount: 0, status: 'active', level: 1, children: [] },
+  { id: 'u5', name: '交通运输局', parentId: null, parentName: '—', deviceCount: 0, status: 'active', level: 1, children: [
+    { id: 'u51', name: '道里区', parentId: 'u5', parentName: '交通运输局', deviceCount: 0, status: 'active', level: 2, children: [] },
+    { id: 'u52', name: '南岗区', parentId: 'u5', parentName: '交通运输局', deviceCount: 0, status: 'active', level: 2, children: [] }
+  ]},
+  { id: 'u6', name: '林业局', parentId: null, parentName: '—', deviceCount: 0, status: 'active', level: 1, children: [] },
+  { id: 'u7', name: '教育局', parentId: null, parentName: '—', deviceCount: 0, status: 'inactive', level: 1, children: [] }
+];
+
+function flattenUnits(dict) {
+  var result = [];
+  function walk(list) {
+    list.forEach(function(u) {
+      result.push(u);
+      if (u.children && u.children.length) walk(u.children);
+    });
+  }
+  walk(dict);
+  return result;
+}
+var flatUnits = flattenUnits(unitDict);
+
+// Devices
+var devices = [
+  { id: 'd1', name: '园区入口高清球机-A01', channel: 'CHN-HZ-XH-001', region: '西湖区', online: true, bizTags: ['重点人员管控', '治安巡逻监控', '市容环境监测'], manageUnit: '杭州市公安局', unitNA: false, unitNAReason: '' },
+  { id: 'd2', name: '园区主干道枪机-B02', channel: 'CHN-HZ-XH-002', region: '西湖区', online: true, bizTags: ['交通流量监测'], manageUnit: '杭州市公安局', unitNA: false, unitNAReason: '' },
+  { id: 'd3', name: '南门全景鹰眼-C03', channel: 'CHN-HZ-XH-003', region: '西湖区', online: false, bizTags: ['治安巡逻监控'], manageUnit: '西湖区城管局', unitNA: false, unitNAReason: '' },
+  { id: 'd4', name: '地下车库半球-D04', channel: 'CHN-NB-HS-001', region: '海曙区', online: true, bizTags: ['治安巡逻监控'], manageUnit: '深圳市公安局', unitNA: false, unitNAReason: '' },
+  { id: 'd5', name: '深圳湾公园球机-E01', channel: 'CHN-SZ-NS-001', region: '南山区', online: true, bizTags: ['市容环境监测', '社区服务监控'], manageUnit: '深圳市公安局', unitNA: false, unitNAReason: '' },
+  { id: 'd6', name: '天河体育中心枪机-F01', channel: 'CHN-GZ-TH-001', region: '天河区', online: false, bizTags: ['重点人员管控'], manageUnit: '杭州市公安局', unitNA: false, unitNAReason: '' },
+  { id: 'd7', name: '郊区森林防火监控-G01', channel: 'CHN-LY-001', region: '林业局辖区', online: true, bizTags: ['市容环境监测'], manageUnit: '', unitNA: true, unitNAReason: '跨区域设备' },
+  { id: 'd8', name: '学校门口枪机-H01', channel: 'CHN-JY-001', region: '教育局辖区', online: true, bizTags: ['治安巡逻监控', '社区服务监控'], manageUnit: '', unitNA: true, unitNAReason: '临时设备' },
+  { id: 'd9', name: '政务大厅入口球机-I01', channel: 'CHN-ZW-001', region: '政务区', online: true, bizTags: ['政务专网监控'], manageUnit: '', unitNA: false, unitNAReason: '' }
+];
+
+// Name Template
+var nameTemplate = {
+  template: '{管理单位}_{业务标签:L2}_{设备类型}_{序号}',
+  dirOverrides: [
+    { dir: '华东区域', template: '{行政区域}_{管理单位}_{业务标签:L2}_{设备类型}_{序号}' },
+    { dir: '华南区域', template: '{管理单位}_{业务标签:L2}_{设备类型}_{序号}' }
+  ]
+};
+
+// ==================== STATES ====================
+var currentCatalogSet = 'basic';
+var catalogData = catalogSets.basic;
+var expanded = {};
+var selectedCatalogId = null;
+var filterName = '';
+var filterChannel = '';
+var filterStatus = '';
+var filterUnits = [];
+var filterTags = [];
+var selectedDeviceIds = {};
+var selectedUnitId = null;
+var unitEditId = null;
+var configTab = 'dict';
+var naExpanded = false;
+var modalTagData = {};
+var catalogSearchText = '';
+
+// ==================== UTILS ====================
+function getSelectedCount() {
+  return Object.keys(selectedDeviceIds).length;
+}
+
+function getFilteredDevices() {
+  return devices.filter(function(d) {
+    if (filterName && d.name.indexOf(filterName) === -1 && d.channel.indexOf(filterName) === -1) return false;
+    if (filterChannel && d.channel.indexOf(filterChannel) === -1) return false;
+    if (filterStatus === 'online' && !d.online) return false;
+    if (filterStatus === 'offline' && d.online) return false;
+    if (filterUnits.length > 0) {
+      var match = false;
+      if (filterUnits.indexOf('_none') >= 0 && !d.manageUnit && !d.unitNA) match = true;
+      if (filterUnits.indexOf('_na') >= 0 && d.unitNA) match = true;
+      if (filterUnits.indexOf(d.manageUnit) >= 0) match = true;
+      if (!match) return false;
+    }
+    if (filterTags.length > 0) {
+      var tagMatch = false;
+      filterTags.forEach(function(t) {
+        if (d.bizTags.indexOf(t) >= 0) tagMatch = true;
+      });
+      if (!tagMatch) return false;
+    }
+    return true;
+  });
+}
+
+function getTotalFiltered() {
+  return getFilteredDevices().length;
+}
+
+function getScope() {
+  var sel = getSelectedCount();
+  var total = getTotalFiltered();
+  if (sel > 0) return '已选 ' + sel + ' 台设备';
+  return '当前列表下全部 ' + total + ' 台设备';
+}
+
+// ==================== CATALOG ====================
+function switchCatalogSet(val) {
+  currentCatalogSet = val;
+  catalogData = catalogSets[val];
+  expanded = {};
+  selectedCatalogId = null;
+  document.getElementById('breadcrumbDir').textContent = '当前目录：' + (val === 'basic' ? '智慧园区' : '全部业务目录');
+  renderCatalogTree();
+}
+
+function findCatalog(nodes, id) {
+  for (var i = 0; i < nodes.length; i++) {
+    if (nodes[i].id === id) return nodes[i];
+    if (nodes[i].children) {
+      var found = findCatalog(nodes[i].children, id);
+      if (found) return found;
+    }
+  }
+  return null;
+}
+
+function selectCatalog(id) {
+  selectedCatalogId = id;
+  var node = findCatalog(catalogData.children, id);
+  document.getElementById('breadcrumbDir').textContent = '当前目录：' + (node ? node.name : '');
+  renderCatalogTree();
+}
+
+function toggleCatalog(id) {
+  expanded[id] = !expanded[id];
+  renderCatalogTree();
+}
+
+function renderCatalogTree() {
+  var container = document.getElementById('catalogTree');
+  var search = (document.getElementById('catalogSearch').value || '').trim().toLowerCase();
+  catalogSearchText = search;
+
+  function buildHtml(nodes, depth) {
+    var html = '';
+    nodes.forEach(function(node) {
+      var hasChildren = node.children && node.children.length > 0;
+      var nodeText = node.name.toLowerCase();
+      var matchesSearch = !search || nodeText.indexOf(search) >= 0;
+      var childMatches = false;
+      var childrenHtml = '';
+
+      if (hasChildren) {
+        childrenHtml = buildHtml(node.children, depth + 1);
+        childMatches = childrenHtml.length > 0;
+      }
+
+      if (!matchesSearch && !childMatches) return; // skip non-matching
+
+      var isExpanded = expanded[node.id] || (search && childMatches);
+      var isSelected = selectedCatalogId === node.id;
+      var arrow = hasChildren ? ('<span class="tree-arrow">' + (isExpanded ? '&#9660;' : '&#9654;') + '</span>') : '<span class="tree-arrow" style="visibility:hidden;"></span>';
+      var icon = '<span class="tree-icon">' + (hasChildren ? (isExpanded ? '&#128193;' : '&#128194;') : '&#128196;') + '</span>';
+      var badge = node.count ? ('<span class="tree-badge">' + node.count + '</span>') : '';
+
+      html += '<div class="tree-node' + (isSelected ? ' selected' : '') + '" style="padding-left:' + (12 + depth * 16) + 'px" onclick="';
+      if (hasChildren) {
+        html += 'event.stopPropagation(); toggleCatalog(\'' + node.id + '\');';
+      } else {
+        html += 'selectCatalog(\'' + node.id + '\');';
+      }
+      html += '">' + arrow + icon + '<span class="tree-label">' + node.name + '</span>' + badge + '</div>';
+
+      if (hasChildren && isExpanded && childrenHtml) {
+        html += '<div class="tree-children">' + childrenHtml + '</div>';
+      }
+    });
+    return html;
+  }
+
+  container.innerHTML = buildHtml(catalogData.children, 0) || '<div style="padding:16px;color:var(--ant-text-tertiary);font-size:13px;">无匹配目录</div>';
+}
+
+// ==================== TABLE ====================
+function renderTable() {
+  var tbody = document.getElementById('deviceTableBody');
+  var filtered = getFilteredDevices();
+  var selCount = getSelectedCount();
+  var total = getTotalFiltered();
+
+  var html = '';
+  filtered.forEach(function(d) {
+    var checked = selectedDeviceIds[d.id] ? ' checked' : '';
+
+    // Biz tags
+    var tagsHtml = '';
+    var maxShow = 2;
+    d.bizTags.slice(0, maxShow).forEach(function(t) {
+      tagsHtml += '<span class="tag-chip tag-business">' + t + '</span>';
+    });
+    if (d.bizTags.length > maxShow) {
+      tagsHtml += '<span class="tag-chip tag-overflow" data-tooltip="' + d.bizTags.slice(maxShow).join(', ') + '">+' + (d.bizTags.length - maxShow) + '</span>';
+    }
+
+    // Unit
+    var unitHtml = '';
+    if (d.unitNA) {
+      unitHtml = '<span class="ant-tag ant-tag-gray" data-tooltip="' + d.unitNAReason + '">&#9888; 不适用</span>';
+    } else if (d.manageUnit) {
+      unitHtml = '<span>' + d.manageUnit + '</span>';
+    } else {
+      unitHtml = '<span class="text-tertiary">—</span>';
+    }
+
+    // Status
+    var statusHtml = d.online
+      ? '<span class="status-dot online"></span>在线'
+      : '<span class="status-dot offline"></span>离线';
+
+    html += '<tr>' +
+      '<td class="col-checkbox"><input type="checkbox" ' + checked + ' onchange="updateSelectAll(); selectedDeviceIds[\'' + d.id + '\']=this.checked; updateBatchInfo();"></td>' +
+      '<td>' + d.name + '</td>' +
+      '<td><span class="mono">' + d.channel + '</span></td>' +
+      '<td>' + statusHtml + '</td>' +
+      '<td>' + unitHtml + '</td>' +
+      '<td>' + tagsHtml + '</td>' +
+      '<td class="col-actions"><button class="ant-btn ant-btn-sm ant-btn-text" onclick="showDetail(\'' + d.id + '\')">详情</button></td>' +
+      '</tr>';
+  });
+
+  tbody.innerHTML = html || '<tr><td colspan="7" style="text-align:center;padding:40px;color:var(--ant-text-tertiary);">暂无数据</td></tr>';
+  document.getElementById('paginationInfo').textContent = '共 ' + total + ' 台设备';
+  document.getElementById('selectAll').checked = selCount > 0 && selCount === total;
+  updateBatchInfo();
+}
+
+function toggleSelectAll() {
+  var checked = document.getElementById('selectAll').checked;
+  var filtered = getFilteredDevices();
+  selectedDeviceIds = {};
+  if (checked) {
+    filtered.forEach(function(d) { selectedDeviceIds[d.id] = true; });
+  }
+  renderTable();
+}
+
+function updateSelectAll() {
+  var sel = getSelectedCount();
+  var total = getTotalFiltered();
+  document.getElementById('selectAll').checked = sel > 0 && sel === total;
+  updateBatchInfo();
+}
+
+function updateBatchInfo() {
+  document.getElementById('batchInfo').textContent = getScope();
+}
+
+function showDetail(id) {
+  var d = devices.find(function(x) { return x.id === id; });
+  if (d) alert('设备详情\n\n名称：' + d.name + '\n编码：' + d.channel + '\n状态：' + (d.online ? '在线' : '离线') + '\n管理单位：' + (d.manageUnit || '—') + '\n标签：' + d.bizTags.join(', '));
+}
+
+// ==================== FILTER ====================
+function doFilter() {
+  filterName = document.getElementById('searchName').value.trim();
+  filterChannel = document.getElementById('searchChannel').value.trim();
+  filterStatus = document.getElementById('filterStatus').value;
+  selectedDeviceIds = {};
+  renderTable();
+}
+
+function resetFilter() {
+  document.getElementById('searchName').value = '';
+  document.getElementById('searchChannel').value = '';
+  document.getElementById('filterStatus').value = '';
+  filterName = '';
+  filterChannel = '';
+  filterStatus = '';
+  filterUnits = [];
+  filterTags = [];
+  selectedDeviceIds = {};
+  updateFilterUI();
+  renderTable();
+}
+
+// Filter Unit Dropdown
+function toggleFilterUnit() {
+  var dd = document.getElementById('filterUnitDropdown');
+  var open = dd.classList.contains('open');
+  closeAllFilterDropdowns();
+  if (!open) {
+    dd.classList.add('open');
+    renderFilterUnitDropdown();
+  }
+}
+
+function renderFilterUnitDropdown() {
+  var dd = document.getElementById('filterUnitDropdown');
+  var html = '<div class="filter-dropdown-item" onclick="toggleFilterUnitItem(\'_none\')"><input type="checkbox" ' + (filterUnits.indexOf('_none') >= 0 ? 'checked' : '') + '> <span>无管理单位</span></div>';
+  html += '<div class="filter-dropdown-item" onclick="toggleFilterUnitItem(\'_na\')"><input type="checkbox" ' + (filterUnits.indexOf('_na') >= 0 ? 'checked' : '') + '> <span>不适用</span></div>';
+  var usedNames = {};
+  flatUnits.forEach(function(u) {
+    if (!usedNames[u.name]) {
+      usedNames[u.name] = true;
+      html += '<div class="filter-dropdown-item" onclick="toggleFilterUnitItem(\'' + u.name + '\')"><input type="checkbox" ' + (filterUnits.indexOf(u.name) >= 0 ? 'checked' : '') + '> <span>' + u.name + '</span></div>';
+    }
+  });
+  dd.innerHTML = html;
+}
+
+function toggleFilterUnitItem(val) {
+  var idx = filterUnits.indexOf(val);
+  if (idx >= 0) filterUnits.splice(idx, 1);
+  else filterUnits.push(val);
+  renderFilterUnitDropdown();
+  updateFilterUI();
+}
+
+// Filter Tag Dropdown
+function toggleFilterTag() {
+  var dd = document.getElementById('filterTagDropdown');
+  var open = dd.classList.contains('open');
+  closeAllFilterDropdowns();
+  if (!open) {
+    dd.classList.add('open');
+    renderFilterTagDropdown();
+  }
+}
+
+function renderFilterTagDropdown() {
+  var dd = document.getElementById('filterTagDropdown');
+  var allTags = ['重点人员管控', '治安巡逻监控', '市容环境监测', '交通流量监测', '社区服务监控', '政务专网监控'];
+  var html = '';
+  allTags.forEach(function(t) {
+    html += '<div class="filter-dropdown-item" onclick="toggleFilterTagItem(\'' + t + '\')"><input type="checkbox" ' + (filterTags.indexOf(t) >= 0 ? 'checked' : '') + '> <span>' + t + '</span></div>';
+  });
+  dd.innerHTML = html;
+}
+
+function toggleFilterTagItem(val) {
+  var idx = filterTags.indexOf(val);
+  if (idx >= 0) filterTags.splice(idx, 1);
+  else filterTags.push(val);
+  renderFilterTagDropdown();
+  updateFilterUI();
+}
+
+function updateFilterUI() {
+  var trigU = document.getElementById('filterUnitTrigger');
+  if (filterUnits.length > 0) {
+    trigU.textContent = filterUnits.map(function(u) {
+      if (u === '_none') return '无管理单位';
+      if (u === '_na') return '不适用';
+      return u;
+    }).join(', ');
+    trigU.classList.add('has-value');
+  } else {
+    trigU.textContent = '请选择管理单位';
+    trigU.classList.remove('has-value');
+  }
+
+  var trigT = document.getElementById('filterTagTrigger');
+  if (filterTags.length > 0) {
+    trigT.textContent = filterTags.join(', ');
+    trigT.classList.add('has-value');
+  } else {
+    trigT.textContent = '请选择标签';
+    trigT.classList.remove('has-value');
+  }
+}
+
+function closeAllFilterDropdowns() {
+  document.querySelectorAll('.filter-dropdown.open').forEach(function(el) { el.classList.remove('open'); });
+}
+
+document.addEventListener('click', function() {
+  closeAllFilterDropdowns();
+});
+
+// ==================== TAG MODAL ====================
+function openTagModal() {
+  var sel = getSelectedCount();
+  if (sel === 0 && getTotalFiltered() === 0) { alert('没有可操作的设备'); return; }
+  document.getElementById('tagModalScope').textContent = getScope();
+  modalTagData = {};
+  document.getElementById('modalTagTree').innerHTML = renderModalTagTree();
+  document.getElementById('modalSelectedTags').innerHTML = renderModalSelectedTags();
+  document.getElementById('tagModal').classList.remove('hidden');
+}
+
+function closeTagModal() {
+  document.getElementById('tagModal').classList.add('hidden');
+}
+
+var modalTagOptions = [
+  { id: 't_ry', name: '重点人员管控', group: 'GA-公安', checked: false },
+  { id: 't_zl', name: '治安巡逻监控', group: 'GA-公安', checked: false },
+  { id: 't_sr', name: '市容环境监测', group: 'CG-城管', checked: false },
+  { id: 't_ll', name: '交通流量监测', group: 'JT-交通', checked: false },
+  { id: 't_sq', name: '社区服务监控', group: 'MS-民生', checked: false },
+  { id: 't_zw', name: '政务专网监控', group: 'ZB-专网', checked: false }
+];
+
+function renderModalTagTree() {
+  var groups = {};
+  modalTagOptions.forEach(function(t) {
+    if (!groups[t.group]) groups[t.group] = [];
+    groups[t.group].push(t);
+  });
+  var html = '';
+  Object.keys(groups).forEach(function(g) {
+    var tags = groups[g];
+    html += '<div style="font-size:13px;font-weight:600;color:var(--ant-text-secondary);padding:8px 0 4px;">' + g + '</div>';
+    tags.forEach(function(t) {
+      html += '<label class="tree-node" style="cursor:pointer;"><input type="checkbox" ' + (t.checked ? 'checked' : '') + ' onchange="toggleModalTag(\'' + t.id + '\')"> <span>' + t.name + '</span></label>';
+    });
+  });
+  return html;
+}
+
+function renderModalSelectedTags() {
+  var sel = modalTagOptions.filter(function(t) { return t.checked; });
+  if (!sel.length) return '<span class="text-tertiary" style="font-size:13px;">尚未选择标签</span>';
+  return '<span class="form-label">已选标签：</span>' + sel.map(function(t) {
+    return '<span class="tag-chip tag-business">' + t.name + ' <span style="cursor:pointer;margin-left:4px;" onclick="toggleModalTag(\'' + t.id + '\')">&times;</span></span>';
+  }).join(' ');
+}
+
+function toggleModalTag(id) {
+  var t = modalTagOptions.find(function(x) { return x.id === id; });
+  if (t) { t.checked = !t.checked; }
+  document.getElementById('modalTagTree').innerHTML = renderModalTagTree();
+  document.getElementById('modalSelectedTags').innerHTML = renderModalSelectedTags();
+}
+
+function saveTags() {
+  var selectedTags = modalTagOptions.filter(function(t) { return t.checked; }).map(function(t) { return t.name; });
+  if (!selectedTags.length) { alert('请至少选择一个标签'); return; }
+  var sel = getSelectedCount();
+  if (sel > 0) {
+    Object.keys(selectedDeviceIds).forEach(function(did) {
+      var d = devices.find(function(x) { return x.id === did; });
+      if (d) {
+        selectedTags.forEach(function(t) { if (d.bizTags.indexOf(t) < 0) d.bizTags.push(t); });
+      }
+    });
+  } else {
+    getFilteredDevices().forEach(function(d) {
+      selectedTags.forEach(function(t) { if (d.bizTags.indexOf(t) < 0) d.bizTags.push(t); });
+    });
+  }
+  closeTagModal();
+  renderTable();
+}
+
+function confirmClearTags() {
+  var sel = getSelectedCount();
+  if (sel === 0 && getTotalFiltered() === 0) { alert('没有可操作的设备'); return; }
+  if (!confirm('确定清除 ' + getScope() + ' 的所有标签？')) return;
+  if (sel > 0) {
+    Object.keys(selectedDeviceIds).forEach(function(did) {
+      var d = devices.find(function(x) { return x.id === did; });
+      if (d) d.bizTags = [];
+    });
+  } else {
+    getFilteredDevices().forEach(function(d) { d.bizTags = []; });
+  }
+  renderTable();
+}
+
+// ==================== UNIT MODAL ====================
+function openSetUnitModal() {
+  var sel = getSelectedCount();
+  var total = getTotalFiltered();
+  if (sel === 0 && total === 0) { alert('没有可操作的设备'); return; }
+  document.getElementById('unitModalScope').textContent = getScope();
+  selectedUnitId = null;
+  naExpanded = false;
+  document.getElementById('naSection').classList.remove('expanded');
+  document.getElementById('naCheck').checked = false;
+  document.getElementById('naReason').value = '';
+  document.getElementById('naOtherInput').style.display = 'none';
+  document.getElementById('naOtherInput').value = '';
+  document.getElementById('naReasonWrap').style.display = 'none';
+  document.getElementById('naNote').style.display = 'none';
+  document.getElementById('unitSearch').value = '';
+
+  // Impact warning
+  var impactHtml = '';
+  if (sel === 0) {
+    impactHtml = '<div style="padding:10px 16px;background:#fffbe6;border:1px solid #ffe58f;border-radius:6px;font-size:13px;">' +
+      '<strong>&#9888; 注意：</strong>未选择特定设备，将对<strong>当前列表下全部 ' + total + ' 台设备</strong>设置管理单位。' +
+      '</div>';
+  }
+  document.getElementById('unitImpact').innerHTML = impactHtml;
+
+  renderUnitList();
+  updateUnitConfirmBtn();
+  document.getElementById('unitModal').classList.remove('hidden');
+}
+
+function closeUnitModal() {
+  document.getElementById('unitModal').classList.add('hidden');
+}
+
+function renderUnitList() {
+  var container = document.getElementById('unitList');
+  var search = (document.getElementById('unitSearch').value || '').trim().toLowerCase();
+  var filtered = flatUnits.filter(function(u) {
+    return !search || u.name.toLowerCase().indexOf(search) >= 0 || (u.parentName || '').toLowerCase().indexOf(search) >= 0;
+  });
+  var html = '';
+  filtered.forEach(function(u) {
+    var sel = selectedUnitId === u.id;
+    html += '<div class="unit-item' + (sel ? ' selected' : '') + '" onclick="selectUnitItem(\'' + u.id + '\')">' +
+      '<div class="check-mark">' + (sel ? '&#10003;' : '') + '</div>' +
+      '<span>' + u.name + '</span>' +
+      (u.level > 1 ? '<span class="text-tertiary" style="font-size:11px;">(' + u.parentName + ')</span>' : '') +
+      (u.status === 'inactive' ? '<span class="ant-tag ant-tag-gray" style="margin-left:auto;">已停用</span>' : '') +
+      '</div>';
+  });
+  container.innerHTML = html || '<div style="padding:16px;text-align:center;color:var(--ant-text-tertiary);">无匹配单位</div>';
+}
+
+function selectUnitItem(id) {
+  selectedUnitId = id;
+  document.getElementById('naCheck').checked = false;
+  document.getElementById('naReason').value = '';
+  document.getElementById('naOtherInput').style.display = 'none';
+  document.getElementById('naReasonWrap').style.display = 'none';
+  document.getElementById('naNote').style.display = 'none';
+  document.getElementById('naSection').classList.remove('expanded');
+  naExpanded = false;
+  renderUnitList();
+  updateUnitConfirmBtn();
+}
+
+function toggleNASection() {
+  naExpanded = !naExpanded;
+  var sec = document.getElementById('naSection');
+  if (naExpanded) sec.classList.add('expanded');
+  else sec.classList.remove('expanded');
+}
+
+function onNACheck() {
+  var checked = document.getElementById('naCheck').checked;
+  document.getElementById('naReasonWrap').style.display = checked ? 'block' : 'none';
+  document.getElementById('naNote').style.display = checked ? 'block' : 'none';
+  if (!checked) {
+    document.getElementById('naReason').value = '';
+    document.getElementById('naOtherInput').style.display = 'none';
+    document.getElementById('naOtherInput').value = '';
+  }
+  if (checked) { selectedUnitId = null; renderUnitList(); }
+  updateUnitConfirmBtn();
+}
+
+function onNAReasonChange() {
+  var val = document.getElementById('naReason').value;
+  document.getElementById('naOtherInput').style.display = val === '其他' ? 'block' : 'none';
+  if (val !== '其他') document.getElementById('naOtherInput').value = '';
+  updateUnitConfirmBtn();
+}
+
+function updateUnitConfirmBtn() {
+  var btn = document.getElementById('unitConfirmBtn');
+  var naChecked = document.getElementById('naCheck').checked;
+  if (naChecked) {
+    var reason = document.getElementById('naReason').value;
+    var other = document.getElementById('naOtherInput').value.trim();
+    var valid = reason && (reason !== '其他' || other);
+    btn.disabled = !valid;
+  } else {
+    btn.disabled = !selectedUnitId;
+  }
+}
+
+function saveUnit() {
+  var naChecked = document.getElementById('naCheck').checked;
+  var sel = getSelectedCount();
+  var targets = sel > 0
+    ? Object.keys(selectedDeviceIds).map(function(id) { return devices.find(function(d) { return d.id === id; }); }).filter(Boolean)
+    : getFilteredDevices();
+
+  if (naChecked) {
+    var reason = document.getElementById('naReason').value;
+    if (reason === '其他') reason = document.getElementById('naOtherInput').value.trim();
+    targets.forEach(function(d) { d.unitNA = true; d.unitNAReason = reason; d.manageUnit = ''; });
+  } else if (selectedUnitId) {
+    var unit = flatUnits.find(function(u) { return u.id === selectedUnitId; });
+    if (unit) {
+      targets.forEach(function(d) { d.manageUnit = unit.name; d.unitNA = false; d.unitNAReason = ''; });
+    }
+  }
+  closeUnitModal();
+  renderTable();
+}
+
+function confirmClearUnit() {
+  var sel = getSelectedCount();
+  if (sel === 0 && getTotalFiltered() === 0) { alert('没有可操作的设备'); return; }
+  if (!confirm('确定清除 ' + getScope() + ' 的管理单位？')) return;
+  var targets = sel > 0
+    ? Object.keys(selectedDeviceIds).map(function(id) { return devices.find(function(d) { return d.id === id; }); }).filter(Boolean)
+    : getFilteredDevices();
+  targets.forEach(function(d) { d.manageUnit = ''; d.unitNA = false; d.unitNAReason = ''; });
+  renderTable();
+}
+
+// ==================== RENAME MODAL ====================
+function openRenamePreview() {
+  var sel = getSelectedCount();
+  var total = getTotalFiltered();
+  if (sel === 0 && total === 0) { alert('没有可操作的设备'); return; }
+  document.getElementById('renameModalScope').textContent = getScope();
+  document.getElementById('renameTemplate').textContent = nameTemplate.template;
+
+  var targets = sel > 0
+    ? Object.keys(selectedDeviceIds).map(function(id) { return devices.find(function(d) { return d.id === id; }); }).filter(Boolean)
+    : getFilteredDevices();
+
+  // Count impact
+  var canRename = 0;
+  var skipped = [];
+  targets.forEach(function(d) {
+    var hasManager = d.manageUnit && !d.unitNA;
+    var hasTags = d.bizTags.length > 0;
+    if (hasManager && hasTags) canRename++;
+    else skipped.push(d);
+  });
+
+  document.getElementById('renameImpact').innerHTML =
+    '<span class="impact-dot green"></span> 可规范命名：<strong>' + canRename + '</strong> 台 &nbsp;&nbsp;' +
+    '<span class="impact-dot yellow"></span> 将跳过：<strong>' + skipped.length + '</strong> 台';
+
+  document.getElementById('renameExample').textContent =
+    '示例：杭州市公安局_治安巡逻监控_枪机_001  |  深圳市公安局_市容环境监测_球机_001';
+
+  var skipHtml = '';
+  if (skipped.length > 0) {
+    skipHtml = '<table class="skip-table"><thead><tr><th>设备名称</th><th>管理单位</th><th>标签</th><th>跳过原因</th></tr></thead><tbody>';
+    skipped.forEach(function(d) {
+      var reason = !d.manageUnit || d.unitNA ? '缺少管理单位' : '缺少业务标签';
+      skipHtml += '<tr><td class="mono">' + d.name + '</td><td>' + (d.manageUnit || '—') + '</td><td>' + (d.bizTags.length ? d.bizTags.join(', ') : '—') + '</td><td class="text-secondary">' + reason + '</td></tr>';
+    });
+    skipHtml += '</tbody></table>';
+  } else {
+    skipHtml = '<span class="text-success" style="font-size:13px;">所有设备均可进行规范命名</span>';
+  }
+  document.getElementById('renameSkips').innerHTML = skipHtml;
+
+  var confirmBtn = document.getElementById('renameConfirmBtn');
+  confirmBtn.disabled = canRename === 0;
+
+  document.getElementById('renameModal').classList.remove('hidden');
+}
+
+function closeRenameModal() {
+  document.getElementById('renameModal').classList.add('hidden');
+}
+
+function doRename() {
+  var sel = getSelectedCount();
+  var targets = sel > 0
+    ? Object.keys(selectedDeviceIds).map(function(id) { return devices.find(function(d) { return d.id === id; }); }).filter(Boolean)
+    : getFilteredDevices();
+
+  var seq = 1;
+  targets.forEach(function(d) {
+    if (!d.manageUnit || d.unitNA || d.bizTags.length === 0) return;
+    var numStr = String(seq).padStart(3, '0');
+    var newName = d.manageUnit + '_' + d.bizTags[0] + '_' + (d.name.indexOf('球机') >= 0 ? '球机' : d.name.indexOf('枪机') >= 0 ? '枪机' : d.name.indexOf('鹰眼') >= 0 ? '鹰眼' : d.name.indexOf('半球') >= 0 ? '半球' : '设备') + '_' + numStr;
+    d.name = newName;
+    seq++;
+  });
+  closeRenameModal();
+  renderTable();
+}
+
+// ==================== CONFIG CENTER ====================
+var cfgGlobalHasValue = false;
+var cfgGlobalTplText = '{管理单位}_{业务标签:L2}_{设备类型}_{序号}';
+
+// ── Dir naming template data ──
+var cfgDirTplData = [
+  { dir: '明厨亮灶', template: '{管理单位}_{业务标签:叶子标签}_{设备类型}', enabled: true },
+  { dir: '社会面监控', template: '{管理单位}_社会面_{设备类型}_{序号}', enabled: true }
+];
+
+// ── Map data ──
+var cfgMapGlobalHasValue = false;
+var cfgMapGlobalLng = '120.1536', cfgMapGlobalLat = '30.2875', cfgMapGlobalZoom = '12';
+var cfgMapDirData = [
+  { dir: '余杭区', lng: '120.2992', lat: '30.3985', zoom: '13', enabled: true },
+  { dir: '西湖区', lng: '120.1350', lat: '30.2592', zoom: '14', enabled: false }
+];
+
+function openConfigCenter() {
+  configTab = 'dict';
+  document.querySelectorAll('.config-tab').forEach(function(el) { el.classList.remove('active'); });
+  document.querySelector('.config-tab[data-tab="dict"]').classList.add('active');
+  document.querySelectorAll('.config-tab-body').forEach(function(el) { el.classList.remove('active'); });
+  document.getElementById('configTabDict').classList.add('active');
+  renderUnitDict();
+  document.getElementById('unitDictCount').textContent = flatUnits.length;
+  document.getElementById('configModal').classList.remove('hidden');
+}
+
+function closeConfigCenter() {
+  document.getElementById('configModal').classList.add('hidden');
+}
+
+function saveConfig() {
+  alert('配置已保存');
+  closeConfigCenter();
+}
+
+function switchConfigTab(tab) {
+  configTab = tab;
+  document.querySelectorAll('.config-tab').forEach(function(el) { el.classList.remove('active'); });
+  document.querySelector('.config-tab[data-tab="' + tab + '"]').classList.add('active');
+  document.querySelectorAll('.config-tab-body').forEach(function(el) { el.classList.remove('active'); });
+  if (tab === 'dict') {
+    document.getElementById('configTabDict').classList.add('active');
+    renderUnitDict();
+  } else if (tab === 'naming') {
+    document.getElementById('configTabNaming').classList.add('active');
+    renderCfgNamingState();
+  } else {
+    document.getElementById('configTabMap').classList.add('active');
+    renderCfgMapState();
+  }
+}
+
+// ==================== UNIT DICT ====================
+function renderUnitDict() {
+  var tbody = document.getElementById('unitDictBody');
+  document.getElementById('unitDictCount').textContent = flatUnits.length;
+
+  var used = {};
+  devices.forEach(function(d) { if (d.manageUnit) used[d.manageUnit] = (used[d.manageUnit] || 0) + 1; });
+
+  function walkFlat(list) {
+    var result = [];
+    function _walk(items) {
+      items.forEach(function(u) {
+        result.push(u);
+        if (u.children && u.children.length) _walk(u.children);
+      });
+    }
+    _walk(list);
+    return result;
+  }
+  var ordered = walkFlat(unitDict);
+
+  var html = '';
+  ordered.forEach(function(u) {
+    var indentClass = u.level === 1 ? 'config-tree-l1' : (u.level === 2 ? 'config-tree-l2' : 'config-tree-l3');
+    var marker = u.level === 1 ? (u.children && u.children.length ? '&#9660;' : '') : '&#9500;';
+    var markerHtml = marker ? '<span class="config-tree-marker">' + marker + '</span>' : '';
+    var deviceCount = used[u.name] || u.deviceCount || 0;
+    var canDelete = deviceCount === 0;
+    var parentDisp = u.parentName || '&#8212;';
+    var rowDisabled = deviceCount === 0 && u.status !== 'active' ? ' class="disabled"' : '';
+
+    var badgeHtml = deviceCount > 0 ? '<span class="config-badge config-badge-blue">' + deviceCount + '</span>' : '<span class="config-badge config-badge-gray">0</span>';
+    var switchChecked = u.status === 'active' ? ' checked' : '';
+
+    html += '<tr' + rowDisabled + '>' +
+      '<td><span class="config-tree-indent ' + indentClass + '">' + markerHtml + u.name + '</span></td>' +
+      '<td><span class="text-tertiary">' + parentDisp + '</span></td>' +
+      '<td>' + badgeHtml + '</td>' +
+      '<td><label class="config-switch"><input type="checkbox"' + switchChecked + ' onchange="toggleUnitStatusCfg(\'' + u.id + '\', this.checked)"><span class="switch-slider"></span></label></td>' +
+      '<td class="unit-actions">' +
+      '<button class="ant-btn ant-btn-sm ant-btn-text" onclick="openUnitEditModal(\'' + u.id + '\')">编辑</button>' +
+      '<button class="ant-btn ant-btn-sm ant-btn-text" ' + (canDelete ? 'onclick="deleteUnit(\'' + u.id + '\')"' : 'disabled') + '>' + (canDelete ? '删除' : '不可删') + '</button>' +
+      '</td></tr>';
+  });
+  tbody.innerHTML = html;
+}
+
+function toggleUnitStatusCfg(id, checked) {
+  var unit = flatUnits.find(function(u) { return u.id === id; });
+  if (!unit) return;
+  unit.status = checked ? 'active' : 'inactive';
+  renderUnitDict();
+}
+
+function openUnitEditModal(id) {
+  unitEditId = id;
+  var title = id ? '编辑管理单位' : '新增管理单位';
+  document.getElementById('unitEditTitle').textContent = title;
+
+  // Populate parent select
+  var sel = document.getElementById('unitEditParent');
+  sel.innerHTML = '<option value="">无（顶级单位）</option>';
+  flatUnits.forEach(function(u) {
+    if (u.id !== id && u.level === 1) {
+      sel.innerHTML += '<option value="' + u.id + '">' + u.name + '</option>';
+    }
+  });
+
+  if (id) {
+    var unit = flatUnits.find(function(u) { return u.id === id; });
+    if (unit) {
+      document.getElementById('unitEditName').value = unit.name;
+      sel.value = unit.parentId || '';
+    }
+  } else {
+    document.getElementById('unitEditName').value = '';
+    sel.value = '';
+  }
+
+  document.getElementById('unitEditModal').classList.remove('hidden');
+}
+
+function closeUnitEditModal() {
+  document.getElementById('unitEditModal').classList.add('hidden');
+  unitEditId = null;
+}
+
+function saveUnitEdit() {
+  var name = document.getElementById('unitEditName').value.trim();
+  if (!name) { alert('请输入单位名称'); return; }
+
+  // Check duplicate
+  var dup = flatUnits.find(function(u) { return u.name === name && u.id !== unitEditId; });
+  if (dup) { alert('单位名称已存在'); return; }
+
+  var parentId = document.getElementById('unitEditParent').value;
+  var parentName = '&#8212;';
+  if (parentId) {
+    var p = flatUnits.find(function(u) { return u.id === parentId; });
+    if (p) parentName = p.name;
+  }
+
+  if (unitEditId) {
+    var unit = flatUnits.find(function(u) { return u.id === unitEditId; });
+    if (unit) {
+      var oldName = unit.name;
+      unit.name = name;
+      unit.parentId = parentId || null;
+      unit.parentName = parentName.replace('&#8212;', '—');
+      // Update device references
+      devices.forEach(function(d) { if (d.manageUnit === oldName) d.manageUnit = name; });
+    }
+  } else {
+    var newId = 'u' + Date.now();
+    var parentUnit = null;
+    if (parentId) {
+      parentUnit = flatUnits.find(function(u) { return u.id === parentId; });
+    }
+    var newUnit = { id: newId, name: name, parentId: parentId || null, parentName: parentName.replace('&#8212;', '—'), deviceCount: 0, status: 'active', level: parentUnit ? 2 : 1, children: [] };
+    if (parentUnit) {
+      parentUnit.children.push(newUnit);
+    } else {
+      unitDict.push(newUnit);
+    }
+  }
+
+  flatUnits = flattenUnits(unitDict);
+  closeUnitEditModal();
+  renderUnitDict();
+  document.getElementById('unitDictCount').textContent = flatUnits.length;
+}
+
+function toggleUnitStatus(id) {
+  var unit = flatUnits.find(function(u) { return u.id === id; });
+  if (!unit) return;
+  unit.status = unit.status === 'active' ? 'inactive' : 'active';
+  renderUnitDict();
+}
+
+function deleteUnit(id) {
+  var unit = flatUnits.find(function(u) { return u.id === id; });
+  if (!unit) return;
+
+  var used = 0;
+  devices.forEach(function(d) { if (d.manageUnit === unit.name) used++; });
+  if (used > 0) { alert('该单位下有 ' + used + ' 台设备关联，无法删除'); return; }
+  if (unit.children && unit.children.length > 0) { alert('该单位下有子单位，请先删除子单位'); return; }
+
+  if (!confirm('确定删除单位"' + unit.name + '"？')) return;
+
+  function removeFromList(list, targetId) {
+    for (var i = 0; i < list.length; i++) {
+      if (list[i].id === targetId) { list.splice(i, 1); return true; }
+      if (list[i].children && removeFromList(list[i].children, targetId)) return true;
+    }
+    return false;
+  }
+  removeFromList(unitDict, id);
+  flatUnits = flattenUnits(unitDict);
+  renderUnitDict();
+  document.getElementById('unitDictCount').textContent = flatUnits.length;
+}
+
+// ==================== NAMING TAB: GLOBAL TEMPLATE STATE MACHINE ====================
+function renderCfgNamingState() {
+  if (cfgGlobalHasValue) {
+    document.getElementById('cfgGlobalEmpty').classList.add('hidden');
+    document.getElementById('cfgGlobalView').classList.remove('hidden');
+    document.getElementById('cfgGlobalEdit').classList.add('hidden');
+    document.getElementById('cfgGlobalViewText').textContent = cfgGlobalTplText;
+    var p = cfgGlobalTplText.replace(/\{管理单位\}/g, '杭州市公安局').replace(/\{业务标签:L2\}/g, '治安巡逻监控').replace(/\{设备类型\}/g, '枪机').replace(/\{序号\}/g, '001');
+    document.getElementById('cfgGlobalViewPreview').textContent = '预览：' + p;
+  } else {
+    document.getElementById('cfgGlobalEmpty').classList.remove('hidden');
+    document.getElementById('cfgGlobalView').classList.add('hidden');
+    document.getElementById('cfgGlobalEdit').classList.add('hidden');
+  }
+  // toggle header button
+  var b = document.getElementById('cfgGlobalBtn');
+  if (cfgGlobalHasValue) {
+    b.textContent = '编辑'; b.className = 'ant-btn ant-btn-sm';
+  } else {
+    b.textContent = '新增'; b.className = 'ant-btn ant-btn-primary ant-btn-sm';
+  }
+  renderCfgDirTplTable();
+}
+
+function showCfgGlobalEdit() {
+  document.getElementById('cfgGlobalEmpty').classList.add('hidden');
+  document.getElementById('cfgGlobalView').classList.add('hidden');
+  document.getElementById('cfgGlobalEdit').classList.remove('hidden');
+  document.getElementById('cfgGlobalTplText').value = cfgGlobalTplText;
+  updateCfgGlobalPreview();
+}
+
+function cancelCfgGlobalEdit() {
+  document.getElementById('cfgGlobalEdit').classList.add('hidden');
+  if (cfgGlobalHasValue) {
+    document.getElementById('cfgGlobalView').classList.remove('hidden');
+  } else {
+    document.getElementById('cfgGlobalEmpty').classList.remove('hidden');
+  }
+}
+
+function saveCfgGlobal() {
+  alert('（演示）全局模板已保存');
+  cfgGlobalTplText = document.getElementById('cfgGlobalTplText').value;
+  cfgGlobalHasValue = true;
+  document.getElementById('cfgGlobalEdit').classList.add('hidden');
+  document.getElementById('cfgGlobalView').classList.remove('hidden');
+  document.getElementById('cfgGlobalViewText').textContent = cfgGlobalTplText;
+  var p = cfgGlobalTplText.replace(/\{管理单位\}/g, '杭州市公安局').replace(/\{业务标签:L2\}/g, '治安巡逻监控').replace(/\{设备类型\}/g, '枪机').replace(/\{序号\}/g, '001');
+  document.getElementById('cfgGlobalViewPreview').textContent = '预览：' + p;
+}
+
+function insertCfgChip(text) {
+  var ta = document.getElementById('cfgGlobalTplText');
+  ta.value += text;
+  ta.focus();
+  updateCfgGlobalPreview();
+}
+
+function clearCfgGlobalTpl() {
+  document.getElementById('cfgGlobalTplText').value = '';
+  updateCfgGlobalPreview();
+}
+
+function updateCfgGlobalPreview() {
+  var val = document.getElementById('cfgGlobalTplText').value;
+  var p = val.replace(/\{管理单位\}/g, '杭州市公安局').replace(/\{业务标签:L2\}/g, '治安巡逻监控').replace(/\{设备类型\}/g, '枪机').replace(/\{序号\}/g, '001');
+  document.getElementById('cfgGlobalPreview').innerHTML = '<span class="preview-label">预览</span>' + (p || '—');
+}
+
+// ── Dir template ──
+function renderCfgDirTplTable() {
+  var tbody = document.getElementById('cfgDirTplBody');
+  var html = '';
+  cfgDirTplData.forEach(function(dt) {
+    html += '<tr>' +
+      '<td>' + dt.dir + '</td>' +
+      '<td><code style="font-size:12px;">' + dt.template + '</code></td>' +
+      '<td><label class="config-switch"><input type="checkbox"' + (dt.enabled ? ' checked' : '') + ' onchange="toggleCfgDirTpl(\'' + dt.dir + '\', this.checked)"><span class="switch-slider"></span></label></td>' +
+      '<td style="text-align:right;"><button class="ant-btn ant-btn-sm ant-btn-text" onclick="editCfgDirTpl(\'' + dt.dir + '\')">编辑</button><button class="ant-btn ant-btn-sm ant-btn-text" style="color:var(--ant-error);" onclick="confirmDelTpl(\'' + dt.dir + '\')">删除</button></td>' +
+      '</tr>';
+  });
+  tbody.innerHTML = html;
+}
+
+function toggleCfgDirTpl(dir, checked) {
+  var dt = cfgDirTplData.find(function(d) { return d.dir === dir; });
+  if (dt) dt.enabled = checked;
+}
+
+function showCfgDirTplEditor() {
+  document.getElementById('cfgDirTplEditor').classList.remove('hidden');
+  document.getElementById('cfgDirTplDir').value = '';
+  document.getElementById('cfgDirTplText').value = '{管理单位}_{业务标签:L2}_{设备类型}_{序号}';
+  document.getElementById('cfgDirTplDir').dataset.editDir = '';
+  updateCfgDirTplPreview();
+}
+
+function editCfgDirTpl(dir) {
+  var dt = cfgDirTplData.find(function(d) { return d.dir === dir; });
+  if (!dt) return;
+  document.getElementById('cfgDirTplEditor').classList.remove('hidden');
+  document.getElementById('cfgDirTplDir').value = dir;
+  document.getElementById('cfgDirTplDir').dataset.editDir = dir;
+  document.getElementById('cfgDirTplText').value = dt.template;
+  updateCfgDirTplPreview();
+}
+
+function hideCfgDirTplEditor() {
+  document.getElementById('cfgDirTplEditor').classList.add('hidden');
+}
+
+function insertCfgDirChip(text) {
+  var ta = document.getElementById('cfgDirTplText');
+  ta.value += text;
+  ta.focus();
+  updateCfgDirTplPreview();
+}
+
+function clearCfgDirTpl() {
+  document.getElementById('cfgDirTplText').value = '';
+  updateCfgDirTplPreview();
+}
+
+function updateCfgDirTplPreview() {
+  var val = document.getElementById('cfgDirTplText').value;
+  var p = val.replace(/\{管理单位\}/g, '杭州市公安局').replace(/\{业务标签:L2\}/g, '治安巡逻监控').replace(/\{设备类型\}/g, '枪机').replace(/\{序号\}/g, '001');
+  document.getElementById('cfgDirTplPreview').innerHTML = '<span class="preview-label">预览</span>' + (p || '—');
+}
+
+function saveCfgDirTpl() {
+  var dir = document.getElementById('cfgDirTplDir').value;
+  var tpl = document.getElementById('cfgDirTplText').value;
+  var editDir = document.getElementById('cfgDirTplDir').dataset.editDir;
+  if (!dir) { alert('请选择生效目录'); return; }
+  if (!tpl) { alert('请输入命名模板'); return; }
+
+  if (editDir) {
+    var dt = cfgDirTplData.find(function(d) { return d.dir === editDir; });
+    if (dt) { dt.dir = dir; dt.template = tpl; }
+  } else {
+    var dup = cfgDirTplData.find(function(d) { return d.dir === dir; });
+    if (dup) { alert('该目录已存在模板配置'); return; }
+    cfgDirTplData.push({ dir: dir, template: tpl, enabled: true });
+  }
+  alert('（演示）目录模板已保存');
+  hideCfgDirTplEditor();
+  renderCfgDirTplTable();
+}
+
+function confirmDelTpl(dir) {
+  document.getElementById('cfgDelMsg').textContent = '确定删除「' + dir + '」的命名模板吗？';
+  document.getElementById('cfgDelModal').classList.remove('hidden');
+  document.getElementById('cfgDelModal').dataset.action = 'delTpl_' + dir;
+}
+
+function closeCfgDel() {
+  document.getElementById('cfgDelModal').classList.add('hidden');
+  var action = document.getElementById('cfgDelModal').dataset.action || '';
+  if (action.indexOf('delTpl_') === 0) {
+    var dir = action.replace('delTpl_', '');
+    cfgDirTplData = cfgDirTplData.filter(function(d) { return d.dir !== dir; });
+    renderCfgDirTplTable();
+  } else if (action.indexOf('delMap_') === 0) {
+    var mdir = action.replace('delMap_', '');
+    cfgMapDirData = cfgMapDirData.filter(function(d) { return d.dir !== mdir; });
+    renderCfgMapDirTable();
+  }
+}
+
+// ==================== MAP TAB ====================
+function renderCfgMapState() {
+  if (cfgMapGlobalHasValue) {
+    document.getElementById('mapGlobalEmpty').classList.add('hidden');
+    document.getElementById('mapGlobalView').classList.remove('hidden');
+    document.getElementById('mapGlobalEdit').classList.add('hidden');
+    document.getElementById('mapGlobalViewText').textContent = '中心坐标：' + cfgMapGlobalLng + ', ' + cfgMapGlobalLat;
+  } else {
+    document.getElementById('mapGlobalEmpty').classList.remove('hidden');
+    document.getElementById('mapGlobalView').classList.add('hidden');
+    document.getElementById('mapGlobalEdit').classList.add('hidden');
+  }
+  // toggle header button
+  var b = document.getElementById('mapGlobalBtn');
+  if (cfgMapGlobalHasValue) {
+    b.textContent = '编辑'; b.className = 'ant-btn ant-btn-sm';
+  } else {
+    b.textContent = '新增'; b.className = 'ant-btn ant-btn-primary ant-btn-sm';
+  }
+  renderCfgMapDirTable();
+}
+
+function renderCfgMapDirTable() {
+  var tbody = document.getElementById('cfgMapDirBody');
+  var html = '';
+  cfgMapDirData.forEach(function(md) {
+    html += '<tr' + (md.enabled ? '' : ' class="disabled"') + '>' +
+      '<td>' + md.dir + '</td>' +
+      '<td>' + md.lng + ', ' + md.lat + '</td>' +
+      '<td>' + md.zoom + '</td>' +
+      '<td><label class="config-switch"><input type="checkbox"' + (md.enabled ? ' checked' : '') + ' onchange="toggleCfgMapDir(\'' + md.dir + '\', this.checked)"><span class="switch-slider"></span></label></td>' +
+      '<td style="text-align:right;"><button class="ant-btn ant-btn-sm ant-btn-text" onclick="editMapDir(\'' + md.dir + '\')">编辑</button><button class="ant-btn ant-btn-sm ant-btn-text" style="color:var(--ant-error);" onclick="confirmDelMap(\'' + md.dir + '\')">删除</button></td>' +
+      '</tr>';
+  });
+  tbody.innerHTML = html;
+}
+
+function toggleCfgMapDir(dir, checked) {
+  var md = cfgMapDirData.find(function(d) { return d.dir === dir; });
+  if (md) md.enabled = checked;
+}
+
+function showMapGlobalEdit() {
+  document.getElementById('mapGlobalEmpty').classList.add('hidden');
+  document.getElementById('mapGlobalView').classList.add('hidden');
+  document.getElementById('mapGlobalEdit').classList.remove('hidden');
+  document.getElementById('mapGlobalLng').value = cfgMapGlobalLng;
+  document.getElementById('mapGlobalLat').value = cfgMapGlobalLat;
+  document.getElementById('mapGlobalZoom').value = cfgMapGlobalZoom;
+}
+
+function cancelMapGlobalEdit() {
+  document.getElementById('mapGlobalEdit').classList.add('hidden');
+  if (cfgMapGlobalHasValue) {
+    document.getElementById('mapGlobalView').classList.remove('hidden');
+  } else {
+    document.getElementById('mapGlobalEmpty').classList.remove('hidden');
+  }
+}
+
+function saveMapGlobal() {
+  alert('（演示）全局地图设置已保存');
+  cfgMapGlobalLng = document.getElementById('mapGlobalLng').value;
+  cfgMapGlobalLat = document.getElementById('mapGlobalLat').value;
+  cfgMapGlobalZoom = document.getElementById('mapGlobalZoom').value;
+  cfgMapGlobalHasValue = true;
+  document.getElementById('mapGlobalEdit').classList.add('hidden');
+  document.getElementById('mapGlobalView').classList.remove('hidden');
+  document.getElementById('mapGlobalViewText').textContent = '中心坐标：' + cfgMapGlobalLng + ', ' + cfgMapGlobalLat;
+}
+
+function showMapDirEditor() {
+  document.getElementById('mapDirEditor').classList.remove('hidden');
+  document.getElementById('mapDirSelect').value = '';
+  document.getElementById('mapDirLng').value = '120.1536';
+  document.getElementById('mapDirLat').value = '30.2875';
+  document.getElementById('mapDirZoom').value = '13';
+  document.getElementById('mapDirSelect').dataset.editDir = '';
+}
+
+function editMapDir(dir) {
+  var md = cfgMapDirData.find(function(d) { return d.dir === dir; });
+  if (!md) return;
+  document.getElementById('mapDirEditor').classList.remove('hidden');
+  document.getElementById('mapDirSelect').value = dir;
+  document.getElementById('mapDirSelect').dataset.editDir = dir;
+  document.getElementById('mapDirLng').value = md.lng;
+  document.getElementById('mapDirLat').value = md.lat;
+  document.getElementById('mapDirZoom').value = md.zoom;
+}
+
+function hideMapDirEditor() {
+  document.getElementById('mapDirEditor').classList.add('hidden');
+}
+
+function saveMapDir() {
+  var dir = document.getElementById('mapDirSelect').value;
+  var lng = document.getElementById('mapDirLng').value;
+  var lat = document.getElementById('mapDirLat').value;
+  var zoom = document.getElementById('mapDirZoom').value;
+  var editDir = document.getElementById('mapDirSelect').dataset.editDir;
+  if (!dir) { alert('请选择生效目录'); return; }
+
+  if (editDir) {
+    var md = cfgMapDirData.find(function(d) { return d.dir === editDir; });
+    if (md) { md.dir = dir; md.lng = lng; md.lat = lat; md.zoom = zoom; }
+  } else {
+    var dup = cfgMapDirData.find(function(d) { return d.dir === dir; });
+    if (dup) { alert('该目录已存在地图配置'); return; }
+    cfgMapDirData.push({ dir: dir, lng: lng, lat: lat, zoom: zoom, enabled: true });
+  }
+  alert('（演示）目录地图设置已保存');
+  hideMapDirEditor();
+  renderCfgMapDirTable();
+}
+
+function confirmDelMap(dir) {
+  document.getElementById('cfgDelMsg').textContent = '确定删除「' + dir + '」的地图设置吗？';
+  document.getElementById('cfgDelModal').classList.remove('hidden');
+  document.getElementById('cfgDelModal').dataset.action = 'delMap_' + dir;
+}
+
+// ==================== MAP PICKER ====================
+var pickerCaller = null;
+var pickerLng = 120.1536, pickerLat = 30.2875;
+
+function openMapPicker(caller) {
+  pickerCaller = caller;
+  document.getElementById('mapPickerModal').classList.remove('hidden');
+  var mapEl = document.getElementById('pickerMap');
+  setTimeout(function() {
+    var x = mapEl.offsetWidth / 2, y = mapEl.offsetHeight / 2;
+    movePickerMarker(x, y, mapEl);
+  }, 50);
+}
+
+function closeMapPicker() {
+  document.getElementById('mapPickerModal').classList.add('hidden');
+}
+
+function movePickerMarker(x, y, mapEl) {
+  var w = mapEl.offsetWidth, h = mapEl.offsetHeight;
+  pickerLng = 120.0 + (x / w) * 0.4;
+  pickerLat = 30.5 - (y / h) * 0.4;
+
+  var m = document.getElementById('pickerMarker');
+  var c = document.getElementById('pickerCoords');
+  m.style.left = x + 'px';
+  m.style.top = y + 'px';
+  m.style.display = 'block';
+  c.style.display = 'block';
+  c.textContent = pickerLng.toFixed(4) + ', ' + pickerLat.toFixed(4);
+  document.getElementById('pickerResult').textContent = pickerLng.toFixed(4) + ', ' + pickerLat.toFixed(4);
+}
+
+function confirmMapPicker() {
+  if (pickerCaller === 'global') {
+    document.getElementById('mapGlobalLng').value = pickerLng.toFixed(4);
+    document.getElementById('mapGlobalLat').value = pickerLat.toFixed(4);
+  } else {
+    document.getElementById('mapDirLng').value = pickerLng.toFixed(4);
+    document.getElementById('mapDirLat').value = pickerLat.toFixed(4);
+  }
+  closeMapPicker();
+}
+
+// ==================== BATCH SELECTION LOGIC ====================
+function selectAllBatch() {
+  var checked = document.getElementById('selectAllBatch').checked;
+  selectedDeviceIds = {};
+  if (checked) {
+    getFilteredDevices().forEach(function(d) { selectedDeviceIds[d.id] = true; });
+  }
+  document.getElementById('selectAll').checked = checked;
+  renderTable();
+}
+
+function updateBatchInfo() {
+  var sel = getSelectedCount();
+  var total = getTotalFiltered();
+  document.getElementById('batchInfo').textContent = sel > 0 ? '已选 ' + sel + ' 台设备' : '已选 0 台设备';
+
+  // Update batch button disabled state
+  var disableAll = sel === 0;
+  var buttons = ['btnAssociateTag', 'btnClearTags', 'btnSetUnit', 'btnClearUnit', 'btnRename'];
+  buttons.forEach(function(bid) {
+    var btn = document.getElementById(bid);
+    if (btn) btn.disabled = disableAll;
+  });
+
+  // Sync selectAll and selectAllBatch checkboxes
+  var filtered = getFilteredDevices();
+  document.getElementById('selectAll').checked = sel > 0 && sel === total;
+  var batchCb = document.getElementById('selectAllBatch');
+  if (batchCb) batchCb.checked = sel > 0 && sel === total;
+}
+
+// Update existing toggleSelectAll to sync batch checkbox
+var _origToggleSelectAll = toggleSelectAll;
+toggleSelectAll = function() {
+  _origToggleSelectAll();
+  var batchCb = document.getElementById('selectAllBatch');
+  if (batchCb) batchCb.checked = document.getElementById('selectAll').checked;
+};
+
+// Override updateSelectAll to also sync batch checkbox
+var _origUpdateSelectAll = updateSelectAll;
+updateSelectAll = function() {
+  _origUpdateSelectAll();
+  var sel = getSelectedCount();
+  var total = getTotalFiltered();
+  document.getElementById('selectAll').checked = sel > 0 && sel === total;
+  var batchCb = document.getElementById('selectAllBatch');
+  if (batchCb) batchCb.checked = sel > 0 && sel === total;
+  updateBatchInfo();
+};
+
+// Override openTagModal to check for selection
+var _origOpenTagModal = openTagModal;
+openTagModal = function() {
+  var sel = getSelectedCount();
+  if (sel === 0) { alert('请先选择设备'); return; }
+  _origOpenTagModal();
+};
+
+// Override confirmClearTags to check for selection
+var _origConfirmClearTags = confirmClearTags;
+confirmClearTags = function() {
+  var sel = getSelectedCount();
+  if (sel === 0) { alert('请先选择设备'); return; }
+  _origConfirmClearTags();
+};
+
+// Override openSetUnitModal to check for selection
+var _origOpenSetUnitModal = openSetUnitModal;
+openSetUnitModal = function() {
+  var sel = getSelectedCount();
+  if (sel === 0) { alert('请先选择设备'); return; }
+  _origOpenSetUnitModal();
+};
+
+// Override confirmClearUnit to check for selection
+var _origConfirmClearUnit = confirmClearUnit;
+confirmClearUnit = function() {
+  var sel = getSelectedCount();
+  if (sel === 0) { alert('请先选择设备'); return; }
+  _origConfirmClearUnit();
+};
+
+// Override openRenamePreview to check for selection
+var _origOpenRenamePreview = openRenamePreview;
+openRenamePreview = function() {
+  var sel = getSelectedCount();
+  if (sel === 0) { alert('请先选择设备'); return; }
+  _origOpenRenamePreview();
+};
+
+// Override getScope for the unit modal to work with new logic
+getScope = function() {
+  var sel = getSelectedCount();
+  return '已选 ' + sel + ' 台设备';
+};
+
+// ==================== INIT ====================
+document.addEventListener('DOMContentLoaded', function() {
+  renderCatalogTree();
+  renderTable();
+  updateFilterUI();
+  updateBatchInfo();
+
+  // Close modals on mask click
+  document.querySelectorAll('.ant-modal-mask').forEach(function(mask) {
+    mask.addEventListener('click', function(e) {
+      if (e.target === mask) mask.classList.add('hidden');
+    });
+  });
+
+  // Map picker click handler
+  var pickerMapEl = document.getElementById('pickerMap');
+  if (pickerMapEl) {
+    pickerMapEl.addEventListener('click', function(e) {
+      var rect = this.getBoundingClientRect();
+      var x = e.clientX - rect.left;
+      var y = e.clientY - rect.top;
+      movePickerMarker(x, y, this);
+    });
+  }
+
+  // NA check change
+  var naCheckEl = document.getElementById('naCheck');
+  if (naCheckEl) naCheckEl.addEventListener('change', onNACheck);
+  var naReasonEl = document.getElementById('naReason');
+  if (naReasonEl) naReasonEl.addEventListener('change', onNAReasonChange);
+  var naOtherEl = document.getElementById('naOtherInput');
+  if (naOtherEl) naOtherEl.addEventListener('input', updateUnitConfirmBtn);
+
+  // Global template textarea live preview
+  var globalTplEl = document.getElementById('cfgGlobalTplText');
+  if (globalTplEl) {
+    globalTplEl.addEventListener('input', updateCfgGlobalPreview);
+  }
+  // Dir template textarea live preview
+  var dirTplEl = document.getElementById('cfgDirTplText');
+  if (dirTplEl) {
+    dirTplEl.addEventListener('input', updateCfgDirTplPreview);
+  }
+});
+
+</script>
+
+</body>
+</html>

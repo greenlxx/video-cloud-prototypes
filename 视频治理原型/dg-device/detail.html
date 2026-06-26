@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>设备详情 - 视频智能运维管理平台</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root{--ant-primary:#1677ff;--ant-primary-bg:#e6f4ff;--ant-success:#52c41a;--ant-warning:#faad14;--ant-error:#ff4d4f;--ant-text:rgba(0,0,0,0.88);--ant-text-secondary:rgba(0,0,0,0.65);--ant-text-tertiary:rgba(0,0,0,0.45);--ant-border:#d9d9d9;--ant-border-secondary:#f0f0f0;--shadow-1:0 1px 2px rgba(0,0,0,0.03),0 1px 6px -1px rgba(0,0,0,0.02);--shadow-2:0 3px 6px -4px rgba(0,0,0,0.12),0 6px 16px rgba(0,0,0,0.08);}
+    *{box-sizing:border-box;}
+    body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;font-size:14px;color:var(--ant-text);background:#f0f2f5;margin:0;}
+    .layout{display:flex;min-height:100vh;flex-direction:column;}
+    .header{height:56px;background:#001529;display:flex;align-items:center;padding:0 20px;gap:16px;position:sticky;top:0;z-index:100;}
+    .content-wrap{display:flex;flex:1;}
+    .sider{width:220px;background:#001529;min-height:calc(100vh - 56px);flex-shrink:0;}
+    .main{flex:1;padding:24px;overflow:auto;}
+    .menu-group-title{padding:12px 16px 4px;font-size:11px;color:rgba(255,255,255,0.35);}
+    .menu-item{display:flex;align-items:center;gap:10px;height:44px;padding:0 20px;color:rgba(255,255,255,0.65);cursor:pointer;transition:all 0.2s;font-size:14px;}
+    .menu-item:hover{color:#fff;background:rgba(255,255,255,0.08);}
+    .menu-item.active{color:#fff;background:var(--ant-primary);}
+    .menu-item i{width:16px;text-align:center;}
+    .ant-btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;height:32px;padding:0 15px;font-size:14px;border:1px solid var(--ant-border);border-radius:4px;background:#fff;color:var(--ant-text);cursor:pointer;transition:all 0.2s;white-space:nowrap;}
+    .ant-btn:hover{color:var(--ant-primary);border-color:var(--ant-primary);}
+    .ant-btn-primary{background:var(--ant-primary);border-color:var(--ant-primary);color:#fff;}
+    .ant-btn-sm{height:28px;padding:0 12px;font-size:13px;}
+    .ant-card{background:#fff;border-radius:8px;box-shadow:var(--shadow-1);}
+    .ant-card-head{display:flex;align-items:center;justify-content:space-between;min-height:52px;padding:0 24px;border-bottom:1px solid var(--ant-border-secondary);font-size:15px;font-weight:600;}
+    .ant-card-body{padding:24px;}
+    .ant-input{height:32px;padding:0 11px;font-size:14px;border:1px solid var(--ant-border);border-radius:4px;outline:none;background:#fff;width:100%;}
+    .ant-select{height:32px;padding:0 8px;border:1px solid var(--ant-border);border-radius:4px;background:#fff;font-size:14px;outline:none;}
+    .ant-textarea{padding:8px 11px;font-size:14px;border:1px solid var(--ant-border);border-radius:4px;outline:none;background:#fff;width:100%;resize:vertical;min-height:80px;font-family:inherit;}
+    .breadcrumb{display:flex;align-items:center;gap:6px;color:var(--ant-text-tertiary);font-size:14px;margin-bottom:16px;}
+    .breadcrumb a{color:var(--ant-text-tertiary);text-decoration:none;}
+    .breadcrumb a:hover{color:var(--ant-primary);}
+    .tag-chip{display:inline-flex;align-items:center;gap:3px;height:22px;padding:0 8px;border-radius:4px;font-size:12px;margin-right:4px;white-space:nowrap;}
+    .tag-business{background:#e6f4ff;border:1px solid #91caff;color:#0958d9;}
+    .tag-ai{background:#f6ffed;border:1px solid #b7eb8f;color:#237804;}
+    .form-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px 24px;margin-bottom:16px;}
+    .form-item{margin-bottom:0;}
+    .form-label{display:block;margin-bottom:6px;font-size:14px;color:var(--ant-text-secondary);}
+    .form-label.required::before{content:'* ';color:#ff4d4f;}
+    .info-row{display:grid;grid-template-columns:120px 1fr;gap:8px 16px;font-size:14px;margin-bottom:6px;}
+    .info-label{color:rgba(0,0,0,0.45);}
+    .domain-block{border:1px solid var(--ant-border-secondary);border-radius:8px;margin-bottom:10px;overflow:hidden;}
+    .domain-head{padding:10px 14px;background:#fafafa;border-bottom:1px solid var(--ant-border-secondary);display:flex;align-items:center;justify-content:space-between;}
+    .domain-body{padding:12px 14px;}
+
+    /* 多选下拉 */
+    .multi-select{position:relative;width:100%;min-height:32px;border:1px solid var(--ant-border);border-radius:4px;padding:4px 28px 4px 8px;font-size:14px;color:var(--ant-text);background:#fff;outline:none;cursor:pointer;display:flex;flex-wrap:wrap;gap:4px;align-items:center;}
+    .multi-select:hover{border-color:var(--ant-primary);}
+    .multi-select.active{border-color:var(--ant-primary);box-shadow:0 0 0 2px rgba(22,119,255,0.12);}
+    .multi-select::after{content:'';position:absolute;right:10px;top:50%;transform:translateY(-50%);width:0;height:0;border-left:4px solid transparent;border-right:4px solid transparent;border-top:5px solid rgba(0,0,0,0.45);pointer-events:none;}
+    .multi-select .placeholder{color:var(--ant-text-tertiary);font-size:13px;}
+    .multi-tag{display:inline-flex;align-items:center;gap:4px;height:22px;padding:0 6px;border-radius:4px;background:#e6f4ff;color:#0958d9;border:1px solid #91caff;font-size:12px;max-width:100%;}
+    .multi-tag span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+    .multi-tag .remove{width:14px;height:14px;display:flex;align-items:center;justify-content:center;border-radius:50%;cursor:pointer;font-size:11px;line-height:1;flex-shrink:0;}
+    .multi-tag .remove:hover{background:rgba(0,0,0,0.08);}
+    .multi-dropdown{position:absolute;top:calc(100% + 4px);left:0;right:0;background:#fff;border:1px solid var(--ant-border);border-radius:4px;box-shadow:var(--shadow-2);z-index:100;max-height:240px;overflow-y:auto;display:none;padding:4px 0;}
+    .multi-dropdown.show{display:block;}
+    /* 树形下拉 */
+    .tree-dropdown .tree-node{display:flex;align-items:center;gap:6px;padding:6px 10px;font-size:13px;cursor:pointer;white-space:nowrap;}
+    .tree-dropdown .tree-node:hover{background:#f5f5f5;}
+    .tree-dropdown .tree-node .toggle{width:16px;text-align:center;color:rgba(0,0,0,0.45);font-size:10px;flex-shrink:0;cursor:pointer;}
+    .tree-dropdown .tree-node .check{width:14px;height:14px;border:1px solid var(--ant-border);border-radius:2px;display:flex;align-items:center;justify-content:center;font-size:10px;flex-shrink:0;}
+    .tree-dropdown .tree-node.checked .check{background:var(--ant-primary);border-color:var(--ant-primary);color:#fff;}
+    .tree-dropdown .tree-children{padding-left:20px;display:none;}
+    .tree-dropdown .tree-children.expanded{display:block;}
+    .tree-dropdown .tree-leaf{display:flex;align-items:center;gap:8px;padding:5px 10px 5px 26px;font-size:13px;cursor:pointer;white-space:nowrap;}
+    .tree-dropdown .tree-leaf:hover{background:#f5f5f5;}
+    .tree-dropdown .tree-leaf input[type="checkbox"]{width:14px;height:14px;accent-color:var(--ant-primary);cursor:pointer;flex-shrink:0;margin:0;}
+    .tags-wrap{display:flex;flex-wrap:wrap;gap:4px;align-items:center;flex:1;}
+  </style>
+</head>
+<body>
+<div class="layout">
+  <header class="header">
+    <div class="flex items-center gap-3">
+      <div style="background:#1677ff;width:32px;height:32px;border-radius:6px;display:flex;align-items:center;justify-content:center;"><i class="fa-solid fa-video text-white text-sm"></i></div>
+      <span class="text-white font-semibold text-base">视频智能运维管理平台</span>
+    </div>
+    <div style="flex:1;"></div>
+    <div class="flex items-center gap-2" style="color:rgba(255,255,255,0.85);">
+      <div style="width:28px;height:28px;border-radius:50%;background:#1677ff;display:flex;align-items:center;justify-content:center;font-size:12px;color:#fff;">张</div>
+      <span style="font-size:13px;">张工程师</span>
+    </div>
+  </header>
+  <div class="content-wrap">
+    <aside class="sider">
+      <div class="menu-group-title">智能运维</div>
+      <div class="menu-item" onclick="location.href='../ops-algorithm/list.html'"><i class="fa-solid fa-microchip"></i>检测算法</div>
+      <div class="menu-item" onclick="location.href='../ops-inspection/list.html'"><i class="fa-solid fa-clipboard-list"></i>巡检任务</div>
+      <div class="menu-item" onclick="location.href='../ops-log/list.html'"><i class="fa-solid fa-file-lines"></i>巡检日志</div>
+      <div class="menu-item" onclick="location.href='../ops-sla/index.html'"><i class="fa-solid fa-chart-line"></i>可用性报告</div>
+      <div class="menu-item" onclick="location.href='../ops-alert/list.html'"><i class="fa-solid fa-triangle-exclamation"></i>故障预警</div>
+      <div class="menu-group-title">数据治理</div>
+      <div class="menu-item" onclick="location.href='../dg-annotation/list.html'"><i class="fa-solid fa-robot"></i>点位智能标注</div>
+      <div class="menu-item" onclick="location.href='../dg-governance/index.html'"><i class="fa-solid fa-gauge-high"></i>点位治理效能</div>
+      <div class="menu-item" onclick="location.href='../dg-tag/list.html'"><i class="fa-solid fa-tags"></i>标签管理</div>
+      <div class="menu-item" onclick="location.href='../admin-bdg/list.html'"><i class="fa-solid fa-sitemap"></i>业务目录管理</div>
+      <div class="menu-item active"><i class="fa-solid fa-camera"></i>基础目录设备管理</div>
+      <div class="menu-item" onclick="location.href='../dg-coord/index.html'"><i class="fa-solid fa-globe"></i>经纬度治理</div>
+    </aside>
+    <main class="main">
+      <div class="breadcrumb">
+        <a href="../index.html">首页</a><span>/</span>
+        <a href="list.html">数据治理</a><span>/</span>
+        <a href="list.html">基础目录设备管理</a><span>/</span>
+        <span style="color:var(--ant-text);">设备详情</span>
+      </div>
+
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+        <div>
+          <h1 style="font-size:20px;font-weight:600;margin:0 0 4px;">CAM-WEST-0341</h1>
+          <div style="font-size:13px;color:var(--ant-text-tertiary);">西区-综合楼正门 · 最后更新 2026-04-14 08:11</div>
+        </div>
+        <div class="flex gap-2">
+          <button class="ant-btn" onclick="history.back()"><i class="fa-solid fa-arrow-left"></i>返回列表</button>
+        </div>
+      </div>
+
+      <!-- 基础信息（只读） -->
+      <div class="ant-card mb-4">
+        <div class="ant-card-head">
+          <span><i class="fa-solid fa-circle-info" style="color:#1677ff;margin-right:6px;"></i>基础信息</span>
+          <span style="font-size:12px;font-weight:400;color:rgba(0,0,0,0.45);"><i class="fa-solid fa-lock mr-1"></i>只读</span>
+        </div>
+        <div class="ant-card-body">
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px 24px;">
+            <div class="info-row"><span class="info-label">设备ID</span><span style="font-family:monospace;">DEV-20240315-0341</span></div>
+            <div class="info-row"><span class="info-label">通道ID</span><span style="font-family:monospace;">CH-01</span></div>
+            <div class="info-row"><span class="info-label">设备名称</span><span>西区-综合楼正门</span></div>
+            <div class="info-row"><span class="info-label">所属区域</span><span>西区</span></div>
+            <div class="info-row"><span class="info-label">IP地址</span><span style="font-family:monospace;">192.168.5.41</span></div>
+            <div class="info-row"><span class="info-label">在线状态</span><span style="color:#52c41a;">● 在线</span></div>
+            <div class="info-row"><span class="info-label">共享编码</span><span style="font-family:monospace;">34010000001320000001</span></div>
+            <div class="info-row"><span class="info-label">行政区划</span><span>四川省 / 巴中市 / 巴州区 / 西城街道</span></div>
+            <div class="info-row"><span class="info-label">接入时间</span><span>2024-03-15</span></div>
+          <div class="info-row"><span class="info-label">场景类型</span><span>治安防控</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 设备属性（可编辑） -->
+      <div class="ant-card mb-4">
+        <div class="ant-card-head">
+          <span><i class="fa-solid fa-pen-to-square" style="color:#1677ff;margin-right:6px;"></i>设备属性</span>
+          <span style="font-size:12px;font-weight:400;color:#1677ff;"><i class="fa-solid fa-pen mr-1"></i>可编辑</span>
+        </div>
+        <div class="ant-card-body">
+          <div class="form-row">
+            <div class="form-item">
+              <label class="form-label required">枪球机类型</label>
+              <select class="ant-select" style="width:100%;"><option>球机</option><option>枪机</option><option>半球</option><option>云台</option></select>
+            </div>
+            <div class="form-item">
+              <label class="form-label required">设备厂商</label>
+              <select class="ant-select" style="width:100%;"><option>海康威视</option><option>大华</option><option>宇视</option><option>华为</option></select>
+            </div>
+            <div class="form-item">
+              <label class="form-label required">联网属性</label>
+              <select class="ant-select" style="width:100%;"><option>专网</option><option>公网</option><option>混合</option></select>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-item">
+              <label class="form-label">行政区划-省</label>
+              <select class="ant-select" style="width:100%;"><option selected>四川省</option></select>
+            </div>
+            <div class="form-item">
+              <label class="form-label">行政区划-市</label>
+              <select class="ant-select" style="width:100%;"><option selected>巴中市</option></select>
+            </div>
+            <div class="form-item">
+              <label class="form-label">行政区划-县</label>
+              <select class="ant-select" style="width:100%;"><option selected>巴州区</option></select>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-item">
+              <label class="form-label">行政区划-镇</label>
+              <select class="ant-select" style="width:100%;"><option selected>西城街道</option></select>
+            </div>
+            <div class="form-item">
+              <label class="form-label">场所类型1</label>
+              <select class="ant-select" style="width:100%;"><option>公共场所</option><option>商业设施</option><option>教育机构</option><option>居民区</option></select>
+            </div>
+            <div class="form-item">
+              <label class="form-label">管理单位</label>
+              <select class="ant-select" style="width:100%;"><option>巴中市公安局</option><option>巴中市交通运输局</option></select>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-item">
+              <label class="form-label">能力级别</label>
+              <select class="ant-select" style="width:100%;"><option>一级</option><option>二级</option><option>三级</option></select>
+            </div>
+            <div class="form-item">
+              <label class="form-label">监控方向</label>
+              <select class="ant-select" style="width:100%;"><option>朝南</option><option>朝北</option><option>朝东</option><option>朝西</option></select>
+            </div>
+            <div class="form-item">
+              <label class="form-label">室内外</label>
+              <select class="ant-select" style="width:100%;"><option>室外</option><option>室内</option></select>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-item" style="grid-column:span 2;">
+              <label class="form-label">安装地址</label>
+              <input class="ant-input" value="西区综合楼正门入口上方">
+            </div>
+            <div class="form-item">
+              <label class="form-label">行政区域</label>
+              <select class="ant-select" style="width:100%;"><option>智慧园区</option><option>市中心</option></select>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-item">
+              <label class="form-label">主题分类</label>
+              <select class="ant-select" style="width:100%;"><option>安防监控</option><option>交通监控</option></select>
+            </div>
+            <div class="form-item">
+              <label class="form-label">是否鹰眼设备</label>
+              <select class="ant-select" style="width:100%;"><option>否</option><option>是</option></select>
+            </div>
+          </div>
+
+          <div class="form-row" style="margin-top:8px;">
+            <div class="form-item">
+              <label class="form-label">效果图</label>
+              <div style="border:1px dashed var(--ant-border);border-radius:6px;padding:20px;text-align:center;color:var(--ant-text-tertiary);cursor:pointer;" onclick="alert('上传效果图')">
+                <i class="fa-solid fa-cloud-arrow-up" style="font-size:24px;margin-bottom:8px;"></i>
+                <div style="font-size:13px;">点击上传或拖拽图片</div>
+                <div style="font-size:12px;">支持 jpg/png，单张不超过 5MB</div>
+              </div>
+            </div>
+            <div class="form-item">
+              <label class="form-label">缩略图</label>
+              <div style="border:1px dashed var(--ant-border);border-radius:6px;padding:20px;text-align:center;color:var(--ant-text-tertiary);cursor:pointer;" onclick="alert('上传缩略图')">
+                <i class="fa-solid fa-cloud-arrow-up" style="font-size:24px;margin-bottom:8px;"></i>
+                <div style="font-size:13px;">点击上传或拖拽图片</div>
+                <div style="font-size:12px;">支持 jpg/png，单张不超过 5MB</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 业务标签 -->
+      <div class="ant-card mb-4">
+        <div class="ant-card-head">
+          <span><i class="fa-solid fa-tags" style="color:#1677ff;margin-right:6px;"></i>业务标签</span>
+          <span style="font-size:12px;font-weight:400;color:#1677ff;"><i class="fa-solid fa-pen mr-1"></i>可编辑</span>
+        </div>
+        <div class="ant-card-body" id="bizTagBody">
+          <div class="form-row">
+            <div class="form-item">
+              <label class="form-label">公共安全(GA)</label>
+              <div class="multi-select" data-key="ga" onclick="toggleBizDropdown('ga')">
+                <div class="tags-wrap" id="tags-ga"></div>
+                <div class="multi-dropdown tree-dropdown" id="dropdown-ga">
+                  <div class="tree-node" onclick="event.stopPropagation();toggleTreeNode(this)"><span class="toggle"><i class="fa-solid fa-chevron-right"></i></span><span style="flex:1;">治安管理</span></div>
+                  <div class="tree-children">
+                    <div class="tree-leaf" onclick="event.stopPropagation();"><input type="checkbox" onchange="toggleBizTag('ga','GA-0101 治安防控')"><span>治安防控</span></div>
+                    <div class="tree-leaf" onclick="event.stopPropagation();"><input type="checkbox" onchange="toggleBizTag('ga','GA-0102 刑事案件')"><span>刑事案件</span></div>
+                  </div>
+                  <div class="tree-node" onclick="event.stopPropagation();toggleTreeNode(this)"><span class="toggle"><i class="fa-solid fa-chevron-right"></i></span><span style="flex:1;">交通管理</span></div>
+                  <div class="tree-children">
+                    <div class="tree-leaf" onclick="event.stopPropagation();"><input type="checkbox" onchange="toggleBizTag('ga','GA-0201 交通违法')"><span>交通违法</span></div>
+                    <div class="tree-leaf" onclick="event.stopPropagation();"><input type="checkbox" onchange="toggleBizTag('ga','GA-0202 事故多发')"><span>事故多发</span></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="form-item">
+              <label class="form-label">城市管理(CG)</label>
+              <div class="multi-select" data-key="cg" onclick="toggleBizDropdown('cg')">
+                <div class="tags-wrap" id="tags-cg"></div>
+                <div class="multi-dropdown tree-dropdown" id="dropdown-cg">
+                  <div class="tree-node" onclick="event.stopPropagation();toggleTreeNode(this)"><span class="toggle"><i class="fa-solid fa-chevron-right"></i></span><span style="flex:1;">市容环境</span></div>
+                  <div class="tree-children">
+                    <div class="tree-leaf" onclick="event.stopPropagation();"><input type="checkbox" onchange="toggleBizTag('cg','CG-0101 市容环境')"><span>市容环境</span></div>
+                    <div class="tree-leaf" onclick="event.stopPropagation();"><input type="checkbox" onchange="toggleBizTag('cg','CG-0102 违规经营')"><span>违规经营</span></div>
+                  </div>
+                  <div class="tree-node" onclick="event.stopPropagation();toggleTreeNode(this)"><span class="toggle"><i class="fa-solid fa-chevron-right"></i></span><span style="flex:1;">规划建设</span></div>
+                  <div class="tree-children">
+                    <div class="tree-leaf" onclick="event.stopPropagation();"><input type="checkbox" onchange="toggleBizTag('cg','CG-0201 违法建设')"><span>违法建设</span></div>
+                    <div class="tree-leaf" onclick="event.stopPropagation();"><input type="checkbox" onchange="toggleBizTag('cg','CG-0202 工地监管')"><span>工地监管</span></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="form-item">
+              <label class="form-label">交通运输(JT)</label>
+              <div class="multi-select" data-key="jt" onclick="toggleBizDropdown('jt')">
+                <div class="tags-wrap" id="tags-jt"></div>
+                <div class="multi-dropdown tree-dropdown" id="dropdown-jt">
+                  <div class="tree-node" onclick="event.stopPropagation();toggleTreeNode(this)"><span class="toggle"><i class="fa-solid fa-chevron-right"></i></span><span style="flex:1;">道路类型</span></div>
+                  <div class="tree-children">
+                    <div class="tree-leaf" onclick="event.stopPropagation();"><input type="checkbox" onchange="toggleBizTag('jt','JT-0101 十字路口')"><span>十字路口</span></div>
+                    <div class="tree-leaf" onclick="event.stopPropagation();"><input type="checkbox" onchange="toggleBizTag('jt','JT-0102 高速公路')"><span>高速公路</span></div>
+                    <div class="tree-leaf" onclick="event.stopPropagation();"><input type="checkbox" onchange="toggleBizTag('jt','JT-0103 城市主干道')"><span>城市主干道</span></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-item">
+              <label class="form-label">水利环保(SL)</label>
+              <div class="multi-select" data-key="sl" onclick="toggleBizDropdown('sl')">
+                <div class="tags-wrap" id="tags-sl"></div>
+                <div class="multi-dropdown tree-dropdown" id="dropdown-sl">
+                  <div class="tree-node" onclick="event.stopPropagation();toggleTreeNode(this)"><span class="toggle"><i class="fa-solid fa-chevron-right"></i></span><span style="flex:1;">水域监测</span></div>
+                  <div class="tree-children">
+                    <div class="tree-leaf" onclick="event.stopPropagation();"><input type="checkbox" onchange="toggleBizTag('sl','SL-0101 河道监测')"><span>河道监测</span></div>
+                    <div class="tree-leaf" onclick="event.stopPropagation();"><input type="checkbox" onchange="toggleBizTag('sl','SL-0102 水库监控')"><span>水库监控</span></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="form-item">
+              <label class="form-label">应急管理(YJ)</label>
+              <div class="multi-select" data-key="yj" onclick="toggleBizDropdown('yj')">
+                <div class="tags-wrap" id="tags-yj"></div>
+                <div class="multi-dropdown tree-dropdown" id="dropdown-yj">
+                  <div class="tree-node" onclick="event.stopPropagation();toggleTreeNode(this)"><span class="toggle"><i class="fa-solid fa-chevron-right"></i></span><span style="flex:1;">自然灾害</span></div>
+                  <div class="tree-children">
+                    <div class="tree-leaf" onclick="event.stopPropagation();"><input type="checkbox" onchange="toggleBizTag('yj','YJ-0101 森林防火')"><span>森林防火</span></div>
+                    <div class="tree-leaf" onclick="event.stopPropagation();"><input type="checkbox" onchange="toggleBizTag('yj','YJ-0102 防汛抗旱')"><span>防汛抗旱</span></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="form-item">
+              <label class="form-label">社会民生(MS)</label>
+              <div class="multi-select" data-key="ms" onclick="toggleBizDropdown('ms')">
+                <div class="tags-wrap" id="tags-ms"></div>
+                <div class="multi-dropdown tree-dropdown" id="dropdown-ms">
+                  <div class="tree-node" onclick="event.stopPropagation();toggleTreeNode(this)"><span class="toggle"><i class="fa-solid fa-chevron-right"></i></span><span style="flex:1;">社区治理</span></div>
+                  <div class="tree-children">
+                    <div class="tree-leaf" onclick="event.stopPropagation();"><input type="checkbox" onchange="toggleBizTag('ms','MS-0101 社区监控')"><span>社区监控</span></div>
+                    <div class="tree-leaf" onclick="event.stopPropagation();"><input type="checkbox" onchange="toggleBizTag('ms','MS-0201 背街小巷')"><span>背街小巷</span></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-item">
+              <label class="form-label">重点保障(ZB)</label>
+              <div class="multi-select" data-key="zb" onclick="toggleBizDropdown('zb')">
+                <div class="tags-wrap" id="tags-zb"></div>
+                <div class="multi-dropdown tree-dropdown" id="dropdown-zb">
+                  <div class="tree-node" onclick="event.stopPropagation();toggleTreeNode(this)"><span class="toggle"><i class="fa-solid fa-chevron-right"></i></span><span style="flex:1;">重点区域</span></div>
+                  <div class="tree-children">
+                    <div class="tree-leaf" onclick="event.stopPropagation();"><input type="checkbox" onchange="toggleBizTag('zb','ZB-0401 核心商圈')"><span>核心商圈</span></div>
+                    <div class="tree-leaf" onclick="event.stopPropagation();"><input type="checkbox" onchange="toggleBizTag('zb','ZB-0101 学校周边')"><span>学校周边</span></div>
+                    <div class="tree-leaf" onclick="event.stopPropagation();"><input type="checkbox" onchange="toggleBizTag('zb','ZB-0201 医院周边')"><span>医院周边</span></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="form-item">
+              <label class="form-label">自定义标签</label>
+              <div class="multi-select" data-key="custom" onclick="toggleBizDropdown('custom')">
+                <div class="tags-wrap" id="tags-custom"></div>
+                <div class="multi-dropdown tree-dropdown" id="dropdown-custom">
+                  <div class="tree-node" onclick="event.stopPropagation();toggleTreeNode(this)"><span class="toggle"><i class="fa-solid fa-chevron-right"></i></span><span style="flex:1;">智慧应用</span></div>
+                  <div class="tree-children">
+                    <div class="tree-leaf" onclick="event.stopPropagation();"><input type="checkbox" onchange="toggleBizTag('custom','CUSTOM-0101 智慧停车')"><span>智慧停车</span></div>
+                    <div class="tree-leaf" onclick="event.stopPropagation();"><input type="checkbox" onchange="toggleBizTag('custom','CUSTOM-0201 垃圾分类')"><span>垃圾分类</span></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 底部操作 -->
+      <div style="display:flex;justify-content:center;gap:12px;padding:8px 0 24px;">
+        <button class="ant-btn" style="width:120px;" onclick="history.back()">取消</button>
+        <button class="ant-btn ant-btn-primary" style="width:120px;" onclick="alert('✅ 设备信息已保存');history.back();">保存</button>
+      </div>
+    </main>
+  </div>
+</div>
+<script>
+let openDropdown = null;
+
+const bizTags = {
+  ga: ['GA-0101 治安防控'],
+  cg: [],
+  jt: ['JT-0101 十字路口'],
+  sl: [],
+  yj: [],
+  ms: ['MS-0201 背街小巷'],
+  zb: ['ZB-0401 核心商圈'],
+  custom: ['CUSTOM-0101 智慧停车','CUSTOM-0201 垃圾分类']
+};
+
+const tagTreeData = {
+  ga: [
+    { id: 'GA-01', label: '治安管理', children: [
+      { id: 'GA-0101', label: '治安防控' },
+      { id: 'GA-0102', label: '刑事案件' }
+    ]},
+    { id: 'GA-02', label: '交通管理', children: [
+      { id: 'GA-0201', label: '交通违法' },
+      { id: 'GA-0202', label: '事故多发' }
+    ]}
+  ],
+  cg: [
+    { id: 'CG-01', label: '市容环境', children: [
+      { id: 'CG-0101', label: '市容环境' },
+      { id: 'CG-0102', label: '违规经营' }
+    ]},
+    { id: 'CG-02', label: '规划建设', children: [
+      { id: 'CG-0201', label: '违法建设' },
+      { id: 'CG-0202', label: '工地监管' }
+    ]}
+  ],
+  jt: [
+    { id: 'JT-01', label: '道路类型', children: [
+      { id: 'JT-0101', label: '十字路口' },
+      { id: 'JT-0102', label: '高速公路' },
+      { id: 'JT-0103', label: '城市主干道' }
+    ]}
+  ],
+  sl: [
+    { id: 'SL-01', label: '水域监测', children: [
+      { id: 'SL-0101', label: '河道监测' },
+      { id: 'SL-0102', label: '水库监控' }
+    ]}
+  ],
+  yj: [
+    { id: 'YJ-01', label: '自然灾害', children: [
+      { id: 'YJ-0101', label: '森林防火' },
+      { id: 'YJ-0102', label: '防汛抗旱' }
+    ]}
+  ],
+  ms: [
+    { id: 'MS-01', label: '社区治理', children: [
+      { id: 'MS-0101', label: '社区监控' },
+      { id: 'MS-0201', label: '背街小巷' }
+    ]}
+  ],
+  zb: [
+    { id: 'ZB-01', label: '重点区域', children: [
+      { id: 'ZB-0401', label: '核心商圈' },
+      { id: 'ZB-0101', label: '学校周边' },
+      { id: 'ZB-0201', label: '医院周边' }
+    ]}
+  ],
+  custom: [
+    { id: 'CUSTOM-01', label: '智慧应用', children: [
+      { id: 'CUSTOM-0101', label: '智慧停车' },
+      { id: 'CUSTOM-0201', label: '垃圾分类' }
+    ]}
+  ]
+};
+
+const domainLabels = {
+  ga: '公共安全(GA)', cg: '城市管理(CG)', jt: '交通运输(JT)', sl: '水利环保(SL)',
+  yj: '应急管理(YJ)', ms: '社会民生(MS)', zb: '重点保障(ZB)', custom: '自定义标签'
+};
+const domainKeys = ['ga','cg','jt','sl','yj','ms','zb','custom'];
+
+function initBizTags() {
+  domainKeys.forEach(key => updateTagsDisplay(key));
+  domainKeys.forEach(key => syncCheckboxes(key));
+}
+
+function syncCheckboxes(key) {
+  const dropdown = document.getElementById('dropdown-' + key);
+  if (!dropdown) return;
+  const tags = bizTags[key];
+  const checkboxes = dropdown.querySelectorAll('.tree-leaf input[type="checkbox"]');
+  checkboxes.forEach(cb => {
+    const match = cb.getAttribute('onchange')?.match(/toggleBizTag\('.*?',\s*'([^']+)'\)/);
+    if (match) {
+      cb.checked = tags.includes(match[1]);
+    }
+  });
+}
+
+function toggleTreeNode(el) {
+  const children = el.nextElementSibling;
+  if (children && children.classList.contains('tree-children')) {
+    const isExpanded = children.classList.contains('expanded');
+    if (isExpanded) {
+      children.classList.remove('expanded');
+      el.querySelector('.toggle i').className = 'fa-solid fa-chevron-right';
+    } else {
+      children.classList.add('expanded');
+      el.querySelector('.toggle i').className = 'fa-solid fa-chevron-down';
+    }
+  }
+}
+
+function toggleBizDropdown(key) {
+  const dropdown = document.getElementById('dropdown-' + key);
+  const selectEl = dropdown.closest('.multi-select');
+  if (openDropdown && openDropdown !== dropdown) {
+    openDropdown.classList.remove('show');
+    openDropdown.closest('.multi-select').classList.remove('active');
+  }
+  const isOpen = dropdown.classList.contains('show');
+  if (isOpen) {
+    dropdown.classList.remove('show');
+    selectEl.classList.remove('active');
+    openDropdown = null;
+  } else {
+    dropdown.classList.add('show');
+    selectEl.classList.add('active');
+    openDropdown = dropdown;
+  }
+}
+
+function toggleBizTag(key, tag) {
+  const idx = bizTags[key].indexOf(tag);
+  if (idx > -1) {
+    bizTags[key].splice(idx, 1);
+  } else {
+    bizTags[key].push(tag);
+  }
+  updateTagsDisplay(key);
+}
+
+function removeBizTag(key, tag) {
+  const idx = bizTags[key].indexOf(tag);
+  if (idx > -1) {
+    bizTags[key].splice(idx, 1);
+    updateTagsDisplay(key);
+    syncCheckboxState(key, tag, false);
+  }
+}
+
+function stripTagCode(t){ return t.replace(/^[A-Z]+-\d+\s+/,''); }
+
+function updateTagsDisplay(key) {
+  const wrap = document.getElementById('tags-' + key);
+  const tags = bizTags[key];
+  if (tags.length) {
+    wrap.innerHTML = tags.map(t => `<span class="multi-tag"><span>${stripTagCode(t)}</span><span class="remove" onclick="event.stopPropagation();removeBizTag('${key}','${t}')">×</span></span>`).join('');
+  } else {
+    wrap.innerHTML = '<span class="placeholder">请选择标签（可多选）</span>';
+  }
+}
+
+function syncCheckboxState(key, tag, checked) {
+  const dropdown = document.getElementById('dropdown-' + key);
+  if (!dropdown) return;
+  const checkboxes = dropdown.querySelectorAll('.tree-leaf input[type="checkbox"]');
+  checkboxes.forEach(cb => {
+    const match = cb.getAttribute('onchange')?.match(/toggleBizTag\('.*?',\s*'([^']+)'\)/);
+    if (match && match[1] === tag) {
+      cb.checked = checked;
+    }
+  });
+}
+
+document.addEventListener('click', (e) => {
+  if (openDropdown && !e.target.closest('.multi-select')) {
+    openDropdown.classList.remove('show');
+    openDropdown.closest('.multi-select').classList.remove('active');
+    openDropdown = null;
+  }
+});
+
+initBizTags();
+</script>
+</body>
+</html>
