@@ -19,42 +19,35 @@ body { font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",
 #app { display:flex; height:100vh; }
 
 .sidebar { width:220px; min-width:220px; background:var(--sidebar-bg); display:flex; flex-direction:column; z-index:10; }
-.sidebar-logo { padding:14px 16px; color:#fff; font-size:15px; font-weight:600; display:flex; align-items:center; gap:8px; border-bottom:1px solid rgba(255,255,255,0.06); }
-.sidebar-logo svg { width:20px; height:20px; flex-shrink:0; }
+.sidebar-logo { padding:14px 16px; color:#fff; font-size:14px; font-weight:600; display:flex; align-items:center; gap:8px; border-bottom:1px solid rgba(255,255,255,0.06); }
+.sidebar-logo svg { width:18px; height:18px; flex-shrink:0; }
 .sidebar-group { margin-top:8px; }
 .sidebar-group-title { padding:6px 16px; color:rgba(255,255,255,0.32); font-size:11px; font-weight:600; letter-spacing:0.08em; }
-.sidebar-item { display:flex; align-items:center; padding:9px 16px; color:rgba(255,255,255,0.72); font-size:13px; cursor:pointer; transition:all 0.15s; gap:10px; }
+.sidebar-item { display:flex; align-items:center; padding:8px 16px 8px 20px; color:rgba(255,255,255,0.72); font-size:13px; cursor:pointer; transition:all 0.15s; gap:8px; border-radius:0; }
 .sidebar-item:hover { background:rgba(255,255,255,0.06); color:#fff; }
 .sidebar-item.active { background:var(--brand-blue); color:#fff; }
-.sidebar-item svg { width:16px; height:16px; flex-shrink:0; opacity:0.75; }
+.sidebar-item svg { width:14px; height:14px; flex-shrink:0; opacity:0.75; }
 .sidebar-item.active svg { opacity:1; }
-.sidebar-item .badge { margin-left:auto; background:rgba(255,255,255,0.15); color:#fff; font-size:11px; padding:1px 7px; border-radius:10px; }
+.sidebar-item.sub { padding-left:36px; font-size:12px; }
 
 .main-area { flex:1; display:flex; flex-direction:column; overflow:hidden; }
-.topbar { height:48px; min-height:48px; background:var(--brand-blue); display:flex; align-items:center; justify-content:space-between; padding:0 20px; color:#fff; font-size:14px; }
-.topbar-left { font-weight:500; display:flex; align-items:center; gap:8px; }
-.topbar-left .dot { width:6px; height:6px; border-radius:50%; background:rgba(255,255,255,0.6); }
+.topbar { height:48px; min-height:48px; background:var(--brand-blue); display:flex; align-items:center; padding:0 20px; color:#fff; font-size:14px; font-weight:500; }
 .content { flex:1; padding:28px 36px; overflow-y:auto; }
 
 .hero { margin-bottom:24px; }
 .hero h1 { font-size:22px; font-weight:700; letter-spacing:-0.02em; margin-bottom:4px; }
 .hero p { font-size:13px; color:var(--text-secondary); }
 
-.stats-bar { display:flex; gap:40px; margin-bottom:24px; background:var(--card-bg); border-radius:var(--radius-lg); padding:18px 28px; box-shadow:var(--shadow-card); align-items:center; }
-.stats-group { display:flex; align-items:center; gap:20px; }
-.stats-group .g-label { font-size:11px; color:var(--text-tertiary); font-weight:500; letter-spacing:0.04em; writing-mode:vertical-lr; }
-.stats-group .g-divider { width:1px; height:32px; background:#EEE; }
-.stat-block { display:flex; align-items:center; gap:10px; }
-.stat-block .dot { width:8px; height:8px; border-radius:2px; flex-shrink:0; }
-.stat-block .dot.market { background:var(--brand-blue); }
-.stat-block .dot.rd { background:#8B5CF6; }
-.stat-block .dot.baseline { background:#34C759; }
-.stat-block .dot.new-page { background:#FF9500; }
-.stat-block .dot.reform { background:#3B82F6; }
-.stat-block .num { font-size:24px; font-weight:700; letter-spacing:-0.03em; line-height:1; }
-.stat-block .lbl { font-size:11px; color:var(--text-secondary); }
+.stats-row { display:grid; grid-template-columns:repeat(4,1fr); gap:16px; margin-bottom:28px; }
+.stat-card { background:var(--card-bg); border-radius:var(--radius-lg); padding:20px; box-shadow:var(--shadow-card); }
+.stat-card .stat-label { font-size:12px; color:var(--text-secondary); margin-bottom:8px; }
+.stat-card .stat-value { font-size:32px; font-weight:700; letter-spacing:-0.03em; }
+.stat-card.new .stat-value { color:var(--brand-blue); }
+.stat-card.iter .stat-value { color:#E6A23C; }
+.stat-card.opt .stat-value { color:#67C23A; }
+.stat-card.market .stat-value { color:#8B5CF6; }
 
-.filter-row { display:flex; gap:6px; margin-bottom:16px; flex-wrap:wrap; align-items:center; }
+.filter-row { display:flex; gap:6px; margin-bottom:12px; flex-wrap:wrap; align-items:center; }
 .filter-row .f-label { font-size:12px; color:var(--text-tertiary); margin-right:8px; font-weight:500; }
 .filter-chip { padding:6px 16px; border-radius:20px; font-size:12px; cursor:pointer; border:1px solid #E5E5EA; background:#fff; color:var(--text-secondary); transition:all 0.2s; white-space:nowrap; }
 .filter-chip:hover { border-color:var(--brand-blue); color:var(--brand-blue); }
@@ -83,9 +76,6 @@ body { font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",
 .card-tag.scene-baseline { background:#E8F8EE; color:#34C759; }
 .card-update { font-size:11px; color:var(--text-tertiary); }
 .card-link { font-size:12px; color:var(--brand-blue); font-weight:500; white-space:nowrap; }
-
-.empty-state { text-align:center; padding:80px 20px; color:var(--text-secondary); }
-.empty-state .empty-icon { font-size:56px; margin-bottom:16px; opacity:0.6; }
 </style>
 </head>
 <body>
@@ -95,42 +85,50 @@ body { font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",
       <svg viewBox="0 0 24 24" fill="white"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>视频云平台
     </div>
     <div class="sidebar-group">
-      <div class="sidebar-group-title">模块筛选</div>
+      <div class="sidebar-group-title">数据治理</div>
       <div class="sidebar-item" :class="{active:activeModule==='all'}" @click="activeModule='all'">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
-        全部<span class="badge">{{prototypes.length}}</span>
+        治理体系迭代
       </div>
-      <div v-for="m in modules" :key="m.id" class="sidebar-item" :class="{active:activeModule===m.id}" @click="activeModule=m.id">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" v-html="m.icon"></svg>
-        {{m.name}}<span class="badge">{{getModuleCount(m.id)}}</span>
+      <div class="sidebar-item sub" :class="{active:activeModule==='region'}" @click="activeModule='region'">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="3 6 9 3 15 6 21 4 21 18 15 21 9 18 3 20"/><line x1="9" y1="3" x2="9" y2="18"/></svg>
+        行政区划
+      </div>
+      <div class="sidebar-item sub" :class="{active:activeModule==='task'}" @click="activeModule='task'">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        治理任务
+      </div>
+      <div class="sidebar-item sub" :class="{active:activeModule==='checklist'}" @click="activeModule='checklist'">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+        治理清单
       </div>
     </div>
   </div>
 
   <div class="main-area">
-    <div class="topbar"><div class="topbar-left"><span class="dot"></span>原型中心</div></div>
+    <div class="topbar">原型中心</div>
     <div class="content">
       <div class="hero">
         <h1>视频云平台 · 原型中心</h1>
-        <p>全部原型页面统一入口。按版本、需求来源或一级模块快速定位。</p>
+        <p>全部原型页面统一入口。按版本或模块快速定位。</p>
       </div>
 
-      <div class="stats-bar">
-        <div class="stats-group">
-          <span class="g-label">来源</span>
-          <div class="stat-block"><div class="dot market"></div><div><div class="num">{{currentStats.market}}</div><div class="lbl">市场化项目</div></div></div>
-          <div class="stat-block"><div class="dot rd"></div><div><div class="num">{{currentStats.rd}}</div><div class="lbl">CHBN 研发</div></div></div>
-          <div class="stat-block"><div class="dot baseline"></div><div><div class="num">{{currentStats.baseline}}</div><div class="lbl">基线迭代</div></div></div>
+      <div class="stats-row">
+        <div class="stat-card new">
+          <div class="stat-label">🆕 全新模块</div>
+          <div class="stat-value">{{currentStats.newPage}}</div>
         </div>
-        <div class="g-divider"></div>
-        <div class="stats-group">
-          <span class="g-label">类型</span>
-          <div class="stat-block"><div class="dot new-page"></div><div><div class="num">{{currentStats.newPage}}</div><div class="lbl">全新页面</div></div></div>
-          <div class="stat-block"><div class="dot reform"></div><div><div class="num">{{currentStats.reform}}</div><div class="lbl">现有改造</div></div></div>
+        <div class="stat-card iter">
+          <div class="stat-label">🔄 迭代模块</div>
+          <div class="stat-value">{{currentStats.reform}}</div>
         </div>
-        <div style="flex:1"></div>
-        <div class="stats-group">
-          <div style="text-align:right"><div class="num" style="font-size:18px">{{currentStats.total}}</div><div class="lbl">原型总数</div></div>
+        <div class="stat-card opt">
+          <div class="stat-label">📦 优化改造</div>
+          <div class="stat-value">{{currentStats.opt}}</div>
+        </div>
+        <div class="stat-card market">
+          <div class="stat-label">🏢 市场化项目</div>
+          <div class="stat-value">{{currentStats.market}}</div>
         </div>
       </div>
 
@@ -161,7 +159,7 @@ body { font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",
             </div>
             <div class="card-info">
               <h3>{{p.name}}</h3>
-              <div class="parent-name">{{p.parent}}</div>
+              <div class="parent-name">{{p.parent}} · {{p.versionLabel}}</div>
             </div>
           </div>
           <div class="card-desc">{{p.desc}}</div>
@@ -176,9 +174,6 @@ body { font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",
             </div>
           </div>
         </div>
-      </div>
-      <div class="empty-state" v-else>
-        <div class="empty-icon">📭</div><div>当前筛选条件下暂无原型</div>
       </div>
     </div>
   </div>
@@ -196,25 +191,14 @@ const app = createApp({
         { id:'2026-06',label:'2026年6月' }
       ],
       sources:[
+        { id:'baseline',label:'基线迭代' },
         { id:'market',label:'市场化项目' },
-        { id:'rd',label:'CHBN 研发项目' },
-        { id:'baseline',label:'基线迭代' }
-      ],
-      modules:[
-        { id:'data-gov',name:'数据治理',icon:'<circle cx="12" cy="12" r="3"/><rect x="3" y="3" width="18" height="18" rx="2"/>' },
-        { id:'smart-ops',name:'智能运维',icon:'<circle cx="12" cy="12" r="9"/><polyline points="12 6 12 12 16 14"/>' },
-        { id:'device-mgmt',name:'设备管理',icon:'<rect x="4" y="4" width="16" height="16" rx="2"/><rect x="9" y="9" width="6" height="6" rx="1"/>' },
-        { id:'video-live',name:'视频直播',icon:'<polygon points="23 7 16 12 23 17"/><rect x="1" y="5" width="15" height="14" rx="2"/>' }
+        { id:'rd',label:'CHBN 研发项目' }
       ],
       prototypes:[
-        { id:'region',name:'行政区划',parent:'数据治理',type:'new',source:'baseline',desc:'维护省市区县四级行政区划数据，含批量导入和天地图坐标拾取，支撑地图广场设备聚合展示。',version:'2026-07',updated:'07-06',module:'data-gov',icon:'<polygon points="3 6 9 3 15 6 21 4 21 18 15 21 9 18 3 20"/><line x1="9" y1="3" x2="9" y2="18"/>',url:'./by-version/2026-06/行政区划_v2.0.html'},
-        { id:'task',name:'治理任务',parent:'数据治理',type:'new',source:'baseline',desc:'创建治理任务，按区域/目录/管理单位批量选设备，派单给治理人员并实时跟踪完成进度。',version:'2026-07',updated:'07-06',module:'data-gov',icon:'<rect x="3" y="5" width="18" height="14" rx="2"/><line x1="3" y1="10" x2="21" y2="10"/><circle cx="8" cy="16" r="1"/><circle cx="12" cy="16" r="1"/>',url:'./by-version/2026-06/治理任务_v2.0.html'},
-        { id:'checklist',name:'治理清单',parent:'数据治理',type:'new',source:'baseline',desc:'治理人员逐台修改设备点位属性，操作即时生效，全部变更记录操作日志支持回溯。',version:'2026-07',updated:'07-06',module:'data-gov',icon:'<path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/>',url:'./by-version/2026-06/治理清单_v2.0.html'},
-        { id:'lj-market',name:'龙江市监·治理工作台',parent:'数据治理',type:'new',source:'market',desc:'龙江市场监督管理局专项——治理工作台+统计晾晒看板，含SC/JY许可证编码规则引擎。',version:'2026-06',updated:'06-25',module:'data-gov',icon:'<rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="3" x2="9" y2="21"/>',url:'#'},
-        { id:'live-filter',name:'直播目录树全局筛选',parent:'视频直播',type:'reform',source:'baseline',desc:'目录树新增在线状态、链路状态、标签三维筛选，设备节点按查询条件切换为48px迷你卡片模式。',version:'2026-06',updated:'06-18',module:'video-live',icon:'<polygon points="23 7 16 12 23 17"/><rect x="1" y="5" width="15" height="14" rx="2"/>',url:'#'},
-        { id:'tv-wall',name:'电视墙交互优化',parent:'视频直播',type:'reform',source:'rd',desc:'分屏布局从4种扩展至8种，支持画布式拖拽配置和双击全屏，轮播控制栏交互重新设计。',version:'2026-06',updated:'06-20',module:'video-live',icon:'<rect x="2" y="3" width="20" height="14" rx="2"/><polyline points="2 7 8 7 8 3"/><polyline points="22 17 16 17 16 14"/>',url:'#'},
-        { id:'alarm-dashboard',name:'告警仪表盘改版',parent:'智能运维',type:'reform',source:'baseline',desc:'全局告警统计视觉升级，新增指标卡片+趋势图表+最新告警列表三区布局，统一状态色阶。',version:'2026-06',updated:'06-15',module:'smart-ops',icon:'<path d="M18 20V10"/><path d="M12 20V4"/><path d="M6 20v-6"/>',url:'#'},
-        { id:'predict-warn',name:'故障预警',parent:'智能运维',type:'new',source:'rd',desc:'基于设备历史运行数据构建预测模型，提前识别潜在故障风险并自动生成预警工单。',version:'2026-07',updated:'07-05',module:'smart-ops',icon:'<path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>',url:'#'}
+        { id:'region',name:'行政区划',parent:'数据治理',type:'new',source:'baseline',desc:'维护省市县镇四级行政区划数据，含批量导入和天地图坐标拾取，支撑地图广场设备聚合展示。',version:'2026-07',versionLabel:'2026.07',updated:'07-06',module:'region',icon:'<polygon points="3 6 9 3 15 6 21 4 21 18 15 21 9 18 3 20"/><line x1="9" y1="3" x2="9" y2="18"/>',url:'./by-version/2026-06/行政区划_v2.0.html'},
+        { id:'task',name:'治理任务',parent:'数据治理',type:'new',source:'baseline',desc:'创建治理任务，按区域/目录/管理单位批量选设备，派单给治理人员并实时跟踪完成进度。',version:'2026-07',versionLabel:'2026.07',updated:'07-06',module:'task',icon:'<rect x="3" y="5" width="18" height="14" rx="2"/><line x1="3" y1="10" x2="21" y2="10"/><circle cx="8" cy="16" r="1"/><circle cx="12" cy="16" r="1"/>',url:'./by-version/2026-06/治理任务_v2.0.html'},
+        { id:'checklist',name:'治理清单',parent:'数据治理',type:'new',source:'baseline',desc:'治理人员逐台修改设备点位属性，操作即时生效，全部变更记录操作日志支持回溯。',version:'2026-07',versionLabel:'2026.07',updated:'07-06',module:'checklist',icon:'<path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/>',url:'./by-version/2026-06/治理清单_v2.0.html'}
       ]
     }
   },
@@ -224,10 +208,9 @@ const app = createApp({
       return {
         market: list.filter(p=>p.source==='market').length,
         rd: list.filter(p=>p.source==='rd').length,
-        baseline: list.filter(p=>p.source==='baseline').length,
         newPage: list.filter(p=>p.type==='new').length,
         reform: list.filter(p=>p.type==='reform').length,
-        total: list.length
+        opt: 0
       }
     },
     filtered(){
@@ -240,7 +223,6 @@ const app = createApp({
     }
   },
   methods: {
-    getModuleCount(mid){ return this.prototypes.filter(p=>p.module===mid).length },
     getSourceLabel(sid){ const m={market:'市场化项目',rd:'CHBN 研发',baseline:'基线迭代'};return m[sid]||sid },
     openProto(p){ if(p.url!=='#') window.open(p.url,'_blank'); else this.$message.info('原型页面尚未生成') }
   }
