@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>治理任务 v2.0</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/element-plus@2.7.0/dist/index.css">
+<script src="https://cdn.jsdelivr.net/npm/vue@3.4.21/dist/vue.global.prod.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/element-plus@2.7.0/dist/index.full.min.js"></script>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif; background:#F5F5F5; }
+/* 顶栏 */
+.topbar { position:fixed; top:0; left:0; right:0; height:48px; background:#165DFF; display:flex; align-items:center; padding:0 20px; z-index:100; color:#fff; font-size:16px; font-weight:600; }
+/* 侧栏 */
+.sidebar { position:fixed; top:48px; left:0; bottom:0; width:220px; background:#001529; color:#fff; padding-top:12px; }
+.sidebar-item { padding:12px 24px; cursor:pointer; font-size:14px; color:rgba(255,255,255,.65); transition:all .2s; }
+.sidebar-item:hover, .sidebar-item.active { color:#fff; background:#165DFF; }
+/* 内容区 */
+.main { margin-left:220px; margin-top:48px; padding:16px; background:#F5F5F5; min-height:calc(100vh - 48px); }
+.card { background:#fff; border-radius:4px; padding:16px; margin-bottom:12px; }
+/* 筛选栏 */
+.filter-bar { display:flex; align-items:center; gap:12px; flex-wrap:wrap; }
+.filter-bar .el-input, .filter-bar .el-select { width:180px; }
+/* 表格 */
+.data-table { width:100%; border-collapse:collapse; font-size:13px; }
+.data-table th { background:#FAFAFA; color:#666; font-weight:500; text-align:left; padding:10px 12px; border-bottom:1px solid #EBEEF5; }
+.data-table td { padding:10px 12px; border-bottom:1px solid #EBEEF5; color:#333; }
+.data-table tr:hover td { background:#F5F7FA; }
+.data-table .th-right, .data-table .td-right { text-align:right; }
+/* Tag */
+.tag { display:inline-block; padding:0 8px; height:22px; line-height:22px; border-radius:2px; font-size:12px; margin-right:4px; }
+.tag-blue { background:#E8F3FF; color:#165DFF; border:1px solid #BFD8FF; }
+/* 进度条 */
+.progress-wrap { display:flex; align-items:center; gap:8px; }
+.progress-bar { flex:1; height:10px; background:#F0F2F5; border-radius:5px; overflow:hidden; min-width:80px; }
+.progress-bar-inner { height:100%; border-radius:5px; transition:width .3s; }
+.progress-text { font-size:12px; color:#666; min-width:36px; text-align:right; }
+/* 操作按钮 */
+.op-btn { font-size:13px; color:#165DFF; cursor:pointer; margin-right:8px; border:none; background:none; padding:0; }
+.op-btn:hover { color:#4080FF; }
+.op-btn.danger { color:#F56C6C; }
+.op-btn.danger:hover { color:#F78989; }
+/* 页面标题 */
+.page-title { font-size:16px; font-weight:600; color:#333; margin-bottom:16px; }
+/* 抽屉自定义 */
+.drawer-body { padding:20px; }
+.info-row { display:flex; margin-bottom:12px; font-size:13px; }
+.info-label { color:#999; width:80px; flex-shrink:0; }
+.info-value { color:#333; }
+.progress-overview { display:flex; gap:32px; padding:16px; background:#F5F7FA; border-radius:4px; margin:12px 0; }
+.progress-overview .ov-item { text-align:center; }
+.progress-overview .ov-num { font-size:24px; font-weight:600; color:#165DFF; }
+.progress-overview .ov-label { font-size:12px; color:#999; margin-top:4px; }
+.progress-cards { display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin:16px 0; }
+.progress-card { background:#fff; border:1px solid #EBEEF5; border-radius:8px; padding:16px; text-align:center; }
+.progress-card .pc-num { font-size:28px; font-weight:700; line-height:1.2; }
+.progress-card .pc-label { font-size:12px; color:#999; margin-top:6px; }
+.progress-card.pc-total .pc-num { color:#165DFF; }
+.progress-card.pc-done .pc-num { color:#67C23A; }
+.progress-card.pc-ing .pc-num { color:#E6A23C; }
+.progress-card.pc-rate .pc-num { color:#165DFF; font-size:20px; }
+.progress-card .pc-bar { margin-top:8px; height:6px; background:#F0F0F0; border-radius:3px; overflow:hidden; }
+.progress-card .pc-bar-inner { height:100%; border-radius:3px; }
+/* 操作记录时间线 */
+
+/* Step2 drawer */
+.step2-drawer .el-drawer__body { padding:0; }
+.config-layout { display:flex; height:100%; }
+.config-left { width:240px; border-right:1px solid #EBEEF5; padding:16px; overflow-y:auto; }
+.config-right { flex:1; padding:16px; overflow-y:auto; display:flex; flex-direction:column; }
+.dir-item { padding:8px 12px; display:flex; align-items:center; justify-content:space-between; cursor:pointer; border-radius:4px; margin-bottom:4px; font-size:13px; }
+.dir-item.active { background:#E8F3FF; color:#165DFF; }
+.dir-item:hover { background:#F5F7FA; }
+.tree-node { padding:6px 0 6px 20px; font-size:13px; }
+.tree-node-label { display:flex; align-items:center; gap:6px; }
+.tree-parent { padding:8px 0; font-size:13px; font-weight:500; }
+.device-count { color:#999; font-size:12px; }
+/* 设备表格 */
+.device-table { width:100%; border-collapse:collapse; font-size:13px; }
+.device-table th { background:#FAFAFA; color:#666; font-weight:500; text-align:left; padding:8px 10px; border-bottom:1px solid #EBEEF5; font-size:12px; }
+.device-table td { padding:8px 10px; border-bottom:1px solid #EBEEF5; }
+/* toggle */
+.toggle-switch { position:relative; display:inline-block; width:36px; height:20px; cursor:pointer; }
+.toggle-switch input { display:none; }
+.toggle-slider { position:absolute; inset:0; background:#DCDFE6; border-radius:10px; transition:.2s; }
+.toggle-slider::after { content:''; position:absolute; left:2px; top:2px; width:16px; height:16px; background:#fff; border-radius:50%; transition:.2s; }
+.toggle-switch input:checked + .toggle-slider { background:#165DFF; }
+.toggle-switch input:checked + .toggle-slider::after { transform:translateX(16px); }
+/* status dot */
+.status-dot { display:inline-block; width:6px; height:6px; border-radius:50%; margin-right:4px; }
+.status-online { background:#67C23A; }
+.status-offline { background:#F56C6C; }
+/* footer bar */
+.footer-bar { display:flex; align-items:center; justify-content:space-between; padding:12px 16px; border-top:1px solid #EBEEF5; background:#fff; }
+.selected-info { font-size:13px; color:#666; }
+.selected-info strong { color:#165DFF; }
+</style>
+</head>
+<body>
+<div id="app">
+  <!-- 顶栏 -->
+  <div class="topbar">视频云平台 · 治理任务 v2.0</div>
+  <!-- 侧栏 -->
+  <div class="sidebar">
+    <div class="sidebar-item">首页</div>
+    <div class="sidebar-item active">治理任务</div>
+    <div class="sidebar-item">设备管理</div>
+    <div class="sidebar-item">数据统计</div>
+  </div>
+  <!-- 内容区 -->
+  <div class="main">
+    <div class="page-title">治理任务</div>
+
+    <!-- 筛选栏 -->
+    <div class="card">
+      <div class="filter-bar">
+        <input v-model="filter.name" placeholder="任务名称" style="padding:6px 10px;border:1px solid #dcdfe6;border-radius:4px;font-size:13px;width:180px;outline:none;" />
+        <input v-model="filter.person" placeholder="治理人员" style="padding:6px 10px;border:1px solid #dcdfe6;border-radius:4px;font-size:13px;width:160px;outline:none;" />
+        <div style="position:relative;display:inline-block;">
+          <el-select v-model="filter.types" multiple placeholder="治理类型" size="small" style="width:200px" collapse-tags>
+            <el-option label="标签配置" value="标签配置"/>
+            <el-option label="管理单位配置" value="管理单位配置"/>
+            <el-option label="经纬度治理" value="经纬度治理"/>
+            <el-option label="设备名称规范" value="设备名称规范"/>
+          </el-select>
+        </div>
+        <select v-model="filter.status" style="padding:6px 10px;border:1px solid #dcdfe6;border-radius:4px;font-size:13px;width:140px;background:#fff;outline:none;">
+          <option value="">任务状态</option>
+          <option value="进行中">进行中</option>
+          <option value="已完成">已完成</option>
+        </select>
+        <button style="padding:6px 12px;background:#165DFF;color:#fff;border:none;border-radius:4px;cursor:pointer;font-size:13px;" @click="doQuery">查询</button>
+        <button style="padding:6px 12px;background:#fff;color:#606266;border:1px solid #dcdfe6;border-radius:4px;cursor:pointer;font-size:13px;" @click="doReset">重置</button>
+        <div style="flex:1"></div>
+        <el-button type="primary" @click="openStep1">+ 新增任务</el-button>
+      </div>
+    </div>
+
+    <!-- 表格 -->
+    <div class="card">
+      <table class="data-table">
+        <colgroup>
+          <col style="width:200px">
+          <col style="width:200px">
+          <col style="width:90px">
+          <col style="width:150px">
+          <col style="width:120px">
+          <col style="width:100px">
+          <col style="width:160px">
+          <col style="width:240px">
+        </colgroup>
+        <thead>
+          <tr>
+            <th>任务名称</th>
+            <th>治理类型</th>
+            <th class="th-right">设备数量</th>
+            <th>任务进度</th>
+            <th>治理人员</th>
+            <th>创建人</th>
+            <th>创建时间</th>
+            <th>操作</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="(row,i) in tableData" :key="i">
+            <td>{{ row.name }}</td>
+            <td style="max-width:200px;" :title="row.types.join('、')"><div style="display:flex;align-items:center;gap:4px;white-space:nowrap;overflow:hidden;"><template v-for="(t,ti) in row.types" :key="ti"><span v-if="ti<2" class="tag tag-blue" style="flex-shrink:0;">{{ t }}</span></template><span v-if="row.types.length>2" class="tag tag-blue" style="flex-shrink:0;">+{{ row.types.length - 2 }}</span></div></td>
+            <td class="td-right">{{ row.count }}</td>
+            <td>
+              <div class="progress-wrap">
+                <div class="progress-bar">
+                  <div class="progress-bar-inner" :style="{width:row.progress+'%', background:getProgressColor(row.progress)}"></div>
+                </div>
+                <span class="progress-text">{{ row.progress }}%</span>
+              </div>
+            </td>
+            <td>{{ row.person }}</td>
+            <td>{{ row.creator }}</td>
+            <td>{{ row.time }}</td>
+            <td>
+              <button class="op-btn" @click="openDetail(row)">详情</button>
+              <button class="op-btn" @click="openEdit(row)">编辑</button>
+              <button class="op-btn" @click="openConfigDevice(row)">配置设备</button>
+              <button class="op-btn danger" @click="confirmDelete(row)">删除</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Step1: 新增/编辑任务弹窗 -->
+  <el-dialog v-model="step1Visible" :title="editingRow?'编辑任务':'新增任务'" width="480px" destroy-on-close>
+    <el-form label-width="80px" label-position="right">
+      <el-form-item label="任务名称" required>
+        <el-input v-model="form.name" placeholder="请输入任务名称" />
+      </el-form-item>
+      <el-form-item label="治理类型" required>
+        <div style="display:flex;gap:16px;flex-wrap:wrap;">
+          <label v-for="t in ['标签配置','管理单位配置','经纬度治理','设备名称规范']" :key="t" style="display:flex;align-items:center;gap:4px;cursor:pointer;font-size:13px;">
+            <input type="checkbox" :value="t" v-model="form.types" /> {{ t }}
+          </label>
+        </div>
+      </el-form-item>
+      <el-form-item label="治理人员">
+        <select v-model="form.person" style="width:100%;padding:6px 10px;border:1px solid #dcdfe6;border-radius:4px;font-size:13px;background:#fff;outline:none;">
+          <option value="">请选择治理人员</option>
+          <option value="张三">张三</option>
+          <option value="李四">李四</option>
+          <option value="王五">王五</option>
+          <option value="赵六">赵六</option>
+        </select>
+      </el-form-item>
+    </el-form>
+    <template #footer>
+      <el-button @click="step1Visible=false">取消</el-button>
+      <el-button type="primary" @click="goStep2">{{ editingRow?'确定':'下一步' }}</el-button>
+    </template>
+  </el-dialog>
+
+  <!-- Step2: 底部抽屉 - 配置设备 -->
+  <el-drawer v-model="step2Visible" direction="btt" size="85%" title="配置任务" destroy-on-close class="step2-drawer">
+    <el-tabs v-model="configTab" style="height:100%; display:flex; flex-direction:column;">
+      <el-tab-pane label="配置目录组织" name="dir" style="flex:1; overflow:auto;">
+        <div class="config-layout" style="min-height:500px;">
+          <div class="config-left">
+            <div v-for="d in dirList" :key="d.name" class="dir-item" :class="{active:d.on}" @click="d.on=!d.on">
+              <span>{{ d.name }}</span>
+              <label class="toggle-switch" @click.stop>
+                <input type="checkbox" v-model="d.on"><span class="toggle-slider"></span>
+              </label>
+            </div>
+          </div>
+          <div class="config-right">
+            <div class="tree-parent">
+              <el-checkbox v-model="treeAll">基础目录</el-checkbox>
+              <span class="device-count">(36125/68699)</span>
+            </div>
+            <div v-for="node in treeNodes" :key="node.name" class="tree-node">
+              <div class="tree-node-label">
+                <el-checkbox v-model="node.checked">{{ node.name }}</el-checkbox>
+                <span class="device-count">({{ node.numerator }}/{{ node.denominator }})</span>
+              </div>
+            </div>
+            <div style="flex:1"></div>
+            <div style="text-align:right; padding-top:16px; border-top:1px solid #EBEEF5; margin-top:16px;">
+              <el-button @click="step2Visible=false">取消</el-button>
+              <el-button type="primary" @click="step2Visible=false">确定</el-button>
+            </div>
+          </div>
+        </div>
+      </el-tab-pane>
+
+      <el-tab-pane label="配置设备" name="device" style="flex:1; overflow:auto;">
+        <div style="display:flex; min-height:500px;">
+          <!-- 左侧已选组织 -->
+          <div class="config-left" style="font-size:13px;">
+            <div style="font-weight:500; margin-bottom:12px; color:#333;">已选目录组织</div>
+            <div v-for="node in treeNodes.filter(n=>n.checked)" :key="node.name" style="padding:6px 0; color:#165DFF;">{{ node.name }}</div>
+            <div v-if="treeNodes.filter(n=>n.checked).length===0" style="color:#999;">暂未选择</div>
+          </div>
+          <!-- 右侧设备配置 -->
+          <div class="config-right">
+            <!-- 设备筛选 -->
+            <div class="filter-bar" style="margin-bottom:12px;">
+              <input v-model="devFilter.name" placeholder="摄像机名称" style="padding:4px 8px;border:1px solid #dcdfe6;border-radius:4px;font-size:12px;width:140px;outline:none;" />
+              <select v-model="devFilter.platform" style="padding:4px 8px;border:1px solid #dcdfe6;border-radius:4px;font-size:12px;background:#fff;outline:none;">
+                <option value="">所属平台</option>
+                <option value="省移动千里眼">省移动千里眼</option>
+                <option value="省电信平台">省电信平台</option>
+                <option value="龙彩特食平台">龙彩特食平台</option>
+                <option value="省联通平台">省联通平台</option>
+              </select>
+              <select v-model="devFilter.online" style="padding:4px 8px;border:1px solid #dcdfe6;border-radius:4px;font-size:12px;background:#fff;outline:none;">
+                <option value="">在线状态</option>
+                <option value="在线">在线</option>
+                <option value="离线">离线</option>
+              </select>
+              <select v-model="devFilter.coord" style="padding:4px 8px;border:1px solid #dcdfe6;border-radius:4px;font-size:12px;background:#fff;outline:none;">
+                <option value="">经纬度状态</option>
+                <option value="有坐标">有坐标</option>
+                <option value="无坐标">无坐标</option>
+                <option value="不适用">不适用</option>
+              </select>
+              <select v-model="devFilter.unit" style="padding:4px 8px;border:1px solid #dcdfe6;border-radius:4px;font-size:12px;background:#fff;outline:none;">
+                <option value="">管理单位</option>
+                <option value="西湖区">西湖区</option>
+                <option value="余杭区">余杭区</option>
+              </select>
+              <select v-model="devFilter.tag" style="padding:4px 8px;border:1px solid #dcdfe6;border-radius:4px;font-size:12px;background:#fff;outline:none;">
+                <option value="">标签</option>
+                <option value="重点">重点</option>
+                <option value="普通">普通</option>
+              </select>
+            </div>
+            <!-- 设备表格 -->
+            <div style="flex:1; overflow:auto;">
+              <table class="device-table">
+                <thead>
+                  <tr>
+                    <th style="width:40px"><input type="checkbox" v-model="devAllCheck" /></th>
+                    <th>摄像机名称</th>
+                    <th>所属平台</th>
+                    <th>在线状态</th>
+                    <th>经纬度状态</th>
+                    <th>管理单位</th>
+                    <th>标签</th>
+                    <th style="width:100px">操作</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr v-for="(d,di) in deviceList" :key="di">
+                    <td><input type="checkbox" v-model="d.checked" /></td>
+                    <td>{{ d.name }}</td>
+                    <td>{{ d.platform }}</td>
+                    <td><span class="status-dot" :class="d.online==='在线'?'status-online':'status-offline'"></span>{{ d.online }}</td>
+                    <td>{{ d.coord }}</td>
+                    <td>{{ d.unit }}</td>
+                    <td>{{ d.tag }}</td>
+                    <td>
+                      <label class="toggle-switch">
+                        <input type="checkbox" v-model="d.enabled"><span class="toggle-slider"></span>
+                      </label>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="footer-bar" style="margin:0 -16px -16px;">
+              <div style="display:flex;align-items:center;gap:12px;">
+                <span class="selected-info">已选择 <strong>{{ deviceList.filter(d=>d.checked).length }}</strong> 台</span>
+                <button style="padding:4px 10px;background:#165DFF;color:#fff;border:none;border-radius:4px;cursor:pointer;font-size:12px;" @click="batchBind">批量绑定</button>
+                <button style="padding:4px 10px;background:#fff;color:#F56C6C;border:1px solid #F56C6C;border-radius:4px;cursor:pointer;font-size:12px;">批量解绑</button>
+              </div>
+              <div>
+                <el-button size="small" @click="step2Visible=false">取消</el-button>
+                <el-button type="primary" size="small" @click="step2Visible=false">确认配置</el-button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </el-tab-pane>
+    </el-tabs>
+  </el-drawer>
+
+  <!-- 详情抽屉 -->
+  <el-drawer v-model="detailVisible" title="任务详情" size="600px" destroy-on-close>
+    <div class="drawer-body" v-if="detailRow">
+      <div style="font-weight:600; font-size:15px; margin-bottom:16px;">任务信息</div>
+      <div class="info-row"><span class="info-label">任务名称</span><span class="info-value">{{ detailRow.name }}</span></div>
+      <div class="info-row"><span class="info-label">治理类型</span><span class="info-value"><span v-for="t in detailRow.types" class="tag tag-blue">{{ t }}</span></span></div>
+      <div class="info-row"><span class="info-label">治理人员</span><span class="info-value">{{ detailRow.person }}</span></div>
+      <div class="info-row"><span class="info-label">创建人</span><span class="info-value">{{ detailRow.creator }}</span></div>
+      <div class="info-row"><span class="info-label">创建时间</span><span class="info-value">{{ detailRow.time }}</span></div>
+
+      <div class="progress-cards">
+        <div class="progress-card pc-total">
+          <div style="font-size:20px;margin-bottom:4px;">📊</div>
+          <div class="pc-num">{{ detailRow.count }}</div>
+          <div class="pc-label">总计(台)</div>
+        </div>
+        <div class="progress-card pc-done">
+          <div style="font-size:20px;margin-bottom:4px;">✅</div>
+          <div class="pc-num">{{ Math.round(detailRow.count*detailRow.progress/100) }}</div>
+          <div class="pc-label">已治理(台)</div>
+        </div>
+        <div class="progress-card pc-ing">
+          <div style="font-size:20px;margin-bottom:4px;">⏳</div>
+          <div class="pc-num">{{ detailRow.count - Math.round(detailRow.count*detailRow.progress/100) }}</div>
+          <div class="pc-label">进行中(台)</div>
+        </div>
+        <div class="progress-card pc-rate">
+          <div style="font-size:20px;margin-bottom:4px;">📈</div>
+          <div class="pc-num">{{ detailRow.progress }}%</div>
+          <div class="pc-label">完成进度</div>
+        </div>
+      </div>
+      <div style="margin:16px 0;padding:0 4px;">
+        <div style="display:flex;justify-content:space-between;font-size:12px;color:#999;margin-bottom:6px;">
+          <span>整体进度</span><span>{{ detailRow.progress }}%</span>
+        </div>
+        <div style="height:12px;background:#F0F0F0;border-radius:6px;overflow:hidden;">
+          <div :style="{width:detailRow.progress+'%',height:'100%',borderRadius:'6px',background:getProgressColor(detailRow.progress),transition:'width .3s'}"></div>
+        </div>
+      </div>
+
+      <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:8px;">
+        <div style="font-weight:600; font-size:14px;">设备清单</div>
+        <div style="display:flex; gap:8px;">
+          <input v-model="detailNameFilter" placeholder="设备名称" style="padding:4px 8px;border:1px solid #dcdfe6;border-radius:4px;font-size:12px;width:140px;outline:none;" />
+          <select v-model="detailPlatformFilter" style="padding:4px 8px;border:1px solid #dcdfe6;border-radius:4px;font-size:12px;background:#fff;outline:none;width:130px;">
+            <option value="">所属平台</option>
+            <option value="省移动千里眼">省移动千里眼</option>
+            <option value="省电信平台">省电信平台</option>
+            <option value="龙彩特食平台">龙彩特食平台</option>
+            <option value="省联通平台">省联通平台</option>
+          </select>
+          <select v-model="detailStatusFilter" style="padding:4px 8px;border:1px solid #dcdfe6;border-radius:4px;font-size:12px;background:#fff;outline:none;width:120px;">
+            <option value="">治理状态</option>
+            <option value="已治理">已治理</option>
+            <option value="进行中">进行中</option>
+          </select>
+        </div>
+      </div>
+      <table class="device-table">
+        <thead>
+          <tr><th style="width:200px">设备名称</th><th style="width:120px">设备编码</th><th style="width:120px">通道编码</th><th style="width:140px">所属平台</th><th style="width:80px">在线状态</th><th style="width:100px">治理状态</th></tr>
+        </thead>
+        <tbody>
+          <tr v-for="(d,di) in filteredDetailDevices" :key="di">
+            <td>{{ d.name }}</td>
+            <td>{{ d.deviceCode }}</td>
+            <td>{{ d.channelCode }}</td>
+            <td>{{ d.platform }}</td>
+            <td><span class="status-dot" :class="d.online==='在线'?'status-online':'status-offline'"></span>{{ d.online }}</td>
+            <td><el-tag :type="d.done?'success':'warning'" size="small">{{ d.done?'已治理':'进行中' }}</el-tag></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </el-drawer>
+
+  <!-- 删除确认 -->
+  <el-dialog v-model="deleteVisible" title="确认删除" width="400px">
+    <p>确定要删除任务「{{ deleteRow?.name }}」吗？此操作不可恢复。</p>
+    <template #footer>
+      <el-button @click="deleteVisible=false">取消</el-button>
+      <el-button type="danger" @click="doDelete">确认删除</el-button>
+    </template>
+  </el-dialog>
+</div>
+
+<script>
+const { createApp, ref, reactive, computed } = Vue
+const app = createApp({
+  setup() {
+    // 筛选
+    const filter = reactive({ name:'', person:'', types:[], status:'' })
+    // 表格数据
+    const allData = [
+      { name:'西湖区设备标签治理', types:['标签配置','管理单位配置'], count:210, progress:68, person:'张三', creator:'管理员', time:'2026-06-15 09:30' },
+      { name:'余杭区经纬度校准', types:['经纬度治理'], count:320, progress:95, person:'李四', creator:'管理员', time:'2026-06-18 14:20' },
+      { name:'滨江区综合治理', types:['标签配置','管理单位配置','经纬度治理'], count:150, progress:8, person:'王五', creator:'管理员', time:'2026-06-20 10:00' },
+      { name:'鄞州区设备名称规范', types:['设备名称规范','标签配置'], count:180, progress:53, person:'赵六', creator:'管理员', time:'2026-06-22 16:45' },
+    ]
+    const tableData = ref([...allData])
+    function doQuery() {
+      tableData.value = allData.filter(r => {
+        if (filter.name && !r.name.includes(filter.name)) return false
+        if (filter.person && !r.person.includes(filter.person)) return false
+        if (filter.types.length && !filter.types.some(t => r.types.includes(t))) return false
+        if (filter.status) {
+          const s = r.progress >= 100 ? '已完成' : '进行中'
+          if (filter.status !== s) return false
+        }
+        return true
+      })
+    }
+    function doReset() { filter.name=''; filter.person=''; filter.types=[]; filter.status=''; tableData.value=[...allData] }
+    function getProgressColor(p) { return p < 60 ? '#F56C6C' : p < 90 ? '#E6A23C' : '#67C23A' }
+
+    // Step1
+    const step1Visible = ref(false)
+    const editingRow = ref(null)
+    const form = reactive({ name:'', types:[], person:'' })
+    function openStep1() { editingRow.value=null; form.name=''; form.types=[]; form.person=''; step1Visible.value=true }
+    function openEdit(row) { editingRow.value=row; form.name=row.name; form.types=[...row.types]; form.person=row.person; step1Visible.value=true }
+    function goStep2() {
+      if (!form.name) { ElMessage.warning('请输入任务名称'); return }
+      if (!form.types.length) { ElMessage.warning('请选择治理类型'); return }
+      step1Visible.value = false
+      if (!editingRow.value) {
+        configTab.value = 'dir'
+        step2Visible.value = true
+      }
+    }
+
+    // Step2
+    const step2Visible = ref(false)
+    const configTab = ref('dir')
+    const dirList = reactive([
+      { name:'基础目录', on:true },
+      { name:'明厨亮灶', on:false },
+      { name:'食品生产', on:false },
+      { name:'食品销售', on:false },
+    ])
+    const treeAll = ref(false)
+    const treeNodes = reactive([
+      { name:'省移动千里眼', numerator:9948, denominator:18737, checked:false },
+      { name:'省电信平台', numerator:21122, denominator:36937, checked:false },
+      { name:'龙彩特食平台', numerator:381, denominator:381, checked:false },
+      { name:'联通绥化平台', numerator:5, denominator:201, checked:false },
+      { name:'联通齐齐哈尔平台', numerator:946, denominator:1590, checked:false },
+      { name:'联通双鸭山平台', numerator:315, denominator:883, checked:false },
+      { name:'联通鹤岗平台', numerator:239, denominator:437, checked:false },
+      { name:'省联通平台', numerator:1531, denominator:5262, checked:false },
+    ])
+    function openConfigDevice(row) {
+      step2Visible.value = true
+      configTab.value = 'device'
+    }
+
+    // 设备筛选
+    const devFilter = reactive({ name:'', platform:'', online:'', coord:'', unit:'', tag:'' })
+    const devAllCheck = ref(false)
+    const deviceList = reactive([
+      { name:'西湖区路口摄像头A01', platform:'省移动千里眼', online:'在线', coord:'有坐标', unit:'西湖区', tag:'重点', checked:false, enabled:true },
+      { name:'西湖区校园门口B03', platform:'省电信平台', online:'在线', coord:'有坐标', unit:'西湖区', tag:'普通', checked:false, enabled:false },
+      { name:'余杭区公园监控C12', platform:'龙彩特食平台', online:'离线', coord:'无坐标', unit:'余杭区', tag:'普通', checked:false, enabled:true },
+      { name:'滨江区主干道D07', platform:'省联通平台', online:'在线', coord:'有坐标', unit:'滨江区', tag:'重点', checked:false, enabled:false },
+      { name:'鄞州区商业街E05', platform:'省移动千里眼', online:'离线', coord:'不适用', unit:'鄞州区', tag:'普通', checked:false, enabled:true },
+      { name:'余杭区河道监控F09', platform:'省电信平台', online:'在线', coord:'无坐标', unit:'余杭区', tag:'重点', checked:false, enabled:false },
+    ])
+
+    // 详情
+    const detailVisible = ref(false)
+    const detailRow = ref(null)
+    const detailTab = ref('list')
+    function openDetail(row) { detailRow.value=row; detailTab.value='list'; detailNameFilter.value=''; detailPlatformFilter.value=''; detailStatusFilter.value=''; detailVisible.value=true }
+    const detailStatusFilter = ref('')
+    const detailNameFilter = ref('')
+    const detailPlatformFilter = ref('')
+    const detailDevices = [
+      { name:'西湖区路口摄像头A01', deviceCode:'DEV001', channelCode:'CH001', platform:'省移动千里眼', online:'在线', done:true },
+      { name:'西湖区校园门口B03', deviceCode:'DEV002', channelCode:'CH002', platform:'省电信平台', online:'在线', done:true },
+      { name:'余杭区公园监控C12', deviceCode:'DEV003', channelCode:'CH003', platform:'龙彩特食平台', online:'离线', done:false },
+      { name:'滨江区主干道D07', deviceCode:'DEV004', channelCode:'CH004', platform:'省联通平台', online:'在线', done:false },
+      { name:'鄞州区商业街E05', deviceCode:'DEV005', channelCode:'CH005', platform:'省移动千里眼', online:'离线', done:true },
+      { name:'余杭区河道监控F09', deviceCode:'DEV006', channelCode:'CH006', platform:'省电信平台', online:'在线', done:false },
+    ]
+    const filteredDetailDevices = computed(() => {
+      let list = detailDevices
+      if (detailNameFilter.value) list = list.filter(d => d.name.includes(detailNameFilter.value))
+      if (detailPlatformFilter.value) list = list.filter(d => d.platform === detailPlatformFilter.value)
+      if (detailStatusFilter.value) {
+        list = list.filter(d => {
+          if (detailStatusFilter.value === '已治理') return d.done
+          return !d.done
+        })
+      }
+      return list
+    })
+
+    // 删除
+    const deleteVisible = ref(false)
+    const deleteRow = ref(null)
+    function confirmDelete(row) { deleteRow.value=row; deleteVisible.value=true }
+    function doDelete() {
+      const idx = allData.indexOf(deleteRow.value)
+      if (idx > -1) allData.splice(idx, 1)
+      tableData.value = [...allData]
+      deleteVisible.value = false
+      ElMessage.success('删除成功')
+    }
+
+    function batchBind() { deviceList.filter(d=>d.checked).forEach(d=>d.enabled=true); ElMessage.success('批量绑定成功') }
+    return {
+      filter, tableData, doQuery, doReset, getProgressColor,
+      step1Visible, editingRow, form, openStep1, openEdit, goStep2,
+      step2Visible, configTab, dirList, treeAll, treeNodes, openConfigDevice,
+      devFilter, devAllCheck, deviceList,
+      detailVisible, detailRow, detailTab, openDetail, detailDevices, detailStatusFilter, detailNameFilter, detailPlatformFilter, filteredDetailDevices,
+      deleteVisible, deleteRow, confirmDelete, doDelete, batchBind,
+    }
+  }
+})
+app.use(ElementPlus)
+app.mount('#app')
+</script>
+</body>
+</html>

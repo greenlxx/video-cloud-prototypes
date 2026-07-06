@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>行政区划管理</title>
+<link rel="stylesheet" href="https://unpkg.com/element-plus@2.4.4/dist/index.css">
+<script src="https://unpkg.com/vue@3.4.15/dist/vue.global.prod.js"></script>
+<script src="https://unpkg.com/element-plus@2.4.4/dist/index.full.min.js"></script>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #F5F5F5; }
+.layout { display: flex; height: 100vh; flex-direction: column; }
+.topbar { height: 48px; background: #165DFF; display: flex; align-items: center; padding: 0 20px; color: #fff; font-size: 16px; font-weight: 600; flex-shrink: 0; }
+.main { display: flex; flex: 1; overflow: hidden; }
+.sidebar { width: 220px; background: #001529; color: #fff; overflow-y: auto; flex-shrink: 0; }
+.sidebar-title { padding: 16px; font-size: 14px; font-weight: 600; border-bottom: 1px solid rgba(255,255,255,0.1); }
+.sidebar-item { padding: 10px 16px; cursor: pointer; font-size: 13px; transition: background 0.2s; }
+.sidebar-item:hover { background: rgba(255,255,255,0.08); }
+.sidebar-item.active { background: #165DFF; }
+.content { flex: 1; padding: 16px; overflow-y: auto; }
+.toolbar { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; }
+.table-wrap { background: #fff; border-radius: 6px; padding: 16px; }
+table { width: 100%; border-collapse: collapse; }
+th { background: #FAFAFA; text-align: left; padding: 10px 12px; font-size: 13px; color: #333; border-bottom: 1px solid #EBEEF5; }
+td { padding: 10px 12px; font-size: 13px; color: #606266; border-bottom: 1px solid #EBEEF5; }
+tr:hover td { background: #F5F7FA; }
+.op-btn { color: #165DFF; cursor: pointer; font-size: 13px; margin-right: 12px; background: none; border: none; }
+.op-btn:hover { text-decoration: underline; }
+</style>
+</head>
+<body>
+<div id="app">
+  <div class="layout">
+    <div class="topbar">视频云平台 - 行政区划管理</div>
+    <div class="main">
+      <div class="sidebar">
+        <div class="sidebar-title">省份列表</div>
+        <div v-for="p in provinces" :key="p.name" class="sidebar-item" :class="{active: activeProvince===p.name}" @click="selectProvince(p)">{{p.name}}</div>
+      </div>
+      <div class="content">
+        <div class="toolbar">
+          <el-input v-model="searchKey" placeholder="请输入省份" style="width:200px" size="default" clearable></el-input>
+          <el-button type="primary" size="default" @click="doSearch">查询</el-button>
+          <el-button size="default" @click="doReset">重置</el-button>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th style="width:200px">省份</th><th style="width:80px">缩放级别</th><th style="width:120px">初始经度</th><th style="width:120px">初始纬度</th><th style="width:160px">操作</th></tr></thead>
+            <tbody>
+              <tr v-for="item in filteredTable" :key="item.name">
+                <td>{{item.name}}</td>
+                <td>{{item.zoom}}</td>
+                <td>{{item.lng}}</td>
+                <td>{{item.lat}}</td>
+                <td><button class="op-btn" @click="editItem(item)">编辑</button><button class="op-btn" @click="previewItem(item)">预览</button></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 配置城市弹窗 -->
+  <el-dialog v-model="cityDialogVisible" title="配置城市" width="800px" :close-on-click-modal="false">
+    <el-tabs v-model="cityTab">
+      <el-tab-pane label="市级" name="city"></el-tab-pane>
+      <el-tab-pane label="县级" name="county"></el-tab-pane>
+      <el-tab-pane label="镇级" name="town"></el-tab-pane>
+    </el-tabs>
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">
+      <el-input v-model="citySearchKey" placeholder="请输入城市名称" style="width:240px" size="default" clearable></el-input>
+      <el-button type="primary" size="default" @click="doCitySearch">查询</el-button>
+      <el-button size="default" @click="doCityReset">重置</el-button>
+    </div>
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">
+      <span style="font-size:13px;">缩放级别：</span>
+      <el-input-number v-model="cityZoom" :min="1" :max="18" size="small"></el-input-number>
+      <el-button size="small" type="primary">导入</el-button>
+      <el-button size="small">导出</el-button>
+    </div>
+    <div style="max-height:400px;overflow-y:auto;">
+      <table>
+        <thead>
+          <tr v-if="cityTab==='city'"><th>市级</th><th>初始经度</th><th>初始纬度</th><th>操作</th></tr>
+          <tr v-if="cityTab==='county'"><th>市级</th><th>县级</th><th>初始经度</th><th>初始纬度</th><th>操作</th></tr>
+          <tr v-if="cityTab==='town'"><th>市级</th><th>县级</th><th>镇级</th><th>初始经度</th><th>初始纬度</th><th>操作</th></tr>
+        </thead>
+        <tbody>
+          <tr v-for="(item,i) in filteredCityTable" :key="i">
+            <template v-if="cityTab==='city'">
+              <td>{{item.name}}</td><td>{{item.lng}}</td><td>{{item.lat}}</td>
+              <td><button class="op-btn">编辑</button></td>
+            </template>
+            <template v-if="cityTab==='county'">
+              <td>{{item.city}}</td><td>{{item.name}}</td><td>{{item.lng}}</td><td>{{item.lat}}</td>
+              <td><button class="op-btn">编辑</button></td>
+            </template>
+            <template v-if="cityTab==='town'">
+              <td>{{item.city}}</td><td>{{item.county}}</td><td>{{item.name}}</td><td>{{item.lng}}</td><td>{{item.lat}}</td>
+              <td><button class="op-btn">编辑</button></td>
+            </template>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </el-dialog>
+</div>
+<script>
+const {createApp,ref,computed} = Vue;
+const provinces = [
+  {name:'山西省',zoom:6,lng:112.55,lat:37.87},{name:'内蒙古自治区',zoom:6,lng:112.17,lat:41.82},
+  {name:'辽宁省',zoom:6,lng:123.43,lat:41.80},{name:'吉林省',zoom:6,lng:126.55,lat:43.88},
+  {name:'黑龙江省',zoom:6,lng:126.66,lat:45.74},{name:'安徽省',zoom:6,lng:117.28,lat:31.86},
+  {name:'福建省',zoom:6,lng:119.30,lat:26.08},{name:'江西省',zoom:6,lng:115.89,lat:28.68},
+  {name:'山东省',zoom:6,lng:117.00,lat:36.67},{name:'河南省',zoom:6,lng:113.65,lat:34.76},
+  {name:'湖北省',zoom:6,lng:114.30,lat:30.60},{name:'湖南省',zoom:6,lng:112.98,lat:28.19},
+  {name:'西藏自治区',zoom:6,lng:91.11,lat:29.97},{name:'陕西省',zoom:6,lng:108.95,lat:34.27},
+  {name:'甘肃省',zoom:6,lng:103.83,lat:36.06},{name:'青海省',zoom:6,lng:101.78,lat:36.62},
+  {name:'香港特别行政区',zoom:6,lng:114.17,lat:22.32}
+];
+const cityData = {
+  '山西省':[
+    {name:'太原市',lng:112.55,lat:37.87},{name:'大同市',lng:113.30,lat:40.08},
+    {name:'阳泉市',lng:113.58,lat:37.87},{name:'长治市',lng:113.12,lat:36.20},
+    {name:'晋城市',lng:112.85,lat:35.49},{name:'朔州市',lng:112.43,lat:39.33},
+    {name:'晋中市',lng:112.75,lat:37.69},{name:'运城市',lng:111.01,lat:35.03},
+    {name:'忻州市',lng:112.73,lat:38.42},{name:'临汾市',lng:111.52,lat:36.09},
+    {name:'吕梁市',lng:111.14,lat:37.52}
+  ]
+};
+const countyData = {
+  '太原市':[
+    {city:'太原市',name:'小店区',lng:112.56,lat:37.74},{city:'太原市',name:'迎泽区',lng:112.56,lat:37.87},
+    {city:'太原市',name:'杏花岭区',lng:112.57,lat:37.89},{city:'太原市',name:'尖草坪区',lng:112.48,lat:37.94},
+    {city:'太原市',name:'万柏林区',lng:112.52,lat:37.86},{city:'太原市',name:'晋源区',lng:112.48,lat:37.73},
+    {city:'太原市',name:'清徐县',lng:112.35,lat:37.61},{city:'太原市',name:'阳曲县',lng:112.67,lat:38.06}
+  ]
+};
+const townData = {
+  '小店区':[
+    {city:'太原市',county:'小店区',name:'小店街道',lng:112.56,lat:37.74},
+    {city:'太原市',county:'小店区',name:'平阳路街道',lng:112.56,lat:37.76},
+    {city:'太原市',county:'小店区',name:'坞城街道',lng:112.58,lat:37.78},
+    {city:'太原市',county:'小店区',name:'北营街道',lng:112.59,lat:37.75},
+    {city:'太原市',county:'小店区',name:'黄陵街道',lng:112.57,lat:37.72}
+  ]
+};
+const app = createApp({
+  setup(){
+    const activeProvince = ref('山西省');
+    const searchKey = ref('');
+    const tableData = ref(provinces);
+    const cityDialogVisible = ref(false);
+    const cityTab = ref('city');
+    const cityZoom = ref(8);
+    const citySearchKey = ref('');
+    const currentCities = ref([]);
+    const currentCounties = ref([]);
+    const currentTowns = ref([]);
+
+    const filteredTable = computed(()=>{
+      const k = searchKey.value.trim();
+      if(!k) return tableData.value;
+      return tableData.value.filter(r=>r.name.includes(k));
+    });
+
+    const filteredCityTable = computed(()=>{
+      const k = citySearchKey.value.trim();
+      if(cityTab.value==='city'){
+        if(!k) return currentCities.value;
+        return currentCities.value.filter(r=>r.name.includes(k));
+      } else if(cityTab.value==='county'){
+        if(!k) return currentCounties.value;
+        return currentCounties.value.filter(r=>r.name.includes(k)||r.city.includes(k));
+      } else {
+        if(!k) return currentTowns.value;
+        return currentTowns.value.filter(r=>r.name.includes(k)||r.city.includes(k)||r.county.includes(k));
+      }
+    });
+
+    function selectProvince(p){
+      activeProvince.value = p.name;
+      currentCities.value = cityData[p.name] || [];
+      currentCounties.value = [];
+      currentTowns.value = [];
+      citySearchKey.value = '';
+      if(currentCities.value.length > 0){
+        const firstCity = currentCities.value[0].name;
+        currentCounties.value = countyData[firstCity] || [];
+        if(currentCounties.value.length > 0){
+          const firstCounty = currentCounties.value[0].name;
+          currentTowns.value = townData[firstCounty] || [];
+        }
+      }
+      cityDialogVisible.value = true;
+    }
+    function editItem(item){ selectProvince(item); }
+    function previewItem(item){ selectProvince(item); }
+    function doCitySearch(){ /* already reactive via computed */ }
+    function doCityReset(){ citySearchKey.value=''; }
+    function doSearch(){ /* already reactive */ }
+    function doReset(){ searchKey.value=''; tableData.value=provinces; }
+
+    return {provinces,activeProvince,searchKey,tableData,filteredTable,cityDialogVisible,cityTab,cityZoom,citySearchKey,filteredCityTable,currentCities,currentCounties,currentTowns,selectProvince,editItem,previewItem,doCitySearch,doCityReset,doSearch,doReset};
+  }
+});
+app.use(ElementPlus);
+app.mount('#app');
+</script>
+</body>
+</html>
