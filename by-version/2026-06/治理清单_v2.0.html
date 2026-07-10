@@ -207,6 +207,35 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC'
 .govern-tags-section h5 { font-size: 14px; color: #1D2129; margin-bottom: 12px; }
 .govern-tags-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px 12px; }
 
+/* 治理弹窗右栏重排布局 */
+.gr-field { margin-bottom: 14px; }
+.gr-field > label { display: block; font-size: 13px; color: #86909C; margin-bottom: 6px; font-weight: 500; }
+.gr-region-row { display: flex; gap: 8px; }
+.gr-region-row select { flex: 1; min-width: 0; }
+.gr-two-row { display: flex; gap: 12px; margin-bottom: 14px; }
+.gr-two-row .gr-col { flex: 1; min-width: 0; }
+.gr-two-row .gr-col > label { display: block; font-size: 13px; color: #86909C; margin-bottom: 6px; font-weight: 500; }
+.gr-two-row .gr-col select { width: 100%; min-width: 0; }
+.gr-coord-row { display: flex; align-items: center; gap: 10px; }
+.gr-coord-row input.native-input { width: 180px; min-width: 0; flex: 0 0 auto; }
+.gr-coord-na { display: flex; align-items: center; gap: 4px; font-size: 13px; color: #606266; font-weight: 400 !important; margin-bottom: 0 !important; white-space: nowrap; cursor: pointer; }
+.gr-divider { border: none; border-top: 1px solid #EBEEF5; margin: 4px 0 14px; }
+.gr-tags-title { font-size: 14px; color: #1D2129; margin-bottom: 12px; font-weight: 600; }
+.gr-tags-flex { display: flex; flex-wrap: wrap; gap: 12px; }
+.gr-tags-flex .gr-tag-field { flex: 0 0 calc(50% - 6px); min-width: 0; }
+.gr-tags-flex .gr-tag-field > label { display: block; font-size: 13px; color: #86909C; margin-bottom: 6px; font-weight: 500; }
+.gr-tags-flex .gr-tag-field select { width: 100%; min-width: 0; }
+
+/* 批量配置下拉菜单 */
+.batch-config-wrap { position: relative; display: inline-block; }
+.batch-menu {
+  position: absolute; top: 100%; left: 0; margin-top: 4px; z-index: 300;
+  background: #fff; border: 1px solid #E4E7ED; border-radius: 4px;
+  box-shadow: 0 2px 12px rgba(0,0,0,.12); min-width: 140px; padding: 4px 0;
+}
+.batch-menu-item { padding: 8px 16px; font-size: 13px; color: #606266; cursor: pointer; }
+.batch-menu-item:hover { background: #F5F7FA; color: #165DFF; }
+
 /* 审核弹窗 */
 .audit-modal { width: 700px; }
 .audit-section { margin-bottom: 16px; }
@@ -493,10 +522,15 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC'
         <!-- 批量操作栏 -->
         <div style="display:flex;align-items:center;gap:8px;padding:8px 0;border-top:1px solid #F2F3F5;margin-top:4px;">
           <template v-if="currentRole === 'governance'">
-            <button class="btn btn-small" :disabled="selectedDevices.length === 0" @click="openBatchGovern('标签配置')">批量配置标签</button>
-            <button class="btn btn-small" :disabled="selectedDevices.length === 0" @click="openBatchGovern('管理单位配置')">批量配置管理单位</button>
-            <button class="btn btn-small" :disabled="selectedDevices.length === 0" @click="openBatchGovern('行政区划')">批量配置行政区划</button>
-            <button class="btn btn-small" :disabled="selectedDevices.length === 0" @click="openBatchGovern('枪球机')">批量配置枪球机</button>
+            <div class="batch-config-wrap">
+              <button class="btn btn-small" :disabled="selectedDevices.length === 0" @click.stop="toggleBatchMenu">批量配置 ▾</button>
+              <div class="batch-menu" v-if="showBatchMenu" @click.stop>
+                <div class="batch-menu-item" @click="openBatchGovern('管理单位配置')">管理单位</div>
+                <div class="batch-menu-item" @click="openBatchGovern('枪球机')">枪球机</div>
+                <div class="batch-menu-item" @click="openBatchGovern('标签配置')">标签</div>
+                <div class="batch-menu-item" @click="openBatchGovern('行政区划')">行政区划</div>
+              </div>
+            </div>
           </template>
           <template v-if="currentRole === 'dispatcher'">
             <button class="btn btn-small btn-success" :disabled="selectedDevices.length === 0" @click="batchAudit('通过')">批量审核通过</button>
@@ -597,53 +631,75 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC'
           </div>
           <!-- 右栏：字段编辑区 -->
           <div class="govern-right">
-            <div class="govern-field">
+            <!-- 行政区划：独占一行，4级并排 -->
+            <div class="gr-field">
               <label>*行政区划</label>
-              <select class="native-select" v-model="governForm.region">
-                <option value="">请选择</option>
-                <option v-for="r in regionOptions" :key="r" :value="r">{{ r }}</option>
-              </select>
-            </div>
-            <div class="govern-field">
-              <label>详细地址</label>
-              <input class="native-input" v-model="governForm.address" placeholder="请输入详细地址" />
-            </div>
-            <div class="govern-field">
-              <label>管理单位</label>
-              <select class="native-select" v-model="governForm.unit">
-                <option value="">请选择</option>
-                <option value="暂无管理单位">暂无管理单位</option>
-                <option v-for="u in unitOptions" :key="u" :value="u">{{ u }}</option>
-              </select>
-            </div>
-            <div class="govern-field">
-              <label>枪球机</label>
-              <select class="native-select" v-model="governForm.cameraType">
-                <option value="">请选择</option>
-                <option value="枪机">枪机</option>
-                <option value="球机">球机</option>
-                <option value="其他">其他</option>
-              </select>
-            </div>
-            <div class="govern-field">
-              <label>经纬度</label>
-              <div class="field-inline">
-                <input class="native-input" v-model="governForm.coord" placeholder="经度,纬度" :disabled="governForm.coordNA" />
-                <button class="btn btn-small" @click="pickCoord" :disabled="governForm.coordNA">拾取经纬度</button>
+              <div class="gr-region-row">
+                <select class="native-select" v-model="governForm.region4[0]">
+                  <option value="">省</option>
+                  <option v-for="p in provinceOptions" :key="p" :value="p">{{ p }}</option>
+                </select>
+                <select class="native-select" v-model="governForm.region4[1]">
+                  <option value="">市</option>
+                  <option v-for="c in cityOptions" :key="c" :value="c">{{ c }}</option>
+                </select>
+                <select class="native-select" v-model="governForm.region4[2]">
+                  <option value="">县/区</option>
+                  <option v-for="q in countyOptions" :key="q" :value="q">{{ q }}</option>
+                </select>
+                <select class="native-select" v-model="governForm.region4[3]">
+                  <option value="">乡镇/街道</option>
+                  <option v-for="t in townOptions" :key="t" :value="t">{{ t }}</option>
+                </select>
               </div>
-              <label style="margin-top:6px;display:flex;align-items:center;gap:4px;font-weight:400;font-size:13px;">
-                <input type="checkbox" v-model="governForm.coordNA" /> 不适用
-              </label>
             </div>
-            <!-- 业务标签独立区域 -->
-            <div class="govern-tags-section">
-              <h5>业务标签</h5>
-              <div class="govern-tags-grid">
-                <div class="govern-field" v-for="(dict, idx) in tagDicts" :key="idx">
+            <!-- 详细地址：独占一行，长文本框 -->
+            <div class="gr-field">
+              <label>详细地址</label>
+              <input class="native-input" v-model="governForm.address" placeholder="请输入详细地址" style="width:100%;" />
+            </div>
+            <!-- 管理单位 + 枪球机：同一行 -->
+            <div class="gr-two-row">
+              <div class="gr-col">
+                <label>管理单位</label>
+                <select class="native-select" v-model="governForm.unit">
+                  <option value="">请选择</option>
+                  <option value="暂无管理单位">暂无管理单位</option>
+                  <option v-for="u in unitOptions" :key="u" :value="u">{{ u }}</option>
+                </select>
+              </div>
+              <div class="gr-col">
+                <label>枪球机</label>
+                <select class="native-select" v-model="governForm.cameraType">
+                  <option value="">请选择</option>
+                  <option value="枪机">枪机</option>
+                  <option value="球机">球机</option>
+                  <option value="其他">其他</option>
+                </select>
+              </div>
+            </div>
+            <!-- 经纬度：同一行 文本框 + 拾取 + 不适用 -->
+            <div class="gr-field">
+              <label>经纬度</label>
+              <div class="gr-coord-row">
+                <input class="native-input" v-model="governForm.coord" placeholder="经度,纬度" :disabled="governForm.coordNA" />
+                <button class="btn btn-small" @click="pickCoord" :disabled="governForm.coordNA">拾取</button>
+                <label class="gr-coord-na">
+                  <input type="checkbox" v-model="governForm.coordNA" /> 不适用
+                </label>
+              </div>
+            </div>
+            <!-- 分隔线 -->
+            <hr class="gr-divider" />
+            <!-- 业务标签：每行两个树状下拉 -->
+            <div>
+              <div class="gr-tags-title">业务标签</div>
+              <div class="gr-tags-flex">
+                <div class="gr-tag-field" v-for="(dict, idx) in tagDicts" :key="idx">
                   <label>{{ dict.label }}</label>
                   <select class="native-select" v-model="governForm.bizTags[idx]">
                     <option value="">请选择</option>
-                    <option v-for="opt in dict.options" :key="opt" :value="opt">{{ opt }}</option>
+                    <option v-for="opt in dict.options" :key="opt.value" :value="opt.value">{{ opt.text }}</option>
                   </select>
                 </div>
               </div>
@@ -710,11 +766,15 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC'
 
           <template v-if="batchGovernType === '标签配置'">
             <div class="govern-field">
-              <label>选择标签（追加到现有标签）</label>
-              <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:4px;">
-                <label v-for="t in allTagOptions" :key="t" style="display:flex;align-items:center;gap:4px;font-size:13px;">
-                  <input type="checkbox" :value="t" v-model="batchForm.tags" /> {{ t }}
-                </label>
+              <label style="font-size:13px;color:#86909C;margin-bottom:10px;display:block;">选择标签（追加到现有标签）</label>
+              <div class="gr-tags-flex">
+                <div class="gr-tag-field" v-for="(dict, idx) in tagDicts" :key="idx">
+                  <label>{{ dict.label }}</label>
+                  <select class="native-select" v-model="batchForm.bizTags[idx]">
+                    <option value="">请选择</option>
+                    <option v-for="opt in dict.options" :key="opt.value" :value="opt.value">{{ opt.text }}</option>
+                  </select>
+                </div>
               </div>
             </div>
           </template>
@@ -731,10 +791,24 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC'
           <template v-if="batchGovernType === '行政区划'">
             <div class="govern-field">
               <label>行政区划</label>
-              <select class="native-select" v-model="batchForm.region" style="width:100%">
-                <option value="">请选择</option>
-                <option v-for="r in regionOptions" :key="r" :value="r">{{ r }}</option>
-              </select>
+              <div class="gr-region-row">
+                <select class="native-select" v-model="batchForm.region4[0]">
+                  <option value="">省</option>
+                  <option v-for="p in provinceOptions" :key="p" :value="p">{{ p }}</option>
+                </select>
+                <select class="native-select" v-model="batchForm.region4[1]">
+                  <option value="">市</option>
+                  <option v-for="c in cityOptions" :key="c" :value="c">{{ c }}</option>
+                </select>
+                <select class="native-select" v-model="batchForm.region4[2]">
+                  <option value="">县/区</option>
+                  <option v-for="q in countyOptions" :key="q" :value="q">{{ q }}</option>
+                </select>
+                <select class="native-select" v-model="batchForm.region4[3]">
+                  <option value="">乡镇/街道</option>
+                  <option v-for="t in townOptions" :key="t" :value="t">{{ t }}</option>
+                </select>
+              </div>
             </div>
           </template>
           <template v-if="batchGovernType === '枪球机'">
@@ -848,6 +922,7 @@ const app = createApp({
     document.addEventListener('click', (e) => {
       showTagTree.value = false;
       showGovernTypeTree.value = false;
+      showBatchMenu.value = false;
     });
 
     const devices = ref([
@@ -904,21 +979,51 @@ const app = createApp({
     // ============ 治理弹窗 ============
     const showGovernModal = ref(false);
     const governDevice = ref({});
-    const governForm = ref({ region: '', address: '', unit: '', cameraType: '', coord: '', coordNA: false, bizTags: [] });
+    const governForm = ref({ region4: ['', '', '', ''], address: '', unit: '', cameraType: '', coord: '', coordNA: false, bizTags: [] });
 
     const regionOptions = ['浙江省-杭州市-西湖区-北山街道', '浙江省-杭州市-滨江区-西兴街道', '浙江省-杭州市-余杭区-仓前街道', '浙江省-宁波市-鄞州区-钟公庙街道', '黑龙江省-绥化市-北林区-大有街道', '黑龙江省-齐齐哈尔市-建华区-文化街道'];
     const unitOptions = ['西湖景区管委会', '下城区城管局', '萧山区公安分局', '上城区交通枢纽中心', '滨江区城管局'];
 
+    // 行政区划4级（简化模拟，不做真实联动）
+    const provinceOptions = ['浙江省', '黑龙江省', '江苏省'];
+    const cityOptions = ['杭州市', '宁波市', '绥化市', '齐齐哈尔市'];
+    const countyOptions = ['西湖区', '滨江区', '余杭区', '鄞州区', '北林区', '建华区'];
+    const townOptions = ['北山街道', '西兴街道', '仓前街道', '钟公庙街道', '大有街道', '文化街道'];
+
+    // 业务标签字典（树状结构，option缩进表示层级）
     const tagDicts = [
-      { label: '区域等级', options: ['重点区域', '一般区域'] },
-      { label: '风险等级', options: ['高风险', '中风险', '低风险'] },
-      { label: '场景分类', options: ['景区', '交通枢纽', '商业区', '居民区'] },
+      { label: '区域等级', options: [
+        { value: '华东区', text: '华东区' },
+        { value: '一级区域', text: '　├ 一级区域' },
+        { value: '二级区域', text: '　├ 二级区域' },
+        { value: '重点区域', text: '　│　├ 重点区域' },
+        { value: '一般区域', text: '　│　├ 一般区域' },
+      ] },
+      { label: '风险等级', options: [
+        { value: '风险分级', text: '风险分级' },
+        { value: '高风险', text: '　├ 高风险' },
+        { value: '中风险', text: '　├ 中风险' },
+        { value: '低风险', text: '　├ 低风险' },
+      ] },
+      { label: '场所类型', options: [
+        { value: '公共场所', text: '公共场所' },
+        { value: '景区', text: '　├ 景区' },
+        { value: '交通枢纽', text: '　├ 交通枢纽' },
+        { value: '商业区', text: '　├ 商业区' },
+        { value: '居民区', text: '　├ 居民区' },
+      ] },
+      { label: '监控类型', options: [
+        { value: '视频监控', text: '视频监控' },
+        { value: '治安监控', text: '　├ 治安监控' },
+        { value: '交通监控', text: '　├ 交通监控' },
+        { value: '环境监控', text: '　├ 环境监控' },
+      ] },
     ];
 
     const openGovernModal = (d) => {
       governDevice.value = { ...d };
       governForm.value = {
-        region: '',
+        region4: ['', '', '', ''],
         address: '',
         unit: d.unit || '',
         cameraType: '',
@@ -989,7 +1094,11 @@ const app = createApp({
     // ============ 批量治理 ============
     const showBatchGovernModal = ref(false);
     const batchGovernType = ref('');
-    const batchForm = ref({ tags: [], unit: '', region: '', cameraType: '' });
+    const batchForm = ref({ bizTags: [], unit: '', region4: ['', '', '', ''], cameraType: '' });
+
+    // 批量配置下拉菜单
+    const showBatchMenu = ref(false);
+    const toggleBatchMenu = () => { showBatchMenu.value = !showBatchMenu.value; };
 
     const allTagOptions = computed(() => {
       const s = new Set();
@@ -999,21 +1108,23 @@ const app = createApp({
 
     const openBatchGovern = (type) => {
       batchGovernType.value = type;
-      batchForm.value = { tags: [], unit: '', region: '', cameraType: '' };
+      batchForm.value = { bizTags: tagDicts.map(() => ''), unit: '', region4: ['', '', '', ''], cameraType: '' };
+      showBatchMenu.value = false;
       showBatchGovernModal.value = true;
     };
 
     const confirmBatchGovern = () => {
       const selected = devices.value.filter(d => selectedDevices.value.includes(d.id));
-      if (batchGovernType.value === '标签配置' && batchForm.value.tags.length > 0) {
+      if (batchGovernType.value === '标签配置') {
+        const picked = batchForm.value.bizTags.filter(t => t);
         selected.forEach(d => {
-          batchForm.value.tags.forEach(t => { if (!d.tags.includes(t)) d.tags.push(t); });
+          picked.forEach(t => { if (!d.tags.includes(t)) d.tags.push(t); });
           d.governStatus = '已治理';
           d.auditStatus = '待审核';
         });
       } else if (batchGovernType.value === '管理单位配置' && batchForm.value.unit) {
         selected.forEach(d => { d.unit = batchForm.value.unit; d.governStatus = '已治理'; d.auditStatus = '待审核'; });
-      } else if (batchGovernType.value === '行政区划' && batchForm.value.region) {
+      } else if (batchGovernType.value === '行政区划' && batchForm.value.region4.some(r => r)) {
         selected.forEach(d => { d.governStatus = '已治理'; d.auditStatus = '待审核'; });
       } else if (batchGovernType.value === '枪球机' && batchForm.value.cameraType) {
         selected.forEach(d => { d.governStatus = '已治理'; d.auditStatus = '待审核'; });
@@ -1064,8 +1175,10 @@ const app = createApp({
       showGovernModal, governDevice, governForm, openGovernModal, pickCoord, saveGovern,
       showAuditModal, auditDevice, auditGovFields, openAuditModal, doAudit,
       showBatchGovernModal, batchGovernType, batchForm, openBatchGovern, confirmBatchGovern,
+      showBatchMenu, toggleBatchMenu,
       batchAudit, allTagOptions,
       regionOptions, unitOptions, tagDicts,
+      provinceOptions, cityOptions, countyOptions, townOptions,
       toast,
     };
   }

@@ -147,6 +147,7 @@ body { font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
           <col style="width:200px">
           <col style="width:90px">
           <col style="width:150px">
+          <col style="width:140px">
           <col style="width:120px">
           <col style="width:100px">
           <col style="width:160px">
@@ -158,6 +159,7 @@ body { font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
             <th>治理类型</th>
             <th class="th-right">设备数量</th>
             <th>任务进度</th>
+            <th>审核情况</th>
             <th>治理人员</th>
             <th>创建人</th>
             <th>创建时间</th>
@@ -177,6 +179,7 @@ body { font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
                 <span class="progress-text">{{ row.progress }}%</span>
               </div>
             </td>
+            <td><span :style="{display:'inline-block',padding:'0 8px',height:'22px',lineHeight:'22px',borderRadius:'4px',fontSize:'12px',color:auditInfo(row).color,background:auditInfo(row).bg}">{{ auditInfo(row).text }}</span></td>
             <td>{{ row.person }}</td>
             <td>{{ row.creator }}</td>
             <td>{{ row.time }}</td>
@@ -456,10 +459,10 @@ const app = createApp({
     const filter = reactive({ name:'', person:'', types:[], status:'' })
     // 表格数据
     const allData = [
-      { name:'西湖区标签治理', types:['标签配置','管理单位配置'], count:210, progress:68, person:'张三', creator:'管理员', time:'2026-06-15 09:30', dispatched:false },
-      { name:'余杭区经纬度校准', types:['经纬度治理'], count:320, progress:95, person:'李四', creator:'管理员', time:'2026-06-18 14:20', dispatched:false },
-      { name:'滨江区综合治理', types:['标签配置','管理单位配置','行政区划'], count:150, progress:8, person:'王五', creator:'管理员', time:'2026-06-20 10:00', dispatched:true },
-      { name:'鄞州区点位补全', types:['行政区划','详细地址','枪球机'], count:180, progress:53, person:'赵六', creator:'管理员', time:'2026-06-22 16:45', dispatched:true },
+      { name:'西湖区标签治理', types:['标签配置','管理单位配置'], count:210, progress:68, person:'张三', creator:'管理员', time:'2026-06-15 09:30', dispatched:false, pendingAudit:3, rejectedAudit:1, governedCount:143 },
+      { name:'余杭区经纬度校准', types:['经纬度治理'], count:320, progress:95, person:'李四', creator:'管理员', time:'2026-06-18 14:20', dispatched:false, pendingAudit:0, rejectedAudit:0, governedCount:320 },
+      { name:'滨江区综合治理', types:['标签配置','管理单位配置','行政区划'], count:150, progress:8, person:'王五', creator:'管理员', time:'2026-06-20 10:00', dispatched:true, pendingAudit:0, rejectedAudit:2, governedCount:12 },
+      { name:'鄞州区点位补全', types:['行政区划','详细地址','枪球机'], count:180, progress:53, person:'赵六', creator:'管理员', time:'2026-06-22 16:45', dispatched:true, pendingAudit:0, rejectedAudit:0, governedCount:0 },
     ]
     const tableData = ref([...allData])
     function doQuery() {
@@ -476,6 +479,12 @@ const app = createApp({
     }
     function doReset() { filter.name=''; filter.person=''; filter.types=[]; filter.status=''; tableData.value=[...allData] }
     function getProgressColor(p) { return p < 60 ? '#F56C6C' : p < 90 ? '#E6A23C' : '#67C23A' }
+    function auditInfo(row) {
+      if (row.pendingAudit > 0) return { text: '待审核 ' + row.pendingAudit + ' 台', color: '#E6A23C', bg: '#FDF6EC' }
+      if (row.rejectedAudit > 0) return { text: '已驳回 ' + row.rejectedAudit + ' 台', color: '#F56C6C', bg: '#FEF0F0' }
+      if (row.governedCount > 0) return { text: '审核完毕', color: '#67C23A', bg: '#F0F9EB' }
+      return { text: '—', color: '#909399', bg: '#F5F5F5' }
+    }
 
     // Step1
     const step1Visible = ref(false)
@@ -593,7 +602,7 @@ const app = createApp({
     })
 
     return {
-      filter, tableData, doQuery, doReset, getProgressColor,
+      filter, tableData, doQuery, doReset, getProgressColor, auditInfo,
       step1Visible, editingRow, form, openStep1, openEdit, goStep2,
       step2Visible, configTab, dirList, treeAll, treeNodes, openConfigDevice,
       devFilter, devAllCheck, deviceList,
