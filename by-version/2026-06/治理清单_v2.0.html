@@ -4,9 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>治理清单 v2.0</title>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/element-plus@2.4.4/dist/index.css">
 <script src="https://cdn.jsdelivr.net/npm/vue@3.3.11/dist/vue.global.prod.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/element-plus@2.4.4/dist/index.full.min.js"></script>
 <style>
 * { margin: 0; padding: 0; box-sizing: border-box; }
 body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif; }
@@ -17,7 +15,17 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC'
   position: fixed; top: 0; left: 0; right: 0; z-index: 100;
   height: 48px; background: #165DFF; display: flex; align-items: center;
   padding: 0 20px; color: #fff; font-size: 16px; font-weight: 600;
+  justify-content: space-between;
 }
+.topbar-left { display: flex; align-items: center; gap: 12px; }
+.topbar-right { display: flex; align-items: center; gap: 10px; font-size: 13px; font-weight: 400; }
+.topbar-select {
+  height: 28px; border: 1px solid rgba(255,255,255,0.4); border-radius: 4px;
+  padding: 0 8px; font-size: 13px; color: #fff; background: rgba(255,255,255,0.15); outline: none;
+  appearance: auto;
+}
+.topbar-select option { color: #333; background: #fff; }
+.topbar-select:focus { border-color: #fff; }
 
 /* 侧栏 */
 .sidebar {
@@ -32,7 +40,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC'
 .sidebar-item:hover { color: #fff; background: rgba(255,255,255,.08); }
 .sidebar-item.active { color: #fff; background: #165DFF; }
 
-/* 内容区 — 减少留白 */
+/* 内容区 */
 .main { margin-left: 220px; margin-top: 48px; flex: 1; background: #F5F5F5; min-height: calc(100vh - 48px); padding: 16px 12px; }
 
 /* 筛选栏 */
@@ -113,7 +121,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC'
 .stat-card-label { font-size: 13px; color: #86909C; margin-top: 2px; }
 
 /* 维度进度卡片 */
-.dim-cards { display: flex; gap: 12px; margin-bottom: 16px; }
+.dim-cards { display: flex; gap: 12px; margin-bottom: 16px; flex-wrap: wrap; }
 .dim-card {
   flex: 1; background: #F7F8FA; border-radius: 12px; padding: 18px 16px;
   min-width: 160px; display: flex; flex-direction: column; gap: 8px;
@@ -162,6 +170,50 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC'
 .btn-small { height: 28px; padding: 0 10px; font-size: 13px; }
 .btn-text { background: none; border: none; color: #409EFF; padding: 0; height: auto; }
 .btn-text:hover { color: #66B1FF; }
+.btn-text.disabled { color: #C0C4CC; cursor: not-allowed; pointer-events: none; }
+.btn-danger { background: #F56C6C; border-color: #F56C6C; color: #fff; }
+.btn-danger:hover { background: #F89898; border-color: #F89898; color: #fff; }
+.btn-success { background: #67C23A; border-color: #67C23A; color: #fff; }
+.btn-success:hover { background: #85CE61; border-color: #85CE61; color: #fff; }
+.btn:disabled, .btn.disabled { opacity: 0.5; cursor: not-allowed; pointer-events: none; }
+
+/* 弹窗 */
+.modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,.45); z-index: 2000; display: flex; align-items: center; justify-content: center; }
+.modal { background: #fff; border-radius: 8px; max-height: 88vh; overflow-y: auto; box-shadow: 0 4px 24px rgba(0,0,0,.15); }
+.modal-title { font-size: 16px; font-weight: 600; padding: 20px 24px 16px; border-bottom: 1px solid #EBEEF5; display: flex; justify-content: space-between; align-items: center; }
+.modal-body { padding: 20px 24px; }
+.modal-footer { display: flex; justify-content: flex-end; gap: 12px; padding: 12px 24px 20px; }
+
+/* 治理弹窗布局 */
+.govern-modal { width: 960px; }
+.govern-modal .modal-body { display: flex; gap: 20px; }
+.govern-left { width: 320px; flex-shrink: 0; }
+.govern-right { flex: 1; min-width: 0; }
+.govern-preview {
+  width: 100%; height: 200px; background: #F0F2F5; border-radius: 8px;
+  display: flex; align-items: center; justify-content: center; color: #86909C; font-size: 14px;
+  margin-bottom: 12px;
+}
+.govern-info-table { width: 100%; font-size: 13px; }
+.govern-info-table td { padding: 6px 0; color: #606266; }
+.govern-info-table td:first-child { color: #86909C; width: 80px; }
+
+.govern-field { margin-bottom: 14px; }
+.govern-field label { display: block; font-size: 13px; color: #606266; margin-bottom: 4px; font-weight: 500; }
+.govern-field input, .govern-field select { width: 100%; }
+.govern-field .field-inline { display: flex; gap: 8px; }
+.govern-field .field-inline input { flex: 1; }
+.govern-tags-section { border-top: 1px solid #EBEEF5; padding-top: 14px; margin-top: 4px; }
+.govern-tags-section h5 { font-size: 14px; color: #1D2129; margin-bottom: 12px; }
+.govern-tags-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px 12px; }
+
+/* 审核弹窗 */
+.audit-modal { width: 700px; }
+.audit-section { margin-bottom: 16px; }
+.audit-section h5 { font-size: 14px; color: #1D2129; margin-bottom: 8px; border-bottom: 1px solid #EBEEF5; padding-bottom: 4px; }
+.audit-row { display: flex; align-items: center; padding: 6px 0; font-size: 13px; }
+.audit-row-label { color: #86909C; width: 80px; flex-shrink: 0; }
+.audit-row-value { color: #1D2129; }
 
 /* 树形多选标签筛选 */
 .tag-tree-select { position: relative; }
@@ -176,12 +228,6 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC'
 .tag-tree-item:hover { background: #F5F7FA; }
 .tag-tree-item input { margin: 0; }
 
-/* 弹窗 */
-.modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,.45); z-index: 300; display: flex; align-items: center; justify-content: center; }
-.modal { background: #fff; border-radius: 8px; padding: 24px; width: 480px; max-height: 80vh; overflow-y: auto; }
-.modal-title { font-size: 16px; font-weight: 600; margin-bottom: 20px; }
-.modal-footer { display: flex; justify-content: flex-end; gap: 12px; margin-top: 24px; }
-
 /* 治理状态筛选按钮组 */
 .status-btn-group { display: flex; gap: 0; }
 .status-btn {
@@ -192,23 +238,43 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC'
 .status-btn:last-child { border-radius: 0 4px 4px 0; }
 .status-btn:not(:first-child) { border-left: none; }
 .status-btn.active { background: #409EFF; border-color: #409EFF; color: #fff; }
+
+/* Toast */
+.toast {
+  position: fixed; top: 60px; left: 50%; transform: translateX(-50%); z-index: 5000;
+  background: #67C23A; color: #fff; padding: 10px 24px; border-radius: 6px;
+  font-size: 14px; box-shadow: 0 2px 12px rgba(0,0,0,.15);
+  animation: toastIn .3s ease-out;
+}
+.toast-error { background: #F56C6C; }
+@keyframes toastIn { from { opacity: 0; transform: translateX(-50%) translateY(-10px); } to { opacity: 1; transform: translateX(-50%) translateY(0); } }
 </style>
 </head>
 <body>
 <div id="app">
-  <!-- 顶栏 -->
-  <div class="topbar">视频云平台 · 治理清单</div>
+  <!-- 顶栏 + 角色切换 -->
+  <div class="topbar">
+    <div class="topbar-left">视频云平台 · 治理清单</div>
+    <div class="topbar-right">
+      <span>当前角色：</span>
+      <select class="topbar-select" v-model="currentRole">
+        <option value="governance">治理人员</option>
+        <option value="dispatcher">派单人</option>
+      </select>
+    </div>
+  </div>
 
   <!-- 侧栏 -->
   <div class="sidebar">
 <div style="padding:14px 16px;color:#fff;font-size:14px;font-weight:600;border-bottom:1px solid rgba(255,255,255,0.06);display:flex;align-items:center;gap:8px;">
 <svg viewBox="0 0 24 24" width="18" height="18" fill="white"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>视频云平台</div>
 <div style="padding:6px 16px;color:rgba(255,255,255,0.32);font-size:11px;font-weight:600;letter-spacing:0.08em;margin-top:8px;">数据治理</div>
-<a href="行政区划_v2.0.html" style="display:flex;align-items:center;padding:8px 16px 8px 20px;color:rgba(255,255,255,0.72);font-size:13px;text-decoration:none;gap:8px;background:transparent;" onmouseover="if(!this.classList.contains('active')){this.style.background='rgba(255,255,255,0.06)';this.style.color='#fff'}" onmouseout="if(!this.classList.contains('active')){this.style.background='';this.style.color='rgba(255,255,255,0.72)'}"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><polygon points="3 6 9 3 15 6 21 4 21 18 15 21 9 18 3 20"/><line x1="9" y1="3" x2="9" y2="18"/></svg>行政区划</a><a href="治理任务_v2.0.html" style="display:flex;align-items:center;padding:8px 16px 8px 20px;color:rgba(255,255,255,0.72);font-size:13px;text-decoration:none;gap:8px;background:transparent;" onmouseover="if(!this.classList.contains('active')){this.style.background='rgba(255,255,255,0.06)';this.style.color='#fff'}" onmouseout="if(!this.classList.contains('active')){this.style.background='';this.style.color='rgba(255,255,255,0.72)'}"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"/><line x1="3" y1="10" x2="21" y2="10"/></svg>治理任务</a><a href="治理清单_v2.0.html" style="display:flex;align-items:center;padding:8px 16px 8px 20px;color:#fff;font-size:13px;text-decoration:none;gap:8px;background:#165DFF;" onmouseover="if(!this.classList.contains('active')){this.style.background='rgba(255,255,255,0.06)';this.style.color='#fff'}" onmouseout="if(!this.classList.contains('active')){this.style.background='';this.style.color='rgba(255,255,255,0.72)'}"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>治理清单</a>
+<div class="sidebar-item" style="display:flex;align-items:center;padding:8px 16px 8px 20px;font-size:13px;gap:8px;" onmouseover="this.style.background='rgba(255,255,255,0.06)';this.style.color='#fff'" onmouseout="if(!this.classList.contains('active')){this.style.background='';this.style.color='rgba(255,255,255,0.72)'}"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><polygon points="3 6 9 3 15 6 21 4 21 18 15 21 9 18 3 20"/><line x1="9" y1="3" x2="9" y2="18"/></svg>行政区划</div><div class="sidebar-item" style="display:flex;align-items:center;padding:8px 16px 8px 20px;font-size:13px;gap:8px;" onmouseover="this.style.background='rgba(255,255,255,0.06)';this.style.color='#fff'" onmouseout="if(!this.classList.contains('active')){this.style.background='';this.style.color='rgba(255,255,255,0.72)'}"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"/><line x1="3" y1="10" x2="21" y2="10"/></svg>治理任务</div><div class="sidebar-item active" style="display:flex;align-items:center;padding:8px 16px 8px 20px;font-size:13px;gap:8px;"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>治理清单</div>
 </div>
+
   <!-- 内容区 -->
   <div class="main">
-    <!-- 任务总览 -->
+    <!-- 第一层：任务总览 -->
     <div>
       <!-- 筛选栏 -->
       <div class="filter-bar">
@@ -219,10 +285,10 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC'
         <div class="filter-item">
           <label>治理类型</label>
           <div class="tag-tree-select">
-            <input class="native-input" :value="governTypeSelectLabel" placeholder="请选择治理类型" readonly style="width:200px;cursor:pointer;" @click="showGovernTypeTree = !showGovernTypeTree" />
+            <input class="native-input" :value="governTypeSelectLabel" placeholder="请选择治理类型" readonly style="width:200px;cursor:pointer;" @click.stop="showGovernTypeTree = !showGovernTypeTree" />
             <div class="tag-tree-dropdown" v-if="showGovernTypeTree" @click.stop>
               <label class="tag-tree-item" v-for="t in governTypeOptions" :key="t">
-                <input type="checkbox" :value="t" v-model="filter.governTypes" @change="onGovernTypeChange(t)" /> {{ t }}
+                <input type="checkbox" :value="t" v-model="filter.governTypes" /> {{ t }}
               </label>
             </div>
           </div>
@@ -245,7 +311,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC'
           <thead>
             <tr>
               <th style="width:200px">任务名称</th>
-              <th style="width:200px">治理类型</th>
+              <th style="width:220px">治理类型</th>
               <th style="width:90px" class="col-right">设备数量</th>
               <th style="width:80px" class="col-right">已治理</th>
               <th style="width:150px">进度</th>
@@ -256,40 +322,42 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC'
             </tr>
           </thead>
           <tbody>
-            <tr v-for="row in filteredTasks" :key="row.id">
-              <td><a class="link" @click="goDetail(row)">{{ row.name }}</a></td>
-              <td>
-                <div class="tag-group">
-                  <span class="tag tag-blue" v-for="t in row.types" :key="t">{{ t }}</span>
-                </div>
-              </td>
-              <td class="col-right">{{ row.total }}</td>
-              <td class="col-right">{{ row.done }}</td>
-              <td>
-                <div class="progress-bar">
-                  <div class="progress-track">
-                    <div class="progress-fill" :style="{ width: row.percent + '%', background: progressColor(row.percent) }"></div>
+            <template v-for="row in filteredTasks" :key="row.id">
+              <tr>
+                <td><a class="link" @click="goDetail(row)">{{ row.name }}</a></td>
+                <td>
+                  <div class="tag-group">
+                    <span class="tag tag-blue" v-for="t in row.types" :key="t">{{ t }}</span>
                   </div>
-                  <span class="progress-text">{{ row.percent }}%</span>
-                </div>
-              </td>
-              <td>
-                <span class="tag" :class="row.status === '进行中' ? 'tag-yellow' : 'tag-green'">{{ row.status }}</span>
-              </td>
-              <td>{{ row.startTime }}</td>
-              <td>{{ row.status === '进行中' ? '—' : row.endTime }}</td>
-              <td>
-                <div class="actions">
-                  <button class="btn btn-text btn-small" @click="goDetail(row)">查看详情</button>
-                </div>
-              </td>
-            </tr>
+                </td>
+                <td class="col-right">{{ row.total }}</td>
+                <td class="col-right">{{ row.done }}</td>
+                <td>
+                  <div class="progress-bar">
+                    <div class="progress-track">
+                      <div class="progress-fill" :style="{ width: row.percent + '%', background: progressColor(row.percent) }"></div>
+                    </div>
+                    <span class="progress-text">{{ row.percent }}%</span>
+                  </div>
+                </td>
+                <td>
+                  <span class="tag" :class="row.status === '进行中' ? 'tag-yellow' : 'tag-green'">{{ row.status }}</span>
+                </td>
+                <td>{{ row.startTime }}</td>
+                <td>{{ row.status === '进行中' ? '—' : row.endTime }}</td>
+                <td>
+                  <div class="actions">
+                    <button class="btn btn-text btn-small" @click="goDetail(row)">查看详情</button>
+                  </div>
+                </td>
+              </tr>
+            </template>
           </tbody>
         </table>
       </div>
     </div>
 
-    <!-- 底部抽屉：任务详情 -->
+    <!-- ========== 底部抽屉：任务详情 ========== -->
     <div v-if="showDetailDrawer" class="drawer-overlay" @click.self="showDetailDrawer = false"></div>
     <div v-if="showDetailDrawer" class="drawer-container">
       <div class="drawer-handle" @click="showDetailDrawer = false"></div>
@@ -297,14 +365,14 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC'
         <div style="display:flex;align-items:center;justify-content:space-between;">
           <div style="display:flex;align-items:center;gap:12px;">
             <span style="font-size:18px;font-weight:600;">{{ currentTask.name }}</span>
-          <span class="tag" :class="currentTask.status === '进行中' ? 'tag-yellow' : 'tag-green'">{{ currentTask.status }}</span>
+            <span class="tag" :class="currentTask.status === '进行中' ? 'tag-yellow' : 'tag-green'">{{ currentTask.status }}</span>
           </div>
           <button @click="showDetailDrawer = false" style="background:none;border:none;font-size:20px;cursor:pointer;color:#999;padding:4px 8px;">✕</button>
         </div>
       </div>
       <div class="drawer-body">
 
-      <!-- 统计卡片 -->
+      <!-- 统计卡片：总计/已治理/进行中/完成进度 -->
       <div class="stat-cards">
         <div class="stat-card">
           <div class="stat-card-icon blue">📊</div>
@@ -324,35 +392,37 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC'
           <div class="stat-card-icon red">⏳</div>
           <div class="stat-card-info">
             <div class="stat-card-value">{{ currentTask.total - currentTask.done }}</div>
-            <div class="stat-card-label">未治理</div>
+            <div class="stat-card-label">进行中</div>
           </div>
         </div>
         <div class="stat-card">
           <div class="stat-card-icon orange">📈</div>
           <div class="stat-card-info">
             <div class="stat-card-value">{{ currentTask.percent }}%</div>
-            <div class="stat-card-label">总进度</div>
+            <div class="stat-card-label">完成进度</div>
           </div>
         </div>
       </div>
 
-      <!-- 维度进度卡片 -->
+      <!-- 维度进度卡片 — 仅显示当前任务配置的类型 -->
       <div class="dim-cards">
-        <div class="dim-card" v-for="dim in dimensions" :key="dim.label">
-          <div class="dim-card-label">{{ dim.label }}</div>
-          <div class="dim-card-stats">已治理 {{ dim.done }}/{{ dim.total }}</div>
-          <div class="dim-card-bar-row">
-            <div class="dim-card-track">
-              <div class="dim-card-fill" :style="{ width: dim.percent + '%', background: progressColor(dim.percent) }"></div>
+        <template v-for="dim in currentDimensions" :key="dim.label">
+          <div class="dim-card">
+            <div class="dim-card-label">{{ dim.label }}</div>
+            <div class="dim-card-stats">已治理 {{ dim.done }}/{{ dim.total }}</div>
+            <div class="dim-card-bar-row">
+              <div class="dim-card-track">
+                <div class="dim-card-fill" :style="{ width: dim.percent + '%', background: progressColor(dim.percent) }"></div>
+              </div>
+              <span class="dim-card-percent" :style="{ color: progressColor(dim.percent) }">{{ dim.percent }}%</span>
             </div>
-            <span class="dim-card-percent" :style="{ color: progressColor(dim.percent) }">{{ dim.percent }}%</span>
           </div>
-        </div>
+        </template>
       </div>
 
-      <!-- 设备筛选 -->
+      <!-- 设备筛选 + 批量操作栏 -->
       <div class="table-card" style="margin-bottom:12px;">
-        <div class="filter-bar" style="padding:12px; margin-bottom:0; background:none;">
+        <div style="padding:12px 0; margin-bottom:0; background:none; display:flex; gap:12px; flex-wrap:wrap; align-items:flex-end;">
           <div class="filter-item">
             <label>摄像机名称</label>
             <input class="native-input" v-model="deviceFilter.cameraName" placeholder="请输入" style="width:150px" />
@@ -396,7 +466,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC'
           <div class="filter-item">
             <label>标签</label>
             <div class="tag-tree-select">
-              <input class="native-input" :value="tagSelectLabel" placeholder="请选择标签" readonly style="width:160px;cursor:pointer;" @click="showTagTree = !showTagTree" />
+              <input class="native-input" :value="tagSelectLabel" placeholder="请选择标签" readonly style="width:160px;cursor:pointer;" @click.stop="showTagTree = !showTagTree" />
               <div class="tag-tree-dropdown" v-if="showTagTree" @click.stop>
                 <div class="tag-tree-group" v-for="group in tagTreeData" :key="group.label">
                   <div class="tag-tree-group-title">{{ group.label }}</div>
@@ -407,8 +477,31 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC'
               </div>
             </div>
           </div>
+          <div class="filter-item" style="flex-direction:row; align-items:center; gap:8px;">
+            <label style="margin-bottom:0;">审核状态</label>
+            <select class="native-select" v-model="deviceFilter.auditStatus" style="width:110px">
+              <option value="">全部</option>
+              <option value="待审核">待审核</option>
+              <option value="已通过">已通过</option>
+              <option value="已驳回">已驳回</option>
+            </select>
+          </div>
           <button class="btn btn-primary" @click="handleDeviceQuery">查询</button>
           <button class="btn" @click="handleDeviceReset">重置</button>
+        </div>
+
+        <!-- 批量操作栏 -->
+        <div style="display:flex;align-items:center;gap:8px;padding:8px 0;border-top:1px solid #F2F3F5;margin-top:4px;">
+          <template v-if="currentRole === 'governance'">
+            <button class="btn btn-small" :disabled="selectedDevices.length === 0" @click="openBatchGovern('标签配置')">批量配置标签</button>
+            <button class="btn btn-small" :disabled="selectedDevices.length === 0" @click="openBatchGovern('管理单位配置')">批量配置管理单位</button>
+            <button class="btn btn-small" :disabled="selectedDevices.length === 0" @click="openBatchGovern('行政区划')">批量配置行政区划</button>
+            <button class="btn btn-small" :disabled="selectedDevices.length === 0" @click="openBatchGovern('枪球机')">批量配置枪球机</button>
+          </template>
+          <template v-if="currentRole === 'dispatcher'">
+            <button class="btn btn-small btn-success" :disabled="selectedDevices.length === 0" @click="batchAudit('通过')">批量审核通过</button>
+            <button class="btn btn-small btn-danger" :disabled="selectedDevices.length === 0" @click="batchAudit('驳回')">批量审核驳回</button>
+          </template>
         </div>
       </div>
 
@@ -418,8 +511,8 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC'
           <div style="display:flex;align-items:center;gap:16px;">
             <div class="status-btn-group">
               <button class="status-btn" :class="{active: governTab==='all'}" @click="governTab='all'">全部({{ devices.length }})</button>
-              <button class="status-btn" :class="{active: governTab==='进行中'}" @click="governTab='进行中'">进行中({{ devices.filter(d=>d.governStatus==='进行中').length }})</button>
-              <button class="status-btn" :class="{active: governTab==='已治理'}" @click="governTab='已治理'">已治理({{ devices.filter(d=>d.governStatus==='已治理').length }})</button>
+              <button class="status-btn" :class="{active: governTab==='进行中'}" @click="governTab='进行中'">进行中({{ devices.filter(function(d){return d.governStatus==='进行中'}).length }})</button>
+              <button class="status-btn" :class="{active: governTab==='已治理'}" @click="governTab='已治理'">已治理({{ devices.filter(function(d){return d.governStatus==='已治理'}).length }})</button>
             </div>
           </div>
           <div style="font-size:13px;color:#86909C">共 {{ filteredDevices.length }} 条</div>
@@ -432,106 +525,267 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC'
               </th>
               <th style="width:180px">摄像机名称</th>
               <th style="width:120px">所属平台</th>
-              <th style="width:90px">在线状态</th>
+              <th style="width:80px">在线状态</th>
               <th style="width:100px">经纬度状态</th>
-              <th style="width:180px">经纬度</th>
-              <th style="width:100px">管理单位</th>
-              <th style="width:100px">治理状态</th>
-              <th style="width:200px">标签</th>
+              <th style="width:170px">经纬度</th>
+              <th style="width:110px">管理单位</th>
+              <th style="width:80px">治理状态</th>
+              <th style="width:80px">审核状态</th>
+              <th style="width:180px">标签</th>
               <th style="width:80px">操作</th>
             </tr>
           </thead>
           <tbody>
-            <tr v-for="d in filteredDevices" :key="d.id">
-              <td class="col-center"><input type="checkbox" :value="d.id" v-model="selectedDevices" /></td>
-              <td>{{ d.cameraName }}</td>
-              <td>{{ d.platform }}</td>
-              <td><span class="tag" :class="d.online === '在线' ? 'tag-green' : 'tag-red'">{{ d.online }}</span></td>
-              <td>
-                <span class="tag" :class="d.coordStatus === '有坐标' ? 'tag-green' : d.coordStatus === '无坐标' ? 'tag-yellow' : 'tag-gray'">{{ d.coordStatus }}</span>
-              </td>
-              <td>{{ d.coord }}</td>
-              <td>{{ d.unit }}</td>
-              <td>
-                <span class="tag" :class="d.governStatus === '已治理' ? 'tag-green' : 'tag-yellow'">{{ d.governStatus }}</span>
-              </td>
-              <td>
-                <div class="tag-group-ellipsis">
-                  <span class="tag tag-blue" v-for="t in d.tags" :key="t">{{ t }}</span>
-                </div>
-              </td>
-              <td>
-                <div class="actions">
-                  <button class="btn btn-text btn-small" @click="handleGovern(d)">去治理</button>
-                </div>
-              </td>
-            </tr>
+            <template v-for="d in filteredDevices" :key="d.id">
+              <tr>
+                <td class="col-center"><input type="checkbox" :value="d.id" v-model="selectedDevices" /></td>
+                <td>{{ d.cameraName }}</td>
+                <td>{{ d.platform }}</td>
+                <td><span class="tag" :class="d.online === '在线' ? 'tag-green' : 'tag-red'">{{ d.online }}</span></td>
+                <td>
+                  <span class="tag" :class="d.coordStatus === '有坐标' ? 'tag-green' : d.coordStatus === '无坐标' ? 'tag-yellow' : 'tag-gray'">{{ d.coordStatus }}</span>
+                </td>
+                <td>{{ d.coord }}</td>
+                <td>{{ d.unit || '—' }}</td>
+                <td>
+                  <span class="tag" :class="d.governStatus === '已治理' ? 'tag-green' : 'tag-yellow'">{{ d.governStatus }}</span>
+                </td>
+                <td>
+                  <span v-if="d.governStatus === '进行中' && d.auditStatus === '—'" class="tag tag-gray">—</span>
+                  <span v-else class="tag" :class="d.auditStatus === '已通过' ? 'tag-green' : d.auditStatus === '已驳回' ? 'tag-red' : 'tag-gray'">{{ d.auditStatus }}</span>
+                </td>
+                <td>
+                  <div class="tag-group-ellipsis">
+                    <span class="tag tag-blue" v-for="t in d.tags" :key="t">{{ t }}</span>
+                  </div>
+                </td>
+                <td>
+                  <div class="actions">
+                    <template v-if="currentRole === 'governance'">
+                      <button class="btn btn-text btn-small" @click="openGovernModal(d)">治理</button>
+                    </template>
+                    <template v-if="currentRole === 'dispatcher'">
+                      <button class="btn btn-text btn-small" :class="{ disabled: d.auditStatus !== '待审核' }" @click="d.auditStatus === '待审核' ? openAuditModal(d) : null">审核</button>
+                    </template>
+                  </div>
+                </td>
+              </tr>
+            </template>
           </tbody>
         </table>
       </div>
       </div><!-- /.drawer-body -->
     </div><!-- /.drawer-container -->
 
-    <!-- 批量治理弹窗 -->
-    <div v-if="showBatchModal" class="modal-overlay" @click.self="showBatchModal = false">
-      <div class="modal">
-        <div class="modal-title">批量治理</div>
-        <div style="margin-bottom:16px;">
-          <label style="display:block;font-size:13px;color:#606266;margin-bottom:6px;">治理维度</label>
-          <select class="native-select" v-model="batchForm.dimension" style="width:100%">
-            <option value="">请选择</option>
-            <option value="标签配置">标签配置</option>
-            <option value="管理单位配置">管理单位配置</option>
-            <option value="经纬度治理">经纬度治理</option>
-            <option value="设备名称规范">设备名称规范</option>
-          </select>
+    <!-- ========== 治理弹窗（治理人员） ========== -->
+    <div v-if="showGovernModal" class="modal-overlay" @click.self="showGovernModal = false">
+      <div class="modal govern-modal">
+        <div class="modal-title">
+          <span>治理 — {{ governDevice.cameraName }}</span>
+          <button @click="showGovernModal = false" style="background:none;border:none;font-size:18px;cursor:pointer;color:#999;padding:0;">✕</button>
         </div>
-        <div style="margin-bottom:16px;">
-          <label style="display:block;font-size:13px;color:#606266;margin-bottom:6px;">治理说明</label>
-          <textarea v-model="batchForm.remark" rows="3" placeholder="请输入治理说明"
-            style="width:100%;border:1px solid #DCDFE6;border-radius:4px;padding:8px;font-size:14px;resize:vertical;"></textarea>
+        <div class="modal-body">
+          <!-- 左栏：设备预览 + 基础信息 -->
+          <div class="govern-left">
+            <div class="govern-preview">实时画面</div>
+            <table class="govern-info-table">
+              <tr><td>设备编码</td><td>{{ governDevice.deviceCode || 'DEV' + governDevice.id.toString().padStart(3,'0') }}</td></tr>
+              <tr><td>通道编码</td><td>{{ governDevice.channelCode || 'CH' + governDevice.id.toString().padStart(3,'0') }}</td></tr>
+              <tr><td>所属平台</td><td>{{ governDevice.platform }}</td></tr>
+              <tr><td>在线状态</td><td><span class="tag" :class="governDevice.online === '在线' ? 'tag-green' : 'tag-red'">{{ governDevice.online }}</span></td></tr>
+            </table>
+          </div>
+          <!-- 右栏：字段编辑区 -->
+          <div class="govern-right">
+            <div class="govern-field">
+              <label>*行政区划</label>
+              <select class="native-select" v-model="governForm.region">
+                <option value="">请选择</option>
+                <option v-for="r in regionOptions" :key="r" :value="r">{{ r }}</option>
+              </select>
+            </div>
+            <div class="govern-field">
+              <label>详细地址</label>
+              <input class="native-input" v-model="governForm.address" placeholder="请输入详细地址" />
+            </div>
+            <div class="govern-field">
+              <label>管理单位</label>
+              <select class="native-select" v-model="governForm.unit">
+                <option value="">请选择</option>
+                <option value="暂无管理单位">暂无管理单位</option>
+                <option v-for="u in unitOptions" :key="u" :value="u">{{ u }}</option>
+              </select>
+            </div>
+            <div class="govern-field">
+              <label>枪球机</label>
+              <select class="native-select" v-model="governForm.cameraType">
+                <option value="">请选择</option>
+                <option value="枪机">枪机</option>
+                <option value="球机">球机</option>
+                <option value="其他">其他</option>
+              </select>
+            </div>
+            <div class="govern-field">
+              <label>经纬度</label>
+              <div class="field-inline">
+                <input class="native-input" v-model="governForm.coord" placeholder="经度,纬度" :disabled="governForm.coordNA" />
+                <button class="btn btn-small" @click="pickCoord" :disabled="governForm.coordNA">拾取经纬度</button>
+              </div>
+              <label style="margin-top:6px;display:flex;align-items:center;gap:4px;font-weight:400;font-size:13px;">
+                <input type="checkbox" v-model="governForm.coordNA" /> 不适用
+              </label>
+            </div>
+            <!-- 业务标签独立区域 -->
+            <div class="govern-tags-section">
+              <h5>业务标签</h5>
+              <div class="govern-tags-grid">
+                <div class="govern-field" v-for="(dict, idx) in tagDicts" :key="idx">
+                  <label>{{ dict.label }}</label>
+                  <select class="native-select" v-model="governForm.bizTags[idx]">
+                    <option value="">请选择</option>
+                    <option v-for="opt in dict.options" :key="opt" :value="opt">{{ opt }}</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
-        <div style="font-size:13px;color:#86909C;margin-top:8px;">已选 {{ selectedDevices.length }} 台设备</div>
         <div class="modal-footer">
-          <button class="btn" @click="showBatchModal = false">取消</button>
-          <button class="btn btn-primary" @click="showBatchModal = false; ElMessage.success('批量治理已提交')">确认</button>
+          <button class="btn" @click="showGovernModal = false">取消</button>
+          <button class="btn btn-primary" @click="saveGovern">保存</button>
         </div>
       </div>
     </div>
-  </div>
-</div>
+
+    <!-- ========== 审核弹窗（派单人） ========== -->
+    <div v-if="showAuditModal" class="modal-overlay" @click.self="showAuditModal = false">
+      <div class="modal audit-modal">
+        <div class="modal-title">
+          <span>审核 — {{ auditDevice.cameraName }}</span>
+          <button @click="showAuditModal = false" style="background:none;border:none;font-size:18px;cursor:pointer;color:#999;padding:0;">✕</button>
+        </div>
+        <div class="modal-body">
+          <div class="audit-section">
+            <h5>设备信息</h5>
+            <div style="display:flex;gap:24px;">
+              <div style="flex:1;">
+                <div class="audit-row"><span class="audit-row-label">设备编码</span><span class="audit-row-value">{{ auditDevice.deviceCode || 'DEV' + auditDevice.id.toString().padStart(3,'0') }}</span></div>
+                <div class="audit-row"><span class="audit-row-label">通道编码</span><span class="audit-row-value">{{ auditDevice.channelCode || 'CH' + auditDevice.id.toString().padStart(3,'0') }}</span></div>
+                <div class="audit-row"><span class="audit-row-label">所属平台</span><span class="audit-row-value">{{ auditDevice.platform }}</span></div>
+              </div>
+              <div style="flex:1;">
+                <div class="audit-row"><span class="audit-row-label">在线状态</span><span class="audit-row-value"><span class="tag" :class="auditDevice.online === '在线' ? 'tag-green' : 'tag-red'">{{ auditDevice.online }}</span></span></div>
+                <div class="audit-row"><span class="audit-row-label">治理状态</span><span class="audit-row-value"><span class="tag tag-green">已治理</span></span></div>
+                <div class="audit-row"><span class="audit-row-label">审核状态</span><span class="audit-row-value"><span class="tag tag-gray">待审核</span></span></div>
+              </div>
+            </div>
+          </div>
+          <div class="audit-section">
+            <h5>治理字段（只读）</h5>
+            <div class="audit-row"><span class="audit-row-label">行政区划</span><span class="audit-row-value">{{ auditGovFields.region || '—' }}</span></div>
+            <div class="audit-row"><span class="audit-row-label">详细地址</span><span class="audit-row-value">{{ auditGovFields.address || '—' }}</span></div>
+            <div class="audit-row"><span class="audit-row-label">管理单位</span><span class="audit-row-value">{{ auditGovFields.unit || '—' }}</span></div>
+            <div class="audit-row"><span class="audit-row-label">枪球机</span><span class="audit-row-value">{{ auditGovFields.cameraType || '—' }}</span></div>
+            <div class="audit-row"><span class="audit-row-label">经纬度</span><span class="audit-row-value">{{ auditGovFields.coordNA ? '不适用' : (auditGovFields.coord || '—') }}</span></div>
+            <div class="audit-row"><span class="audit-row-label">业务标签</span><span class="audit-row-value">{{ auditGovFields.bizLabels || '—' }}</span></div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn" @click="showAuditModal = false">取消</button>
+          <button class="btn btn-danger" @click="doAudit('驳回')">驳回</button>
+          <button class="btn btn-success" @click="doAudit('通过')">通过</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========== 批量治理弹窗 ========== -->
+    <div v-if="showBatchGovernModal" class="modal-overlay" @click.self="showBatchGovernModal = false">
+      <div class="modal" style="width:520px;">
+        <div class="modal-title">
+          <span>批量配置{{ batchGovernType }}</span>
+          <button @click="showBatchGovernModal = false" style="background:none;border:none;font-size:18px;cursor:pointer;color:#999;padding:0;">✕</button>
+        </div>
+        <div class="modal-body">
+          <div style="font-size:13px;color:#86909C;margin-bottom:16px;">已选 {{ selectedDevices.length }} 台设备，将按以下配置覆盖：</div>
+
+          <template v-if="batchGovernType === '标签配置'">
+            <div class="govern-field">
+              <label>选择标签（追加到现有标签）</label>
+              <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:4px;">
+                <label v-for="t in allTagOptions" :key="t" style="display:flex;align-items:center;gap:4px;font-size:13px;">
+                  <input type="checkbox" :value="t" v-model="batchForm.tags" /> {{ t }}
+                </label>
+              </div>
+            </div>
+          </template>
+          <template v-if="batchGovernType === '管理单位配置'">
+            <div class="govern-field">
+              <label>管理单位</label>
+              <select class="native-select" v-model="batchForm.unit" style="width:100%">
+                <option value="">请选择</option>
+                <option value="暂无管理单位">暂无管理单位</option>
+                <option v-for="u in unitOptions" :key="u" :value="u">{{ u }}</option>
+              </select>
+            </div>
+          </template>
+          <template v-if="batchGovernType === '行政区划'">
+            <div class="govern-field">
+              <label>行政区划</label>
+              <select class="native-select" v-model="batchForm.region" style="width:100%">
+                <option value="">请选择</option>
+                <option v-for="r in regionOptions" :key="r" :value="r">{{ r }}</option>
+              </select>
+            </div>
+          </template>
+          <template v-if="batchGovernType === '枪球机'">
+            <div class="govern-field">
+              <label>枪球机类型</label>
+              <select class="native-select" v-model="batchForm.cameraType" style="width:100%">
+                <option value="">请选择</option>
+                <option value="枪机">枪机</option>
+                <option value="球机">球机</option>
+                <option value="其他">其他</option>
+              </select>
+            </div>
+          </template>
+        </div>
+        <div class="modal-footer">
+          <button class="btn" @click="showBatchGovernModal = false">取消</button>
+          <button class="btn btn-primary" @click="confirmBatchGovern">确认</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Toast -->
+    <div v-if="toast.show" class="toast" :class="{ 'toast-error': toast.type === 'error' }">{{ toast.msg }}</div>
+  </div><!-- /.main -->
+</div><!-- /#app -->
 
 <script>
-const { createApp, ref, computed, watch } = Vue;
-const { ElMessage } = ElementPlus;
+const { createApp, ref, computed, watch, nextTick } = Vue;
 
 const app = createApp({
   setup() {
-    const currentTask = ref({});
+    // ============ 角色切换 ============
+    const currentRole = ref('governance'); // 'governance' | 'dispatcher'
 
-    // 第一层筛选
+    // ============ 第一层：任务总览 ============
     const filter = ref({ taskName: '', governTypes: [], taskStatus: '' });
-    const governTypeOptions = ['标签配置', '管理单位配置', '经纬度治理', '设备名称规范'];
+    const governTypeOptions = ['标签配置', '管理单位配置', '经纬度治理', '行政区划', '详细地址', '枪球机'];
     const showGovernTypeTree = ref(false);
+
     const governTypeSelectLabel = computed(() => {
       const t = filter.value.governTypes;
       if (!t || t.length === 0) return '';
       if (t.length === governTypeOptions.length) return '全部';
       return t.length > 1 ? t[0] + ' +' + (t.length - 1) : t[0];
     });
-    const onGovernTypeChange = (val) => {
-      // If all 4 selected, clear to "全部"
-      if (filter.value.governTypes.length === governTypeOptions.length) {
-        // keep all selected = 全部
-      }
-    };
 
-    // 任务数据
     const tasks = ref([
       { id: 1, name: '西湖区设备标签治理', types: ['标签配置', '管理单位配置'], total: 210, done: 68, percent: 32, status: '进行中', startTime: '2026-06-15 09:30', endTime: '' },
-      { id: 2, name: '余杭区经纬度校准', types: ['经纬度治理'], total: 320, done: 320, percent: 100, status: '已完成', startTime: '2026-06-18 14:20', endTime: '2026-06-28 16:45' },
-      { id: 3, name: '滨江区综合治理', types: ['标签配置', '管理单位配置', '经纬度治理'], total: 150, done: 12, percent: 8, status: '进行中', startTime: '2026-06-20 10:00', endTime: '' },
-      { id: 4, name: '鄞州区名称规范', types: ['设备名称规范', '标签配置'], total: 180, done: 95, percent: 53, status: '进行中', startTime: '2026-06-22 16:45', endTime: '' },
+      { id: 2, name: '余杭区经纬度校准', types: ['经纬度治理', '详细地址'], total: 320, done: 320, percent: 100, status: '已完成', startTime: '2026-06-18 14:20', endTime: '2026-06-28 16:45' },
+      { id: 3, name: '滨江区综合治理', types: ['标签配置', '管理单位配置', '经纬度治理', '行政区划'], total: 150, done: 12, percent: 8, status: '进行中', startTime: '2026-06-20 10:00', endTime: '' },
+      { id: 4, name: '鄞州区枪球机配置', types: ['枪球机', '标签配置', '行政区划'], total: 180, done: 95, percent: 53, status: '进行中', startTime: '2026-06-22 16:45', endTime: '' },
     ]);
 
     const filteredTasks = computed(() => {
@@ -547,25 +801,36 @@ const app = createApp({
       });
     });
 
+    const progressColor = (p) => p < 60 ? '#F56C6C' : p < 90 ? '#E6A23C' : '#67C23A';
+
     const handleFilterQuery = () => {};
     const handleFilterReset = () => { filter.value = { taskName: '', governTypes: [], taskStatus: '' }; showGovernTypeTree.value = false; };
 
-    const progressColor = (p) => p < 60 ? '#F56C6C' : p < 90 ? '#E6A23C' : '#67C23A';
-
-    // 底部抽屉
+    // ============ 底部抽屉 ============
     const showDetailDrawer = ref(false);
+    const currentTask = ref({});
     const governTab = ref('all');
 
-    // 维度数据
-    const dimensions = ref([
-      { label: '标签配置', percent: 45, done: 95, total: 210 },
-      { label: '管理单位配置', percent: 90, done: 189, total: 210 },
-      { label: '经纬度治理', percent: 75, done: 158, total: 210 },
-      { label: '设备名称规范', percent: 80, done: 168, total: 210 },
-    ]);
+    // 维度数据 — 按任务类型动态生成
+    const allDimensionData = {
+      '标签配置': { done: 95, total: 210, percent: 45 },
+      '管理单位配置': { done: 189, total: 210, percent: 90 },
+      '经纬度治理': { done: 158, total: 210, percent: 75 },
+      '行政区划': { done: 120, total: 210, percent: 57 },
+      '详细地址': { done: 180, total: 210, percent: 86 },
+      '枪球机': { done: 60, total: 210, percent: 29 },
+    };
 
-    // 设备筛选
-    const deviceFilter = ref({ cameraName: '', platform: '', online: '', coordStatus: '', unit: '', tags: [] });
+    const currentDimensions = computed(() => {
+      if (!currentTask.value.types) return [];
+      return currentTask.value.types.map(t => ({
+        label: t,
+        ...(allDimensionData[t] || { done: 0, total: currentTask.value.total || 0, percent: 0 }),
+      }));
+    });
+
+    // ============ 设备数据（含双状态） ============
+    const deviceFilter = ref({ cameraName: '', platform: '', online: '', coordStatus: '', unit: '', tags: [], auditStatus: '' });
     const showTagTree = ref(false);
 
     const tagTreeData = [
@@ -580,19 +845,18 @@ const app = createApp({
       return t.length > 1 ? t[0] + ' +' + (t.length - 1) : t[0];
     });
 
-    // 点击外部关闭标签树
     document.addEventListener('click', (e) => {
       showTagTree.value = false;
       showGovernTypeTree.value = false;
     });
 
     const devices = ref([
-      { id: 1, cameraName: '西湖景区-北山路入口A', platform: '省移动千里眼', online: '在线', coordStatus: '有坐标', coord: '120.1487, 30.2592', unit: '西湖景区管委会', tags: ['重点区域', '景区'], governStatus: '进行中' },
-      { id: 2, cameraName: '钱江新城-市民中心东门', platform: '省电信平台', online: '在线', coordStatus: '无坐标', coord: '—', unit: '暂无管理单位', tags: ['重点区域'], governStatus: '进行中' },
-      { id: 3, cameraName: '武林广场-地下通道B1', platform: '联通绥化平台', online: '离线', coordStatus: '有坐标', coord: '120.1693, 30.2735', unit: '下城区城管局', tags: ['一般区域', '地下'], governStatus: '已治理' },
-      { id: 4, cameraName: '滨江大道-星光大道段', platform: '联通齐齐哈尔平台', online: '在线', coordStatus: '不适用', coord: '—', unit: '—', tags: ['高风险'], governStatus: '进行中' },
-      { id: 5, cameraName: '萧山机场-出发层东侧', platform: '省移动千里眼', online: '在线', coordStatus: '有坐标', coord: '120.4342, 30.2295', unit: '萧山区公安分局', tags: ['重点区域', '交通枢纽'], governStatus: '已治理' },
-      { id: 6, cameraName: '城站火车站-广场南', platform: '省电信平台', online: '离线', coordStatus: '无坐标', coord: '—', unit: '上城区交通枢纽中心', tags: ['交通枢纽'], governStatus: '进行中' },
+      { id: 1, cameraName: '西湖景区-北山路入口A', platform: '省移动千里眼', online: '在线', coordStatus: '有坐标', coord: '120.1487, 30.2592', unit: '西湖景区管委会', tags: ['重点区域', '景区'], governStatus: '进行中', auditStatus: '—' },
+      { id: 2, cameraName: '钱江新城-市民中心东门', platform: '省电信平台', online: '在线', coordStatus: '无坐标', coord: '—', unit: '暂无管理单位', tags: ['重点区域'], governStatus: '进行中', auditStatus: '—' },
+      { id: 3, cameraName: '武林广场-地下通道B1', platform: '联通绥化平台', online: '离线', coordStatus: '有坐标', coord: '120.1693, 30.2735', unit: '下城区城管局', tags: ['一般区域', '地下'], governStatus: '已治理', auditStatus: '已通过' },
+      { id: 4, cameraName: '滨江大道-星光大道段', platform: '联通齐齐哈尔平台', online: '在线', coordStatus: '不适用', coord: '—', unit: null, tags: ['高风险'], governStatus: '已治理', auditStatus: '待审核' },
+      { id: 5, cameraName: '萧山机场-出发层东侧', platform: '省移动千里眼', online: '在线', coordStatus: '有坐标', coord: '120.4342, 30.2295', unit: '萧山区公安分局', tags: ['重点区域', '交通枢纽'], governStatus: '已治理', auditStatus: '已驳回' },
+      { id: 6, cameraName: '城站火车站-广场南', platform: '省电信平台', online: '离线', coordStatus: '无坐标', coord: '—', unit: '上城区交通枢纽中心', tags: ['交通枢纽'], governStatus: '进行中', auditStatus: '—' },
     ]);
 
     const filteredDevices = computed(() => {
@@ -603,12 +867,19 @@ const app = createApp({
         if (deviceFilter.value.online && d.online !== deviceFilter.value.online) return false;
         if (deviceFilter.value.coordStatus && d.coordStatus !== deviceFilter.value.coordStatus) return false;
         if (deviceFilter.value.unit) {
-          if (deviceFilter.value.unit === '有管理单位' && (d.unit === '暂无管理单位' || d.unit === '—')) return false;
+          if (deviceFilter.value.unit === '有管理单位' && (!d.unit || d.unit === '暂无管理单位')) return false;
           if (deviceFilter.value.unit === '暂无管理单位' && d.unit !== '暂无管理单位') return false;
-          if (deviceFilter.value.unit === '未配置' && d.unit !== '—') return false;
+          if (deviceFilter.value.unit === '未配置' && d.unit !== null) return false;
         }
         if (deviceFilter.value.tags && deviceFilter.value.tags.length > 0) {
           if (!deviceFilter.value.tags.some(t => d.tags.includes(t))) return false;
+        }
+        if (deviceFilter.value.auditStatus) {
+          if (d.governStatus === '进行中' && d.auditStatus === '—') {
+            if (deviceFilter.value.auditStatus !== '—' && deviceFilter.value.auditStatus !== '') return false;
+          } else if (d.auditStatus !== deviceFilter.value.auditStatus) {
+            return false;
+          }
         }
         return true;
       });
@@ -621,32 +892,184 @@ const app = createApp({
     };
 
     const handleDeviceQuery = () => {};
-    const handleDeviceReset = () => { deviceFilter.value = { cameraName: '', platform: '', online: '', coordStatus: '', unit: '', tags: [] }; };
-
-    const showBatchModal = ref(false);
-    const batchForm = ref({ dimension: '', remark: '' });
+    const handleDeviceReset = () => { deviceFilter.value = { cameraName: '', platform: '', online: '', coordStatus: '', unit: '', tags: [], auditStatus: '' }; };
 
     const goDetail = (row) => {
       currentTask.value = row;
+      governTab.value = 'all';
+      selectedDevices.value = [];
       showDetailDrawer.value = true;
     };
-    const handleGovern = (d) => { ElMessage.info('治理：' + d.cameraName); };
 
+    // ============ 治理弹窗 ============
+    const showGovernModal = ref(false);
+    const governDevice = ref({});
+    const governForm = ref({ region: '', address: '', unit: '', cameraType: '', coord: '', coordNA: false, bizTags: [] });
+
+    const regionOptions = ['浙江省-杭州市-西湖区-北山街道', '浙江省-杭州市-滨江区-西兴街道', '浙江省-杭州市-余杭区-仓前街道', '浙江省-宁波市-鄞州区-钟公庙街道', '黑龙江省-绥化市-北林区-大有街道', '黑龙江省-齐齐哈尔市-建华区-文化街道'];
+    const unitOptions = ['西湖景区管委会', '下城区城管局', '萧山区公安分局', '上城区交通枢纽中心', '滨江区城管局'];
+
+    const tagDicts = [
+      { label: '区域等级', options: ['重点区域', '一般区域'] },
+      { label: '风险等级', options: ['高风险', '中风险', '低风险'] },
+      { label: '场景分类', options: ['景区', '交通枢纽', '商业区', '居民区'] },
+    ];
+
+    const openGovernModal = (d) => {
+      governDevice.value = { ...d };
+      governForm.value = {
+        region: '',
+        address: '',
+        unit: d.unit || '',
+        cameraType: '',
+        coord: d.coordStatus === '有坐标' ? d.coord : '',
+        coordNA: d.coordStatus === '不适用',
+        bizTags: tagDicts.map(() => ''),
+      };
+      showGovernModal.value = true;
+    };
+
+    const pickCoord = () => {
+      showToast('打开地图拾取器（模拟：已选择坐标 120.1500, 30.2600）');
+      governForm.value.coord = '120.1500, 30.2600';
+    };
+
+    const saveGovern = () => {
+      const dev = devices.value.find(d => d.id === governDevice.value.id);
+      if (dev) {
+        dev.governStatus = '已治理';
+        dev.auditStatus = '待审核';
+        dev.unit = governForm.value.unit || dev.unit;
+        if (governForm.value.coordNA) {
+          dev.coordStatus = '不适用';
+          dev.coord = '—';
+        } else if (governForm.value.coord) {
+          dev.coordStatus = '有坐标';
+          dev.coord = governForm.value.coord;
+        }
+      }
+      showGovernModal.value = false;
+      showToast('治理已保存，等待审核');
+    };
+
+    // ============ 审核弹窗 ============
+    const showAuditModal = ref(false);
+    const auditDevice = ref({});
+    const auditGovFields = ref({ region: '', address: '', unit: '', cameraType: '', coord: '', coordNA: false, bizLabels: '' });
+
+    const openAuditModal = (d) => {
+      auditDevice.value = { ...d };
+      auditGovFields.value = {
+        region: '',
+        address: '',
+        unit: d.unit || '—',
+        cameraType: '',
+        coord: d.coordStatus === '有坐标' ? d.coord : '',
+        coordNA: d.coordStatus === '不适用',
+        bizLabels: d.tags ? d.tags.join('、') : '',
+      };
+      showAuditModal.value = true;
+    };
+
+    const doAudit = (action) => {
+      const dev = devices.value.find(d => d.id === auditDevice.value.id);
+      if (dev) {
+        if (action === '通过') {
+          dev.auditStatus = '已通过';
+          showToast('审核已通过，字段已写入设备管理');
+        } else {
+          dev.auditStatus = '已驳回';
+          dev.governStatus = '进行中';
+          showToast('审核已驳回，设备治理状态已回退为进行中', 'error');
+        }
+      }
+      showAuditModal.value = false;
+    };
+
+    // ============ 批量治理 ============
+    const showBatchGovernModal = ref(false);
+    const batchGovernType = ref('');
+    const batchForm = ref({ tags: [], unit: '', region: '', cameraType: '' });
+
+    const allTagOptions = computed(() => {
+      const s = new Set();
+      tagTreeData.forEach(g => g.children.forEach(c => s.add(c)));
+      return [...s];
+    });
+
+    const openBatchGovern = (type) => {
+      batchGovernType.value = type;
+      batchForm.value = { tags: [], unit: '', region: '', cameraType: '' };
+      showBatchGovernModal.value = true;
+    };
+
+    const confirmBatchGovern = () => {
+      const selected = devices.value.filter(d => selectedDevices.value.includes(d.id));
+      if (batchGovernType.value === '标签配置' && batchForm.value.tags.length > 0) {
+        selected.forEach(d => {
+          batchForm.value.tags.forEach(t => { if (!d.tags.includes(t)) d.tags.push(t); });
+          d.governStatus = '已治理';
+          d.auditStatus = '待审核';
+        });
+      } else if (batchGovernType.value === '管理单位配置' && batchForm.value.unit) {
+        selected.forEach(d => { d.unit = batchForm.value.unit; d.governStatus = '已治理'; d.auditStatus = '待审核'; });
+      } else if (batchGovernType.value === '行政区划' && batchForm.value.region) {
+        selected.forEach(d => { d.governStatus = '已治理'; d.auditStatus = '待审核'; });
+      } else if (batchGovernType.value === '枪球机' && batchForm.value.cameraType) {
+        selected.forEach(d => { d.governStatus = '已治理'; d.auditStatus = '待审核'; });
+      }
+      showBatchGovernModal.value = false;
+      selectedDevices.value = [];
+      showToast('批量治理已提交，等待审核');
+    };
+
+    // ============ 批量审核 ============
+    const batchAudit = (action) => {
+      const selected = devices.value.filter(d => selectedDevices.value.includes(d.id));
+      const auditables = selected.filter(d => d.auditStatus === '待审核');
+      if (auditables.length === 0) {
+        showToast('所选设备中没有待审核的设备', 'error');
+        return;
+      }
+      if (action === '通过') {
+        auditables.forEach(d => { d.auditStatus = '已通过'; });
+        showToast(`已批量审核通过 ${auditables.length} 台设备`);
+      } else {
+        auditables.forEach(d => { d.auditStatus = '已驳回'; d.governStatus = '进行中'; });
+        showToast(`已批量审核驳回 ${auditables.length} 台设备`, 'error');
+      }
+      selectedDevices.value = [];
+    };
+
+    // ============ Toast ============
+    const toast = ref({ show: false, msg: '', type: 'success' });
+    let toastTimer = null;
+    const showToast = (msg, type) => {
+      if (toastTimer) clearTimeout(toastTimer);
+      toast.value = { show: true, msg, type: type || 'success' };
+      toastTimer = setTimeout(() => { toast.value.show = false; }, 2500);
+    };
+
+    // ============ Return ============
     return {
-      currentTask, filter, governTypeOptions, showGovernTypeTree, governTypeSelectLabel, onGovernTypeChange,
+      currentRole,
+      filter, governTypeOptions, showGovernTypeTree, governTypeSelectLabel,
       tasks, filteredTasks,
       handleFilterQuery, handleFilterReset, progressColor,
-      showDetailDrawer, governTab, goDetail,
-      dimensions, deviceFilter, showTagTree, tagTreeData, tagSelectLabel,
+      showDetailDrawer, currentTask, governTab, goDetail,
+      currentDimensions, deviceFilter, showTagTree, tagTreeData, tagSelectLabel,
       devices, filteredDevices,
       selectedDevices, isAllSelected, toggleAll,
       handleDeviceQuery, handleDeviceReset,
-      showBatchModal, batchForm,
-      goDetail, handleGovern,
+      showGovernModal, governDevice, governForm, openGovernModal, pickCoord, saveGovern,
+      showAuditModal, auditDevice, auditGovFields, openAuditModal, doAudit,
+      showBatchGovernModal, batchGovernType, batchForm, openBatchGovern, confirmBatchGovern,
+      batchAudit, allTagOptions,
+      regionOptions, unitOptions, tagDicts,
+      toast,
     };
   }
 });
-app.use(ElementPlus);
 app.mount('#app');
 </script>
 </body>

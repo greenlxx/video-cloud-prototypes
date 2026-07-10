@@ -122,7 +122,9 @@ body { font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
             <el-option label="标签配置" value="标签配置"/>
             <el-option label="管理单位配置" value="管理单位配置"/>
             <el-option label="经纬度治理" value="经纬度治理"/>
-            <el-option label="设备名称规范" value="设备名称规范"/>
+            <el-option label="行政区划" value="行政区划"/>
+            <el-option label="详细地址" value="详细地址"/>
+            <el-option label="枪球机" value="枪球机"/>
           </el-select>
         </div>
         <select v-model="filter.status" style="padding:6px 10px;border:1px solid #dcdfe6;border-radius:4px;font-size:13px;width:140px;background:#fff;outline:none;">
@@ -179,10 +181,11 @@ body { font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
             <td>{{ row.creator }}</td>
             <td>{{ row.time }}</td>
             <td>
+              <button v-if="!row.dispatched" class="op-btn" @click="confirmDispatch(row)">派单</button>
               <button class="op-btn" @click="openDetail(row)">详情</button>
-              <button class="op-btn" @click="openEdit(row)">编辑</button>
-              <button class="op-btn" @click="openConfigDevice(row)">配置设备</button>
-              <button class="op-btn danger" @click="confirmDelete(row)">删除</button>
+              <button v-if="!row.dispatched" class="op-btn" @click="openEdit(row)">编辑</button>
+              <button v-if="!row.dispatched" class="op-btn" @click="openConfigDevice(row)">配置设备</button>
+              <button v-if="!row.dispatched" class="op-btn danger" @click="confirmDelete(row)">删除</button>
             </td>
           </tr>
         </tbody>
@@ -198,7 +201,7 @@ body { font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
       </el-form-item>
       <el-form-item label="治理类型" required>
         <div style="display:flex;gap:16px;flex-wrap:wrap;">
-          <label v-for="t in ['标签配置','管理单位配置','经纬度治理','设备名称规范']" :key="t" style="display:flex;align-items:center;gap:4px;cursor:pointer;font-size:13px;">
+          <label v-for="t in ['标签配置','管理单位配置','经纬度治理','行政区划','详细地址','枪球机']" :key="t" style="display:flex;align-items:center;gap:4px;cursor:pointer;font-size:13px;">
             <input type="checkbox" :value="t" v-model="form.types" /> {{ t }}
           </label>
         </div>
@@ -385,6 +388,13 @@ body { font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
         </div>
       </div>
 
+      <div style="margin:0 0 16px 0;padding:8px 12px;background:#F5F7FA;border-radius:4px;font-size:13px;color:#666;display:flex;align-items:center;gap:16px;">
+        <span style="font-weight:500;">审核情况：</span>
+        <span>待审核 <strong style="color:#909399;">{{ detailAuditCounts.pending }}</strong></span>
+        <span>已通过 <strong style="color:#67C23A;">{{ detailAuditCounts.passed }}</strong></span>
+        <span>已驳回 <strong style="color:#F56C6C;">{{ detailAuditCounts.rejected }}</strong></span>
+      </div>
+
       <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:8px;">
         <div style="font-weight:600; font-size:14px;">设备清单</div>
         <div style="display:flex; gap:8px;">
@@ -401,11 +411,17 @@ body { font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
             <option value="已治理">已治理</option>
             <option value="进行中">进行中</option>
           </select>
+          <select v-model="detailAuditFilter" style="padding:4px 8px;border:1px solid #dcdfe6;border-radius:4px;font-size:12px;background:#fff;outline:none;width:120px;">
+            <option value="">审核状态</option>
+            <option value="待审核">待审核</option>
+            <option value="已通过">已通过</option>
+            <option value="已驳回">已驳回</option>
+          </select>
         </div>
       </div>
       <table class="device-table">
         <thead>
-          <tr><th style="width:200px">设备名称</th><th style="width:120px">设备编码</th><th style="width:120px">通道编码</th><th style="width:140px">所属平台</th><th style="width:80px">在线状态</th><th style="width:100px">治理状态</th></tr>
+          <tr><th style="width:180px">设备名称</th><th style="width:110px">设备编码</th><th style="width:110px">通道编码</th><th style="width:130px">所属平台</th><th style="width:80px">在线状态</th><th style="width:90px">治理状态</th><th style="width:90px">审核状态</th></tr>
         </thead>
         <tbody>
           <tr v-for="(d,di) in filteredDetailDevices" :key="di">
@@ -415,6 +431,7 @@ body { font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
             <td>{{ d.platform }}</td>
             <td><span class="status-dot" :class="d.online==='在线'?'status-online':'status-offline'"></span>{{ d.online }}</td>
             <td><el-tag :type="d.done?'success':'warning'" size="small">{{ d.done?'已治理':'进行中' }}</el-tag></td>
+            <td><span :style="{display:'inline-block',padding:'0 6px',height:'20px',lineHeight:'20px',borderRadius:'2px',fontSize:'12px',background:d.auditStatus==='已通过'?'#E8F8E8':d.auditStatus==='已驳回'?'#FDE8E8':'#F0F0F0',color:d.auditStatus==='已通过'?'#67C23A':d.auditStatus==='已驳回'?'#F56C6C':'#909399'}">{{ d.auditStatus }}</span></td>
           </tr>
         </tbody>
       </table>
@@ -439,10 +456,10 @@ const app = createApp({
     const filter = reactive({ name:'', person:'', types:[], status:'' })
     // 表格数据
     const allData = [
-      { name:'西湖区设备标签治理', types:['标签配置','管理单位配置'], count:210, progress:68, person:'张三', creator:'管理员', time:'2026-06-15 09:30' },
-      { name:'余杭区经纬度校准', types:['经纬度治理'], count:320, progress:95, person:'李四', creator:'管理员', time:'2026-06-18 14:20' },
-      { name:'滨江区综合治理', types:['标签配置','管理单位配置','经纬度治理'], count:150, progress:8, person:'王五', creator:'管理员', time:'2026-06-20 10:00' },
-      { name:'鄞州区设备名称规范', types:['设备名称规范','标签配置'], count:180, progress:53, person:'赵六', creator:'管理员', time:'2026-06-22 16:45' },
+      { name:'西湖区标签治理', types:['标签配置','管理单位配置'], count:210, progress:68, person:'张三', creator:'管理员', time:'2026-06-15 09:30', dispatched:false },
+      { name:'余杭区经纬度校准', types:['经纬度治理'], count:320, progress:95, person:'李四', creator:'管理员', time:'2026-06-18 14:20', dispatched:false },
+      { name:'滨江区综合治理', types:['标签配置','管理单位配置','行政区划'], count:150, progress:8, person:'王五', creator:'管理员', time:'2026-06-20 10:00', dispatched:true },
+      { name:'鄞州区点位补全', types:['行政区划','详细地址','枪球机'], count:180, progress:53, person:'赵六', creator:'管理员', time:'2026-06-22 16:45', dispatched:true },
     ]
     const tableData = ref([...allData])
     function doQuery() {
@@ -517,17 +534,18 @@ const app = createApp({
     const detailVisible = ref(false)
     const detailRow = ref(null)
     const detailTab = ref('list')
-    function openDetail(row) { detailRow.value=row; detailTab.value='list'; detailNameFilter.value=''; detailPlatformFilter.value=''; detailStatusFilter.value=''; detailVisible.value=true }
+    function openDetail(row) { detailRow.value=row; detailTab.value='list'; detailNameFilter.value=''; detailPlatformFilter.value=''; detailStatusFilter.value=''; detailAuditFilter.value=''; detailVisible.value=true }
     const detailStatusFilter = ref('')
+    const detailAuditFilter = ref('')
     const detailNameFilter = ref('')
     const detailPlatformFilter = ref('')
     const detailDevices = [
-      { name:'西湖区路口摄像头A01', deviceCode:'DEV001', channelCode:'CH001', platform:'省移动千里眼', online:'在线', done:true },
-      { name:'西湖区校园门口B03', deviceCode:'DEV002', channelCode:'CH002', platform:'省电信平台', online:'在线', done:true },
-      { name:'余杭区公园监控C12', deviceCode:'DEV003', channelCode:'CH003', platform:'龙彩特食平台', online:'离线', done:false },
-      { name:'滨江区主干道D07', deviceCode:'DEV004', channelCode:'CH004', platform:'省联通平台', online:'在线', done:false },
-      { name:'鄞州区商业街E05', deviceCode:'DEV005', channelCode:'CH005', platform:'省移动千里眼', online:'离线', done:true },
-      { name:'余杭区河道监控F09', deviceCode:'DEV006', channelCode:'CH006', platform:'省电信平台', online:'在线', done:false },
+      { name:'西湖区路口摄像头A01', deviceCode:'DEV001', channelCode:'CH001', platform:'省移动千里眼', online:'在线', done:true, auditStatus:'已通过' },
+      { name:'西湖区校园门口B03', deviceCode:'DEV002', channelCode:'CH002', platform:'省电信平台', online:'在线', done:true, auditStatus:'待审核' },
+      { name:'余杭区公园监控C12', deviceCode:'DEV003', channelCode:'CH003', platform:'龙彩特食平台', online:'离线', done:false, auditStatus:'—' },
+      { name:'滨江区主干道D07', deviceCode:'DEV004', channelCode:'CH004', platform:'省联通平台', online:'在线', done:false, auditStatus:'—' },
+      { name:'鄞州区商业街E05', deviceCode:'DEV005', channelCode:'CH005', platform:'省移动千里眼', online:'离线', done:true, auditStatus:'已驳回' },
+      { name:'余杭区河道监控F09', deviceCode:'DEV006', channelCode:'CH006', platform:'省电信平台', online:'在线', done:false, auditStatus:'—' },
     ]
     const filteredDetailDevices = computed(() => {
       let list = detailDevices
@@ -538,6 +556,9 @@ const app = createApp({
           if (detailStatusFilter.value === '已治理') return d.done
           return !d.done
         })
+      }
+      if (detailAuditFilter.value) {
+        list = list.filter(d => d.auditStatus === detailAuditFilter.value)
       }
       return list
     })
@@ -554,14 +575,30 @@ const app = createApp({
       ElMessage.success('删除成功')
     }
 
+    function confirmDispatch(row) {
+      if (window.confirm(`确定派单给治理人员「${row.person}」吗？`)) {
+        row.dispatched = true
+        ElMessage.success('派单成功')
+      }
+    }
+
     function batchBind() { deviceList.filter(d=>d.checked).forEach(d=>d.enabled=true); ElMessage.success('批量绑定成功') }
+
+    // 审核情况统计
+    const detailAuditCounts = computed(() => {
+      const pending = detailDevices.filter(d => d.auditStatus === '待审核').length
+      const passed = detailDevices.filter(d => d.auditStatus === '已通过').length
+      const rejected = detailDevices.filter(d => d.auditStatus === '已驳回').length
+      return { pending, passed, rejected }
+    })
+
     return {
       filter, tableData, doQuery, doReset, getProgressColor,
       step1Visible, editingRow, form, openStep1, openEdit, goStep2,
       step2Visible, configTab, dirList, treeAll, treeNodes, openConfigDevice,
       devFilter, devAllCheck, deviceList,
-      detailVisible, detailRow, detailTab, openDetail, detailDevices, detailStatusFilter, detailNameFilter, detailPlatformFilter, filteredDetailDevices,
-      deleteVisible, deleteRow, confirmDelete, doDelete, batchBind,
+      detailVisible, detailRow, detailTab, openDetail, detailDevices, detailStatusFilter, detailAuditFilter, detailAuditCounts, detailNameFilter, detailPlatformFilter, filteredDetailDevices,
+      deleteVisible, deleteRow, confirmDelete, doDelete, batchBind, confirmDispatch,
     }
   }
 })
