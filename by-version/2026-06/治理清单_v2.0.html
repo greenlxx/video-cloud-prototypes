@@ -229,10 +229,11 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC'
 /* 批量配置下拉菜单 */
 .batch-config-wrap { position: relative; display: inline-block; }
 .batch-menu {
-  position: absolute; top: 100%; left: 0; margin-top: 4px; z-index: 300;
+  position: absolute; top: calc(100% + 4px); left: 0; z-index: 3000;
   background: #fff; border: 1px solid #E4E7ED; border-radius: 4px;
   box-shadow: 0 2px 12px rgba(0,0,0,.12); min-width: 140px; padding: 4px 0;
 }
+.batch-bar { overflow: visible; }
 .batch-menu-item { padding: 8px 16px; font-size: 13px; color: #606266; cursor: pointer; }
 .batch-menu-item:hover { background: #F5F7FA; color: #165DFF; }
 
@@ -519,24 +520,6 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC'
           <button class="btn" @click="handleDeviceReset">重置</button>
         </div>
 
-        <!-- 批量操作栏 -->
-        <div style="display:flex;align-items:center;gap:8px;padding:8px 0;border-top:1px solid #F2F3F5;margin-top:4px;">
-          <template v-if="currentRole === 'governance'">
-            <div class="batch-config-wrap">
-              <button class="btn btn-small" :disabled="selectedDevices.length === 0" @click.stop="toggleBatchMenu">批量配置 ▾</button>
-              <div class="batch-menu" v-if="showBatchMenu" @click.stop>
-                <div class="batch-menu-item" @click="openBatchGovern('管理单位配置')">管理单位</div>
-                <div class="batch-menu-item" @click="openBatchGovern('枪球机')">枪球机</div>
-                <div class="batch-menu-item" @click="openBatchGovern('标签配置')">标签</div>
-                <div class="batch-menu-item" @click="openBatchGovern('行政区划')">行政区划</div>
-              </div>
-            </div>
-          </template>
-          <template v-if="currentRole === 'dispatcher'">
-            <button class="btn btn-small btn-success" :disabled="selectedDevices.length === 0" @click="batchAudit('通过')">批量审核通过</button>
-            <button class="btn btn-small btn-danger" :disabled="selectedDevices.length === 0" @click="batchAudit('驳回')">批量审核驳回</button>
-          </template>
-        </div>
       </div>
 
       <!-- 设备列表 -->
@@ -548,6 +531,21 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC'
               <button class="status-btn" :class="{active: governTab==='进行中'}" @click="governTab='进行中'">进行中({{ devices.filter(function(d){return d.governStatus==='进行中'}).length }})</button>
               <button class="status-btn" :class="{active: governTab==='已治理'}" @click="governTab='已治理'">已治理({{ devices.filter(function(d){return d.governStatus==='已治理'}).length }})</button>
             </div>
+            <template v-if="currentRole === 'governance'">
+              <div class="batch-config-wrap">
+                <button class="btn btn-small" :disabled="selectedDevices.length === 0" @click.stop="toggleBatchMenu">批量配置 ▾</button>
+                <div class="batch-menu" v-if="showBatchMenu" @click.stop>
+                  <div class="batch-menu-item" @click="openBatchGovern('管理单位配置')">管理单位</div>
+                  <div class="batch-menu-item" @click="openBatchGovern('枪球机')">枪球机</div>
+                  <div class="batch-menu-item" @click="openBatchGovern('标签配置')">标签</div>
+                  <div class="batch-menu-item" @click="openBatchGovern('行政区划')">行政区划</div>
+                </div>
+              </div>
+            </template>
+            <template v-if="currentRole === 'dispatcher'">
+              <button class="btn btn-small btn-success" :disabled="selectedDevices.length === 0" @click="batchAudit('通过')">批量审核通过</button>
+              <button class="btn btn-small btn-danger" :disabled="selectedDevices.length === 0" @click="batchAudit('驳回')">批量审核驳回</button>
+            </template>
           </div>
           <div style="font-size:13px;color:#86909C">共 {{ filteredDevices.length }} 条</div>
         </div>
