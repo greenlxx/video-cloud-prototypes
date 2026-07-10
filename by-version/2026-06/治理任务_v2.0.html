@@ -44,6 +44,12 @@ body { font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
 /* 页面标题 */
 .page-title { font-size:16px; font-weight:600; color:#333; margin-bottom:16px; }
 /* 抽屉自定义 */
+.detail-overlay { position:fixed; inset:0; background:rgba(0,0,0,.45); z-index:2000; }
+.detail-panel { position:fixed; top:0; right:0; bottom:0; width:640px; max-width:92vw; background:#fff; box-shadow:-2px 0 16px rgba(0,0,0,.15); display:flex; flex-direction:column; animation:detailSlideIn .25s ease; }
+@keyframes detailSlideIn { from{transform:translateX(100%);} to{transform:translateX(0);} }
+.detail-header { height:52px; flex-shrink:0; display:flex; align-items:center; justify-content:space-between; padding:0 20px; border-bottom:1px solid #EBEEF5; font-size:16px; font-weight:600; }
+.detail-close { cursor:pointer; color:#909399; font-size:18px; line-height:1; }
+.detail-close:hover { color:#333; }
 .drawer-body { padding:20px; }
 .info-row { display:flex; margin-bottom:12px; font-size:13px; }
 .info-label { color:#999; width:80px; flex-shrink:0; }
@@ -350,96 +356,102 @@ body { font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
     </el-tabs>
   </el-drawer>
 
-  <!-- 详情抽屉 -->
-  <el-drawer v-model="detailVisible" title="任务详情" size="600px" destroy-on-close>
-    <div class="drawer-body" v-if="detailRow">
-      <div style="font-weight:600; font-size:15px; margin-bottom:16px;">任务信息</div>
-      <div class="info-row"><span class="info-label">任务名称</span><span class="info-value">{{ detailRow.name }}</span></div>
-      <div class="info-row"><span class="info-label">治理类型</span><span class="info-value"><span v-for="t in detailRow.types" class="tag tag-blue">{{ t }}</span></span></div>
-      <div class="info-row"><span class="info-label">治理人员</span><span class="info-value">{{ detailRow.person }}</span></div>
-      <div class="info-row"><span class="info-label">创建人</span><span class="info-value">{{ detailRow.creator }}</span></div>
-      <div class="info-row"><span class="info-label">创建时间</span><span class="info-value">{{ detailRow.time }}</span></div>
+  <!-- 详情抽屉（原生div，右侧滑入） -->
+  <div v-if="detailVisible" class="detail-overlay" @click.self="detailVisible=false">
+    <div class="detail-panel">
+      <div class="detail-header">
+        <span>任务详情</span>
+        <span class="detail-close" @click="detailVisible=false">✕</span>
+      </div>
+      <div class="drawer-body" v-if="detailRow" style="padding:20px;overflow-y:auto;flex:1;">
+        <div style="font-weight:600; font-size:15px; margin-bottom:16px;">任务信息</div>
+        <div class="info-row"><span class="info-label">任务名称</span><span class="info-value">{{ detailRow.name }}</span></div>
+        <div class="info-row"><span class="info-label">治理类型</span><span class="info-value"><span v-for="t in detailRow.types" class="tag tag-blue">{{ t }}</span></span></div>
+        <div class="info-row"><span class="info-label">治理人员</span><span class="info-value">{{ detailRow.person }}</span></div>
+        <div class="info-row"><span class="info-label">创建人</span><span class="info-value">{{ detailRow.creator }}</span></div>
+        <div class="info-row"><span class="info-label">创建时间</span><span class="info-value">{{ detailRow.time }}</span></div>
 
-      <div class="progress-cards">
-        <div class="progress-card pc-total">
-          <div style="font-size:20px;margin-bottom:4px;">📊</div>
-          <div class="pc-num">{{ detailRow.count }}</div>
-          <div class="pc-label">总计(台)</div>
+        <div class="progress-cards">
+          <div class="progress-card pc-total">
+            <div style="font-size:20px;margin-bottom:4px;">📊</div>
+            <div class="pc-num">{{ detailRow.count }}</div>
+            <div class="pc-label">总计(台)</div>
+          </div>
+          <div class="progress-card pc-done">
+            <div style="font-size:20px;margin-bottom:4px;">✅</div>
+            <div class="pc-num">{{ Math.round(detailRow.count*detailRow.progress/100) }}</div>
+            <div class="pc-label">已治理(台)</div>
+          </div>
+          <div class="progress-card pc-ing">
+            <div style="font-size:20px;margin-bottom:4px;">⏳</div>
+            <div class="pc-num">{{ detailRow.count - Math.round(detailRow.count*detailRow.progress/100) }}</div>
+            <div class="pc-label">进行中(台)</div>
+          </div>
+          <div class="progress-card pc-rate">
+            <div style="font-size:20px;margin-bottom:4px;">📈</div>
+            <div class="pc-num">{{ detailRow.progress }}%</div>
+            <div class="pc-label">完成进度</div>
+          </div>
         </div>
-        <div class="progress-card pc-done">
-          <div style="font-size:20px;margin-bottom:4px;">✅</div>
-          <div class="pc-num">{{ Math.round(detailRow.count*detailRow.progress/100) }}</div>
-          <div class="pc-label">已治理(台)</div>
+        <div style="margin:16px 0;padding:0 4px;">
+          <div style="display:flex;justify-content:space-between;font-size:12px;color:#999;margin-bottom:6px;">
+            <span>整体进度</span><span>{{ detailRow.progress }}%</span>
+          </div>
+          <div style="height:12px;background:#F0F0F0;border-radius:6px;overflow:hidden;">
+            <div :style="{width:detailRow.progress+'%',height:'100%',borderRadius:'6px',background:getProgressColor(detailRow.progress),transition:'width .3s'}"></div>
+          </div>
         </div>
-        <div class="progress-card pc-ing">
-          <div style="font-size:20px;margin-bottom:4px;">⏳</div>
-          <div class="pc-num">{{ detailRow.count - Math.round(detailRow.count*detailRow.progress/100) }}</div>
-          <div class="pc-label">进行中(台)</div>
-        </div>
-        <div class="progress-card pc-rate">
-          <div style="font-size:20px;margin-bottom:4px;">📈</div>
-          <div class="pc-num">{{ detailRow.progress }}%</div>
-          <div class="pc-label">完成进度</div>
-        </div>
-      </div>
-      <div style="margin:16px 0;padding:0 4px;">
-        <div style="display:flex;justify-content:space-between;font-size:12px;color:#999;margin-bottom:6px;">
-          <span>整体进度</span><span>{{ detailRow.progress }}%</span>
-        </div>
-        <div style="height:12px;background:#F0F0F0;border-radius:6px;overflow:hidden;">
-          <div :style="{width:detailRow.progress+'%',height:'100%',borderRadius:'6px',background:getProgressColor(detailRow.progress),transition:'width .3s'}"></div>
-        </div>
-      </div>
 
-      <div style="margin:0 0 16px 0;padding:8px 12px;background:#F5F7FA;border-radius:4px;font-size:13px;color:#666;display:flex;align-items:center;gap:16px;">
-        <span style="font-weight:500;">审核情况：</span>
-        <span>待审核 <strong style="color:#909399;">{{ detailAuditCounts.pending }}</strong></span>
-        <span>已通过 <strong style="color:#67C23A;">{{ detailAuditCounts.passed }}</strong></span>
-        <span>已驳回 <strong style="color:#F56C6C;">{{ detailAuditCounts.rejected }}</strong></span>
-      </div>
-
-      <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:8px;">
-        <div style="font-weight:600; font-size:14px;">设备清单</div>
-        <div style="display:flex; gap:8px;">
-          <input v-model="detailNameFilter" placeholder="设备名称" style="padding:4px 8px;border:1px solid #dcdfe6;border-radius:4px;font-size:12px;width:140px;outline:none;" />
-          <select v-model="detailPlatformFilter" style="padding:4px 8px;border:1px solid #dcdfe6;border-radius:4px;font-size:12px;background:#fff;outline:none;width:130px;">
-            <option value="">所属平台</option>
-            <option value="省移动千里眼">省移动千里眼</option>
-            <option value="省电信平台">省电信平台</option>
-            <option value="龙彩特食平台">龙彩特食平台</option>
-            <option value="省联通平台">省联通平台</option>
-          </select>
-          <select v-model="detailStatusFilter" style="padding:4px 8px;border:1px solid #dcdfe6;border-radius:4px;font-size:12px;background:#fff;outline:none;width:120px;">
-            <option value="">治理状态</option>
-            <option value="已治理">已治理</option>
-            <option value="进行中">进行中</option>
-          </select>
-          <select v-model="detailAuditFilter" style="padding:4px 8px;border:1px solid #dcdfe6;border-radius:4px;font-size:12px;background:#fff;outline:none;width:120px;">
-            <option value="">审核状态</option>
-            <option value="待审核">待审核</option>
-            <option value="已通过">已通过</option>
-            <option value="已驳回">已驳回</option>
-          </select>
+        <div style="margin:0 0 16px 0;padding:8px 12px;background:#F5F7FA;border-radius:4px;font-size:13px;color:#666;display:flex;align-items:center;gap:16px;">
+          <span style="font-weight:500;">审核情况：</span>
+          <span>待审核 <strong style="color:#909399;">{{ detailAuditCounts.pending }}</strong></span>
+          <span>已通过 <strong style="color:#67C23A;">{{ detailAuditCounts.passed }}</strong></span>
+          <span>已驳回 <strong style="color:#F56C6C;">{{ detailAuditCounts.rejected }}</strong></span>
         </div>
+
+        <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:8px;">
+          <div style="font-weight:600; font-size:14px;">设备清单</div>
+          <div style="display:flex; gap:8px;">
+            <input v-model="detailNameFilter" placeholder="设备名称" style="padding:4px 8px;border:1px solid #dcdfe6;border-radius:4px;font-size:12px;width:140px;outline:none;" />
+            <select v-model="detailPlatformFilter" style="padding:4px 8px;border:1px solid #dcdfe6;border-radius:4px;font-size:12px;background:#fff;outline:none;width:130px;">
+              <option value="">所属平台</option>
+              <option value="省移动千里眼">省移动千里眼</option>
+              <option value="省电信平台">省电信平台</option>
+              <option value="龙彩特食平台">龙彩特食平台</option>
+              <option value="省联通平台">省联通平台</option>
+            </select>
+            <select v-model="detailStatusFilter" style="padding:4px 8px;border:1px solid #dcdfe6;border-radius:4px;font-size:12px;background:#fff;outline:none;width:120px;">
+              <option value="">治理状态</option>
+              <option value="已治理">已治理</option>
+              <option value="进行中">进行中</option>
+            </select>
+            <select v-model="detailAuditFilter" style="padding:4px 8px;border:1px solid #dcdfe6;border-radius:4px;font-size:12px;background:#fff;outline:none;width:120px;">
+              <option value="">审核状态</option>
+              <option value="待审核">待审核</option>
+              <option value="已通过">已通过</option>
+              <option value="已驳回">已驳回</option>
+            </select>
+          </div>
+        </div>
+        <table class="device-table">
+          <thead>
+            <tr><th style="width:180px">设备名称</th><th style="width:110px">设备编码</th><th style="width:110px">通道编码</th><th style="width:130px">所属平台</th><th style="width:80px">在线状态</th><th style="width:90px">治理状态</th><th style="width:90px">审核状态</th></tr>
+          </thead>
+          <tbody>
+            <tr v-for="(d,di) in filteredDetailDevices" :key="di">
+              <td>{{ d.name }}</td>
+              <td>{{ d.deviceCode }}</td>
+              <td>{{ d.channelCode }}</td>
+              <td>{{ d.platform }}</td>
+              <td><span class="status-dot" :class="d.online==='在线'?'status-online':'status-offline'"></span>{{ d.online }}</td>
+              <td><span :style="{display:'inline-block',padding:'0 8px',height:'22px',lineHeight:'22px',borderRadius:'3px',fontSize:'12px',background:d.done?'#E8F8E8':'#FDF6EC',color:d.done?'#67C23A':'#E6A23C'}">{{ d.done?'已治理':'进行中' }}</span></td>
+              <td><span :style="{display:'inline-block',padding:'0 6px',height:'20px',lineHeight:'20px',borderRadius:'2px',fontSize:'12px',background:d.auditStatus==='已通过'?'#E8F8E8':d.auditStatus==='已驳回'?'#FDE8E8':'#F0F0F0',color:d.auditStatus==='已通过'?'#67C23A':d.auditStatus==='已驳回'?'#F56C6C':'#909399'}">{{ d.auditStatus }}</span></td>
+            </tr>
+          </tbody>
+        </table>
       </div>
-      <table class="device-table">
-        <thead>
-          <tr><th style="width:180px">设备名称</th><th style="width:110px">设备编码</th><th style="width:110px">通道编码</th><th style="width:130px">所属平台</th><th style="width:80px">在线状态</th><th style="width:90px">治理状态</th><th style="width:90px">审核状态</th></tr>
-        </thead>
-        <tbody>
-          <tr v-for="(d,di) in filteredDetailDevices" :key="di">
-            <td>{{ d.name }}</td>
-            <td>{{ d.deviceCode }}</td>
-            <td>{{ d.channelCode }}</td>
-            <td>{{ d.platform }}</td>
-            <td><span class="status-dot" :class="d.online==='在线'?'status-online':'status-offline'"></span>{{ d.online }}</td>
-            <td><el-tag :type="d.done?'success':'warning'" size="small">{{ d.done?'已治理':'进行中' }}</el-tag></td>
-            <td><span :style="{display:'inline-block',padding:'0 6px',height:'20px',lineHeight:'20px',borderRadius:'2px',fontSize:'12px',background:d.auditStatus==='已通过'?'#E8F8E8':d.auditStatus==='已驳回'?'#FDE8E8':'#F0F0F0',color:d.auditStatus==='已通过'?'#67C23A':d.auditStatus==='已驳回'?'#F56C6C':'#909399'}">{{ d.auditStatus }}</span></td>
-          </tr>
-        </tbody>
-      </table>
     </div>
-  </el-drawer>
+  </div>
 
   <!-- 删除确认 -->
   <el-dialog v-model="deleteVisible" title="确认删除" width="400px">
