@@ -542,6 +542,8 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC'
                 </div>
               </div>
             </template>
+            <button class="btn btn-small" @click="handleExport">导出</button>
+            <button class="btn btn-small" @click="handleImport">导入</button>
             <template v-if="currentRole === 'dispatcher'">
               <button class="btn btn-small btn-success" :disabled="selectedDevices.length === 0" @click="batchAudit('通过')">批量审核通过</button>
               <button class="btn btn-small btn-danger" :disabled="selectedDevices.length === 0" @click="batchAudit('驳回')">批量审核驳回</button>
@@ -1098,6 +1100,14 @@ const app = createApp({
     const showBatchMenu = ref(false);
     const toggleBatchMenu = () => { showBatchMenu.value = !showBatchMenu.value; };
 
+    const handleExport = () => {
+      const scope = selectedDevices.value.length > 0 ? `已勾选 ${selectedDevices.value.length} 台` : '当前筛选下全部设备';
+      alert(`导出 ${scope}\n\n将生成 Excel（含设备治理清单 + 可选值参考两个Sheet），按任务分配的治理类型动态生成列。\n已审核设备在治理字段列标注「已审核，不可修改」。\n\n（原型示意——实际由后端生成 xlsx 文件下载）`);
+    };
+    const handleImport = () => {
+      alert('导入\n\n选择 Excel 文件 → 系统校验设备编码 + 治理字段格式 → 弹出确认弹窗（显示将更新 X 台 / 校验失败 Y 台）→ 确认后写入。\n校验失败可下载错误报告。\n\n（原型示意——实际由后端处理文件上传与校验）');
+    };
+
     const allTagOptions = computed(() => {
       const s = new Set();
       tagTreeData.forEach(g => g.children.forEach(c => s.add(c)));
@@ -1173,7 +1183,7 @@ const app = createApp({
       showGovernModal, governDevice, governForm, openGovernModal, pickCoord, saveGovern,
       showAuditModal, auditDevice, auditGovFields, openAuditModal, doAudit,
       showBatchGovernModal, batchGovernType, batchForm, openBatchGovern, confirmBatchGovern,
-      showBatchMenu, toggleBatchMenu,
+      showBatchMenu, toggleBatchMenu, handleExport, handleImport,
       batchAudit, allTagOptions,
       regionOptions, unitOptions, tagDicts,
       provinceOptions, cityOptions, countyOptions, townOptions,
