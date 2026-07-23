@@ -691,13 +691,18 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC'
             </div>
             <!-- 分隔线 -->
             <hr class="gr-divider" />
-            <!-- 业务标签：每行两个树状下拉 -->
+            <!-- 业务标签：标题+不适用复选框 + 每行两个树状下拉 -->
             <div>
-              <div class="gr-tags-title">业务标签</div>
+              <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px;">
+                <div class="gr-tags-title" style="margin-bottom:0;">业务标签</div>
+                <label class="gr-coord-na">
+                  <input type="checkbox" v-model="governForm.tagNA" @change="if(governForm.tagNA){governForm.bizTags=tagDicts.map(()=>'不适用')}" /> 不适用
+                </label>
+              </div>
               <div class="gr-tags-flex">
                 <div class="gr-tag-field" v-for="(dict, idx) in tagDicts" :key="idx">
                   <label>{{ dict.label }}</label>
-                  <select class="native-select" v-model="governForm.bizTags[idx]">
+                  <select class="native-select" v-model="governForm.bizTags[idx]" :disabled="governForm.tagNA">
                     <option value="">请选择</option>
                     <option v-for="opt in dict.options" :key="opt.value" :value="opt.value">{{ opt.text }}</option>
                   </select>
@@ -1029,6 +1034,7 @@ const app = createApp({
         cameraType: '',
         coord: d.coordStatus === '有坐标' ? d.coord : '',
         coordNA: d.coordStatus === '不适用',
+        tagNA: false,
         bizTags: tagDicts.map(() => ''),
       };
       showGovernModal.value = true;
