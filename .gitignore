@@ -1,0 +1,4 @@
+# 测试环境原型目录（含 node_modules，不发布）
+测试环境/
+node_modules/
+.DS_Store
