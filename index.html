@@ -102,6 +102,11 @@ body { font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
         治理清单
       </div>
+      <div class="sidebar-group-title" style="margin-top:12px;">直播回放</div>
+      <div class="sidebar-item sub" :class="{active:activeModule==='replay-download'}" @click="activeModule='replay-download'">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        回放页下载交互
+      </div>
       <div class="sidebar-group-title" style="margin-top:12px;">组件化原型</div>
       <div class="sidebar-item sub" :class="{active:activeModule==='bundle'}" @click="activeModule='bundle'">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
@@ -205,7 +210,8 @@ const app = createApp({
         { id:'region',name:'行政区划',parent:'数据治理',type:'new',source:'baseline',desc:'配置城市弹窗新增查询/重置按钮，维护省市县镇四级行政区划，支撑电子地图设备聚合展示。',version:'2026-07',versionLabel:'2026.07',updated:'07-10',module:'region',icon:'<polygon points="3 6 9 3 15 6 21 4 21 18 15 21 9 18 3 20"/><line x1="9" y1="3" x2="9" y2="18"/>',url:'./by-version/2026-06/行政区划_v2.0.html'},
         { id:'task',name:'治理任务',parent:'数据治理',type:'new',source:'baseline',desc:'治理类型6种，新增任务连贯流程，独立派单按钮，派单后隐藏编辑删除，详情含审核情况与设备清单。',version:'2026-07',versionLabel:'2026.07',updated:'07-10',module:'task',icon:'<rect x="3" y="5" width="18" height="14" rx="2"/><line x1="3" y1="10" x2="21" y2="10"/><circle cx="8" cy="16" r="1"/><circle cx="12" cy="16" r="1"/>',url:'./by-version/2026-06/治理任务_v2.0.html'},
         { id:'checklist',name:'治理清单',parent:'数据治理',type:'new',source:'baseline',desc:'弹窗内直接治理（含直播预览+6维度编辑），支持批量治理，治理+审核双状态，派单人审核后生效。',version:'2026-07',versionLabel:'2026.07',updated:'07-10',module:'checklist',icon:'<path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/>',url:'./by-version/2026-06/治理清单_v2.0.html'},
-        { id:'bundle',name:'视频云平台组件合集',parent:'组件化原型',type:'new',source:'rd',desc:'手动抓拍、企业管理、视频治理三个组件的高保真交互原型合集，通过左侧菜单切换（抓拍工作台/企业信息管理/主体接入登记/接入主体目录管理/接入进度统计/治理工作台/治理统计）。',version:'2026-08',versionLabel:'2026.08',updated:'08-10',module:'bundle',icon:'<rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>',url:'./by-version/2026-08/视频云平台合集/index.html'}
+        { id:'bundle',name:'视频云平台组件合集',parent:'组件化原型',type:'new',source:'rd',desc:'手动抓拍、企业管理、视频治理三个组件的高保真交互原型合集，通过左侧菜单切换（抓拍工作台/企业信息管理/主体接入登记/接入主体目录管理/接入进度统计/治理工作台/治理统计）。',version:'2026-08',versionLabel:'2026.08',updated:'08-10',module:'bundle',icon:'<rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>',url:'./by-version/2026-08/视频云平台合集/index.html'},
+        { id:'replay-download',name:'回放页下载交互',parent:'直播回放',type:'reform',source:'baseline',desc:'回放页下载交互完善：下载按钮右侧概览区实时显示进度，下载任务弹窗管理未完成任务，支持多任务并发（受下级平台回放链接能力约束）、失败原因提示与重试、失败任务5分钟自动移除、取消立即消失、切换页面下载继续。',version:'2026-08',versionLabel:'2026.08',updated:'08-12',module:'replay-download',icon:'<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>',url:'./by-version/2026-08/回放页下载交互/index.html'}
       ]
     }
   },
