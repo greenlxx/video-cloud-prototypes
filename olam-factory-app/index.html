@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Olam Factory Operations — Prototype</title>
+<style>
+  :root{
+    --bg:#0B1220; --card:#131C2E; --border:#22304A; --ink:#E6EDF7; --muted:#8FA3BF;
+    --blue:#3B82F6; --amber:#F59E0B;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+       font:400 15px/1.55 Inter,-apple-system,"SF Pro Text","Segoe UI",Roboto,sans-serif}
+  .wrap{max-width:1040px;margin:0 auto;padding:56px 24px 72px}
+  .eyebrow{color:var(--blue);font-size:12px;letter-spacing:.14em;text-transform:uppercase}
+  h1{font-size:34px;line-height:1.2;margin:14px 0 10px;font-weight:600;letter-spacing:-.01em}
+  .lede{color:var(--muted);max-width:640px;margin:0 0 40px}
+  .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:20px}
+  @media (max-width:760px){.grid{grid-template-columns:1fr}}
+  .card{display:block;background:var(--card);border:1px solid var(--border);border-radius:14px;
+        padding:24px;text-decoration:none;color:inherit;transition:border-color .15s,transform .15s}
+  .card:hover{border-color:var(--blue);transform:translateY(-2px)}
+  .tag{display:inline-block;font-size:11px;letter-spacing:.1em;text-transform:uppercase;
+       color:var(--blue);border:1px solid #3B82F655;background:#3B82F61A;border-radius:999px;padding:3px 9px}
+  .card h2{font-size:22px;margin:16px 0 8px;font-weight:600}
+  .card p{color:var(--muted);margin:0 0 16px;font-size:14px}
+  ul{margin:0 0 20px;padding-left:18px;color:var(--muted);font-size:14px}
+  li{margin-bottom:6px}
+  .open{display:inline-flex;align-items:center;gap:8px;color:var(--blue);font-weight:500;font-size:14px}
+  footer{margin-top:44px;color:#5F7594;font-size:12.5px;line-height:1.7}
+  code{background:#18233A;border-radius:4px;padding:1px 6px;color:#C9D6E8;font-size:12px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="eyebrow">Prototype · Factory operations app</div>
+  <h1>Olam Factory Operations</h1>
+  <p class="lede">Two visual directions of the same mobile application. Identical pages, identical data, identical interactions — only the visual language differs. Open either one on a phone or in a desktop browser.</p>
+
+  <div class="grid">
+    <a class="card" href="version-b/index.html">
+      <span class="tag">Direction B</span>
+      <h2>Light professional</h2>
+      <p>Calm, restrained, built for daily use. White cards on light grey, blue accents, generous spacing.</p>
+      <ul>
+        <li>Reads like a product, not a concept</li>
+        <li>Comfortable for long sessions</li>
+        <li>Best for management review</li>
+      </ul>
+      <span class="open">Open prototype →</span>
+    </a>
+
+    <a class="card" href="version-a/index.html">
+      <span class="tag">Direction A</span>
+      <h2>Dark cockpit</h2>
+      <p>Operational console feel. Deep navy surfaces, high-contrast figures, saturated status colours.</p>
+      <ul>
+        <li>Strong impact on large screens</li>
+        <li>Status and alerts stand out</li>
+        <li>Best for control-room contexts</li>
+      </ul>
+      <span class="open">Open prototype →</span>
+    </a>
+  </div>
+
+  <footer>
+    Eight screens: overview, devices, device detail, alerts, alert detail, site activity, output, profile.<br>
+    All figures are illustrative sample data. Best viewed at 393 × 852 —
+    on desktop the app renders inside a phone frame.
+  </footer>
+</div>
+</body>
+</html>
