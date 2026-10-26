@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>翱兰工厂运行 · 原型（中文版）</title>
+<style>
+  :root{--bg:#0B1220;--card:#131C2E;--border:#22304A;--ink:#E6EDF7;--muted:#8FA3BF;--blue:#3B82F6}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+       font:400 15px/1.6 -apple-system,"PingFang SC","Microsoft YaHei",sans-serif}
+  .wrap{max-width:1040px;margin:0 auto;padding:56px 24px 72px}
+  .eyebrow{color:var(--blue);font-size:12px;letter-spacing:.14em}
+  h1{font-size:32px;margin:14px 0 10px;font-weight:600}
+  .lede{color:var(--muted);max-width:660px;margin:0 0 36px}
+  .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:20px}
+  @media (max-width:760px){.grid{grid-template-columns:1fr}}
+  .card{display:block;background:var(--card);border:1px solid var(--border);border-radius:14px;
+        padding:24px;text-decoration:none;color:inherit;transition:border-color .15s,transform .15s}
+  .card:hover{border-color:var(--blue);transform:translateY(-2px)}
+  .tag{display:inline-block;font-size:11px;letter-spacing:.08em;color:var(--blue);
+       border:1px solid #3B82F655;background:#3B82F61A;border-radius:999px;padding:3px 9px}
+  .card h2{font-size:21px;margin:14px 0 8px;font-weight:600}
+  .card p{color:var(--muted);margin:0 0 14px;font-size:14px}
+  ul{margin:0 0 18px;padding-left:18px;color:var(--muted);font-size:14px}
+  li{margin-bottom:6px}
+  .open{color:var(--blue);font-weight:500;font-size:14px}
+  footer{margin-top:40px;color:#5F7594;font-size:12.5px;line-height:1.8}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="eyebrow">原型 · 中文版 · 供内部评审</div>
+  <h1>翱兰工厂运行</h1>
+  <p class="lede">同一套移动端产品的两种视觉方向。页面、数据、交互完全一致，只有视觉语言不同。第一屏是「全球工厂实况」，从地球位置往下钻到单厂，再到设备、告警、现场与产量。</p>
+
+  <div class="grid">
+    <a class="card" href="version-zh-b/index.html">
+      <span class="tag">方向 B</span>
+      <h2>浅色专业</h2>
+      <p>白底卡片、克制层级，像每天在用的产品。适合管理者日常查看与评审汇报。</p>
+      <ul>
+        <li>久看不累，信息密度高</li>
+        <li>更像可交付的产品</li>
+        <li>推荐作为主推方向</li>
+      </ul>
+      <span class="open">打开原型 →</span>
+    </a>
+    <a class="card" href="version-zh-a/index.html">
+      <span class="tag">方向 A</span>
+      <h2>深色驾驶舱</h2>
+      <p>深海军蓝底、状态色高饱和，像工业中控台。适合大屏展示与控制室场景。</p>
+      <ul>
+        <li>告警与异常跳得出来</li>
+        <li>大屏投影观感强</li>
+        <li>适合开场演示</li>
+      </ul>
+      <span class="open">打开原型 →</span>
+    </a>
+  </div>
+
+  <footer>
+    页面：全球 / 本厂 / 设备 / 设备详情 / 告警 / 告警详情 / 现场 / 产量 / 我的<br>
+    所有数值为演示用的模拟数据，按粮农加工线的合理量级设定，不对应任何真实工厂。<br>
+    建议以 393 × 852 手机视口查看；桌面浏览器下会显示为手机框。
+  </footer>
+</div>
+</body>
+</html>
